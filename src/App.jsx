@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 // Pages
 import Splash from './agent/pages/Splash';
+import PortalSelector from './pages/PortalSelector';
 import AgentLogin from './agent/pages/AgentLogin';
 import AgentDashboard from './agent/pages/AgentDashboard';
 import Farmers from './agent/pages/Farmers';
@@ -20,10 +21,23 @@ import Layout from './agent/components/Layout';
 import BottomNavigation from './agent/components/BottomNavigation';
 import { isAuthenticated } from './agent/utils/agentAuth';
 
+// Incharge
+import InchargeLogin from './incharge/pages/InchargeLogin';
+import InchargeLayout from './incharge/components/InchargeLayout';
+import InchargeRoutes from './incharge/InchargeRoutes';
+import { isInchargeAuthenticated } from './incharge/utils/inchargeAuth';
+
 const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) {
     // If user directly accesses a protected route without being logged in, redirect to login
     return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+const InchargeProtectedRoute = ({ children }) => {
+  if (!isInchargeAuthenticated()) {
+    return <Navigate to="/incharge-login" replace />;
   }
   return children;
 };
@@ -45,7 +59,18 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Splash />} />
-        <Route path="/login" element={<AgentLogin />} />
+        <Route path="/login" element={<PortalSelector />} />
+        <Route path="/agent-login" element={<AgentLogin />} />
+        <Route path="/incharge-login" element={<InchargeLogin />} />
+        
+        {/* Incharge Routes */}
+        <Route path="/incharge/*" element={
+          <InchargeProtectedRoute>
+            <InchargeLayout>
+              <InchargeRoutes />
+            </InchargeLayout>
+          </InchargeProtectedRoute>
+        } />
         
         {/* Authenticated Routes wrapped in ProtectedRoute and Layout */}
         <Route path="/dashboard" element={<ProtectedRoute><Layout><AgentDashboard /></Layout></ProtectedRoute>} />
