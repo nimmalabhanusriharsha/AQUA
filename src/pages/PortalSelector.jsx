@@ -1,238 +1,203 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, LayoutTemplate, ArrowRight, Shield, HardHat } from 'lucide-react';
+import { Users, LayoutTemplate, ArrowRight, Shield, HardHat, Waves } from 'lucide-react';
 import logo from '../assets/splash-logo.png';
 
 const PortalSelector = () => {
   const navigate = useNavigate();
-  const [hoveredCard, setHoveredCard] = useState(null);
 
   return (
-    <div style={styles.container}>
-      <div style={styles.content}>
-        {/* Header Section */}
-        <div style={styles.header}>
-          <div style={styles.logoContainer}>
-             <img src={logo} alt="Aqua Feed" style={styles.logo} />
+    <>
+      <style>
+        {`
+          @keyframes mesh {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+          }
+          .portal-container {
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #eff6ff, #dbeafe, #bfdbfe, #e0f2fe, #f0f9ff);
+            background-size: 400% 400%;
+            animation: mesh 15s ease infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+          }
+          /* Decorative background blobs */
+          .blob-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+          }
+          .blob-2 {
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            animation: float 10s ease-in-out infinite reverse;
+          }
+          .portal-card {
+            flex: 1 1 320px;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 28px;
+            padding: 36px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03), inset 0 0 0 1px rgba(255,255,255,0.5);
+            position: relative;
+            z-index: 10;
+          }
+          .portal-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08), inset 0 0 0 1px rgba(255,255,255,1);
+            background: rgba(255, 255, 255, 0.95);
+          }
+          .portal-icon-wrapper {
+            transition: transform 0.4s ease;
+          }
+          .portal-card:hover .portal-icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+          }
+          .portal-arrow {
+            transition: transform 0.3s ease;
+          }
+          .portal-card:hover .portal-arrow {
+            transform: translateX(6px);
+          }
+        `}
+      </style>
+
+      <div className="portal-container">
+        <div className="blob-1"></div>
+        <div className="blob-2"></div>
+
+        <div style={{ width: '100%', maxWidth: '1400px', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10 }}>
+          {/* Header Section */}
+          <div style={{ textAlign: 'center', marginBottom: '64px', animation: 'float 6s ease-in-out infinite' }}>
+            <div style={{
+              width: '90px', height: '90px', backgroundColor: 'rgba(255,255,255,0.9)', 
+              borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              margin: '0 auto 24px', boxShadow: '0 8px 32px rgba(37, 99, 235, 0.15)',
+              border: '1px solid rgba(255,255,255,0.8)'
+            }}>
+              <img src={logo} alt="Aqua Feed" style={{ width: '60px', height: 'auto' }} />
+            </div>
+            <h1 style={{ fontSize: '42px', fontWeight: '800', marginBottom: '8px', letterSpacing: '-1.5px', color: 'var(--color-primary)' }}>
+              Aqua Feed
+            </h1>
+            <p style={{ fontSize: '18px', color: '#4b5563', marginBottom: '24px', fontWeight: 500 }}>
+              Intelligent Performance Management System
+            </p>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(220, 252, 231, 0.8)',
+              backdropFilter: 'blur(8px)', border: '1px solid rgba(187, 247, 208, 0.8)', padding: '8px 18px', 
+              borderRadius: '30px', fontSize: '13px', color: '#166534', fontWeight: 600, boxShadow: '0 4px 12px rgba(22, 163, 74, 0.1)'
+            }}>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a', boxShadow: '0 0 8px #16a34a' }}></div>
+              All systems operational
+            </div>
           </div>
-          <h1 style={styles.title}>Aqua Feed</h1>
-          <p style={styles.subtitle}>Performance Management System</p>
-          <div style={styles.statusBadge}>
-            <div style={styles.statusDot}></div>
-            All systems operational
+
+          {/* Cards Section */}
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '28px', width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
+            
+            {/* Agent Portal Card */}
+            <div className="portal-card" onClick={() => navigate('/agent-login')}>
+              <div className="portal-icon-wrapper" style={{
+                width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '28px', color: 'white', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                boxShadow: '0 8px 24px rgba(37, 99, 235, 0.25)'
+              }}>
+                <HardHat size={28} />
+              </div>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '6px', color: '#111827', letterSpacing: '-0.5px' }}>Agent Portal</h2>
+              <p style={{ fontSize: '14px', fontWeight: '700', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#2563eb' }}>Field Operations</p>
+              <p style={{ fontSize: '15px', color: '#4b5563', lineHeight: '1.6', marginBottom: '40px', flex: 1 }}>
+                Mobile-optimized interface for field agents. Access assigned farmers, manage tanks, and submit real-time data from the field.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '20px' }}>
+                <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: 600 }}>Mobile / Web App</span>
+                <span style={{ color: '#2563eb', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  Enter <ArrowRight size={18} className="portal-arrow" />
+                </span>
+              </div>
+            </div>
+
+            {/* Admin Portal Card */}
+            <div className="portal-card" onClick={() => navigate('/admin-login')}>
+              <div className="portal-icon-wrapper" style={{
+                width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '28px', color: 'white', background: 'linear-gradient(135deg, #4f46e5, #4338ca)',
+                boxShadow: '0 8px 24px rgba(79, 70, 229, 0.25)'
+              }}>
+                <Shield size={28} />
+              </div>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '6px', color: '#111827', letterSpacing: '-0.5px' }}>Admin Portal</h2>
+              <p style={{ fontSize: '14px', fontWeight: '700', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#4f46e5' }}>System Administrator</p>
+              <p style={{ fontSize: '15px', color: '#4b5563', lineHeight: '1.6', marginBottom: '40px', flex: 1 }}>
+                Organization-wide dashboard. Manage user access, configure system settings, monitor global compliance, and export data.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '20px' }}>
+                <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: 600 }}>Web Portal</span>
+                <span style={{ color: '#4f46e5', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  Enter <ArrowRight size={18} className="portal-arrow" />
+                </span>
+              </div>
+            </div>
+
+            {/* Incharge Portal Card */}
+            <div className="portal-card" onClick={() => navigate('/incharge-login')}>
+              <div className="portal-icon-wrapper" style={{
+                width: '64px', height: '64px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                marginBottom: '28px', color: 'white', background: 'linear-gradient(135deg, #0ea5e9, #0284c7)',
+                boxShadow: '0 8px 24px rgba(14, 165, 233, 0.25)'
+              }}>
+                <LayoutTemplate size={28} />
+              </div>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', marginBottom: '6px', color: '#111827', letterSpacing: '-0.5px' }}>Incharge Portal</h2>
+              <p style={{ fontSize: '14px', fontWeight: '700', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0ea5e9' }}>Operations Manager</p>
+              <p style={{ fontSize: '15px', color: '#4b5563', lineHeight: '1.6', marginBottom: '40px', flex: 1 }}>
+                Web dashboard for regional Incharges. Monitor agent activity, allocate farmers, and review field test reports.
+              </p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '20px' }}>
+                <span style={{ color: '#6b7280', fontSize: '13px', fontWeight: 600 }}>Web Portal</span>
+                <span style={{ color: '#0ea5e9', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  Enter <ArrowRight size={18} className="portal-arrow" />
+                </span>
+              </div>
+            </div>
+
           </div>
         </div>
-
-        {/* Cards Section - Horizontal Layout */}
-        <div style={styles.cardsContainer}>
-          {/* Agent Portal Card */}
-          <div 
-            style={{ ...styles.card, ...(hoveredCard === 'agent' ? styles.cardHover : {}) }}
-            onMouseEnter={() => setHoveredCard('agent')}
-            onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => navigate('/agent-login')}
-          >
-            <div style={{...styles.iconBox, color: 'white', backgroundColor: 'var(--color-primary)'}}>
-              <HardHat size={24} />
-            </div>
-            <h2 style={styles.cardTitle}>Agent Portal</h2>
-            <p style={{...styles.cardRole, color: 'var(--color-primary)'}}>Field Operations</p>
-            <p style={styles.cardDesc}>
-              Mobile-optimized interface for field agents. Access assigned farmers, tanks, and submit data from the field.
-            </p>
-            <div style={styles.cardFooter}>
-              <span style={{color: 'var(--color-text-muted)', fontSize: '13px', fontWeight: 500}}>Android App</span>
-              <span style={{color: 'var(--color-primary)', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                Enter <ArrowRight size={16} />
-              </span>
-            </div>
-          </div>
-
-          {/* Admin Portal Card */}
-          <div 
-            style={{ ...styles.card, ...(hoveredCard === 'admin' ? styles.cardHover : {}) }}
-            onMouseEnter={() => setHoveredCard('admin')}
-            onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => navigate('/admin-login')}
-          >
-            <div style={{...styles.iconBox, color: 'white', backgroundColor: '#4f46e5'}}>
-              <Shield size={24} />
-            </div>
-            <h2 style={styles.cardTitle}>Admin Portal</h2>
-            <p style={{...styles.cardRole, color: '#4f46e5'}}>System Administrator</p>
-            <p style={styles.cardDesc}>
-              Organization-wide dashboard. Manage user access, configure system settings, and monitor compliance.
-            </p>
-            <div style={styles.cardFooter}>
-              <span style={{color: 'var(--color-text-muted)', fontSize: '13px', fontWeight: 500}}>Web Portal</span>
-              <span style={{color: '#4f46e5', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                Enter <ArrowRight size={16} />
-              </span>
-            </div>
-          </div>
-
-          {/* Incharge Portal Card */}
-          <div 
-            style={{ ...styles.card, ...(hoveredCard === 'incharge' ? styles.cardHover : {}) }}
-            onMouseEnter={() => setHoveredCard('incharge')}
-            onMouseLeave={() => setHoveredCard(null)}
-            onClick={() => navigate('/incharge-login')}
-          >
-            <div style={{...styles.iconBox, color: 'white', backgroundColor: '#0ea5e9'}}>
-              <LayoutTemplate size={24} />
-            </div>
-            <h2 style={styles.cardTitle}>Incharge Portal</h2>
-            <p style={{...styles.cardRole, color: '#0ea5e9'}}>Operations Manager</p>
-            <p style={styles.cardDesc}>
-              Web dashboard for regional Incharges. Monitor agents, allocate farmers, and review field test reports.
-            </p>
-            <div style={styles.cardFooter}>
-              <span style={{color: 'var(--color-text-muted)', fontSize: '13px', fontWeight: 500}}>Web Portal</span>
-              <span style={{color: '#0ea5e9', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px'}}>
-                Enter <ArrowRight size={16} />
-              </span>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
+    </>
   );
-};
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#f8fafc', // Very light grey/blue
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px 20px',
-    color: 'var(--color-text-main)',
-    fontFamily: 'Inter, sans-serif',
-  },
-  content: {
-    width: '100%',
-    maxWidth: '1400px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '40px'
-  },
-  logoContainer: {
-    width: '80px',
-    height: '80px',
-    backgroundColor: 'white',
-    borderRadius: '20px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto 24px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-    border: '1px solid var(--color-border)'
-  },
-  logo: {
-    width: '60px',
-    height: 'auto'
-  },
-  title: {
-    fontSize: '36px',
-    fontWeight: '800',
-    marginBottom: '8px',
-    letterSpacing: '-1px',
-    color: 'var(--color-primary)' // Royal Blue
-  },
-  subtitle: {
-    fontSize: '18px',
-    color: 'var(--color-text-muted)',
-    marginBottom: '24px',
-    fontWeight: 500
-  },
-  statusBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px',
-    backgroundColor: '#dcfce7',
-    border: '1px solid #bbf7d0',
-    padding: '8px 16px',
-    borderRadius: '30px',
-    fontSize: '13px',
-    color: '#166534',
-    fontWeight: 600
-  },
-  statusDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    backgroundColor: '#16a34a'
-  },
-  cardsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: '24px',
-    width: '100%',
-    justifyContent: 'center',
-    flexWrap: 'wrap'
-  },
-  card: {
-    flex: '1 1 300px',
-    maxWidth: '400px',
-    backgroundColor: 'white',
-    border: '1px solid var(--color-border)',
-    borderRadius: '24px',
-    padding: '32px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-  },
-  cardHover: {
-    transform: 'translateY(-4px)',
-    borderColor: 'var(--color-primary)',
-    boxShadow: '0 12px 24px rgba(23, 56, 115, 0.15)'
-  },
-  iconBox: {
-    width: '56px',
-    height: '56px',
-    borderRadius: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '24px'
-  },
-  cardTitle: {
-    fontSize: '24px',
-    fontWeight: '700',
-    marginBottom: '6px',
-    color: 'var(--color-text-main)'
-  },
-  cardRole: {
-    fontSize: '14px',
-    fontWeight: '700',
-    marginBottom: '16px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  cardDesc: {
-    fontSize: '15px',
-    color: 'var(--color-text-muted)',
-    lineHeight: '1.6',
-    marginBottom: '32px',
-    flex: 1
-  },
-  cardFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 'auto',
-    borderTop: '1px solid var(--color-border)',
-    paddingTop: '20px'
-  }
 };
 
 export default PortalSelector;

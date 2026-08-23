@@ -38,7 +38,7 @@ const InchargeLogin = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            margin: '0 auto 16px',
+            margin: '0 auto',
             color: 'white'
           }}>
             <Droplets size={32} />

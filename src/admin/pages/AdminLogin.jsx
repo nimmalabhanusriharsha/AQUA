@@ -29,7 +29,12 @@ const AdminLogin = () => {
   return (
     <div className="auth-container">
       <div className="auth-box card">
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ 
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          marginBottom: '40px'
+        }}>
           <div style={{
             width: '64px',
             height: '64px',

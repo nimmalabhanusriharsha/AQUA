@@ -42,8 +42,8 @@ const AgentLogin = () => {
   };
 
   return (
-    <div className="auth-container" style={styles.container}>
-      <div className="auth-box">
+    <div className="auth-container">
+      <div className="auth-box card">
         <div style={styles.logoSection}>
           <img src={logo} alt="Royals Marine Food" style={styles.logoImage} />
         </div>
@@ -114,20 +114,15 @@ const AgentLogin = () => {
 };
 
 const styles = {
-  container: {
-    backgroundColor: '#ffffff',
-    padding: '24px',
-  },
   logoSection: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: '60px',
-    marginBottom: '40px',
+    marginBottom: '24px',
   },
   logoImage: {
     width: '100%',
-    maxWidth: '300px',
+    maxWidth: '180px',
     height: 'auto',
   },
   formSection: {
