@@ -27,6 +27,12 @@ import InchargeLayout from './incharge/components/InchargeLayout';
 import InchargeRoutes from './incharge/InchargeRoutes';
 import { isInchargeAuthenticated } from './incharge/utils/inchargeAuth';
 
+// Admin
+import AdminLogin from './admin/pages/AdminLogin';
+import AdminLayout from './admin/components/AdminLayout';
+import AdminRoutes from './admin/AdminRoutes';
+import { isAdminAuthenticated } from './admin/utils/adminAuth';
+
 const ProtectedRoute = ({ children }) => {
   if (!isAuthenticated()) {
     // If user directly accesses a protected route without being logged in, redirect to login
@@ -38,6 +44,13 @@ const ProtectedRoute = ({ children }) => {
 const InchargeProtectedRoute = ({ children }) => {
   if (!isInchargeAuthenticated()) {
     return <Navigate to="/incharge-login" replace />;
+  }
+  return children;
+};
+
+const AdminProtectedRoute = ({ children }) => {
+  if (!isAdminAuthenticated()) {
+    return <Navigate to="/admin-login" replace />;
   }
   return children;
 };
@@ -62,7 +75,17 @@ function App() {
         <Route path="/login" element={<PortalSelector />} />
         <Route path="/agent-login" element={<AgentLogin />} />
         <Route path="/incharge-login" element={<InchargeLogin />} />
+        <Route path="/admin-login" element={<AdminLogin />} />
         
+        {/* Admin Routes */}
+        <Route path="/admin/*" element={
+          <AdminProtectedRoute>
+            <AdminLayout>
+              <AdminRoutes />
+            </AdminLayout>
+          </AdminProtectedRoute>
+        } />
+
         {/* Incharge Routes */}
         <Route path="/incharge/*" element={
           <InchargeProtectedRoute>

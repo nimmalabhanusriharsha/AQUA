@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, LayoutTemplate, ArrowRight } from 'lucide-react';
+import { Users, LayoutTemplate, ArrowRight, Shield, HardHat } from 'lucide-react';
 import logo from '../assets/splash-logo.png';
 
 const PortalSelector = () => {
   const navigate = useNavigate();
+  const [hoveredCard, setHoveredCard] = useState(null);
 
   return (
     <div style={styles.container}>
@@ -26,13 +27,13 @@ const PortalSelector = () => {
         <div style={styles.cardsContainer}>
           {/* Agent Portal Card */}
           <div 
-            style={styles.card}
+            style={{ ...styles.card, ...(hoveredCard === 'agent' ? styles.cardHover : {}) }}
+            onMouseEnter={() => setHoveredCard('agent')}
+            onMouseLeave={() => setHoveredCard(null)}
             onClick={() => navigate('/agent-login')}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(23, 56, 115, 0.15)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'; }}
           >
             <div style={{...styles.iconBox, color: 'white', backgroundColor: 'var(--color-primary)'}}>
-              <Users size={24} />
+              <HardHat size={24} />
             </div>
             <h2 style={styles.cardTitle}>Agent Portal</h2>
             <p style={{...styles.cardRole, color: 'var(--color-primary)'}}>Field Operations</p>
@@ -47,12 +48,35 @@ const PortalSelector = () => {
             </div>
           </div>
 
+          {/* Admin Portal Card */}
+          <div 
+            style={{ ...styles.card, ...(hoveredCard === 'admin' ? styles.cardHover : {}) }}
+            onMouseEnter={() => setHoveredCard('admin')}
+            onMouseLeave={() => setHoveredCard(null)}
+            onClick={() => navigate('/admin-login')}
+          >
+            <div style={{...styles.iconBox, color: 'white', backgroundColor: '#4f46e5'}}>
+              <Shield size={24} />
+            </div>
+            <h2 style={styles.cardTitle}>Admin Portal</h2>
+            <p style={{...styles.cardRole, color: '#4f46e5'}}>System Administrator</p>
+            <p style={styles.cardDesc}>
+              Organization-wide dashboard. Manage user access, configure system settings, and monitor compliance.
+            </p>
+            <div style={styles.cardFooter}>
+              <span style={{color: 'var(--color-text-muted)', fontSize: '13px', fontWeight: 500}}>Web Portal</span>
+              <span style={{color: '#4f46e5', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px'}}>
+                Enter <ArrowRight size={16} />
+              </span>
+            </div>
+          </div>
+
           {/* Incharge Portal Card */}
           <div 
-            style={styles.card}
+            style={{ ...styles.card, ...(hoveredCard === 'incharge' ? styles.cardHover : {}) }}
+            onMouseEnter={() => setHoveredCard('incharge')}
+            onMouseLeave={() => setHoveredCard(null)}
             onClick={() => navigate('/incharge-login')}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.borderColor = '#0ea5e9'; e.currentTarget.style.boxShadow = '0 12px 24px rgba(14, 165, 233, 0.15)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'; }}
           >
             <div style={{...styles.iconBox, color: 'white', backgroundColor: '#0ea5e9'}}>
               <LayoutTemplate size={24} />
@@ -166,6 +190,11 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+  },
+  cardHover: {
+    transform: 'translateY(-4px)',
+    borderColor: 'var(--color-primary)',
+    boxShadow: '0 12px 24px rgba(23, 56, 115, 0.15)'
   },
   iconBox: {
     width: '56px',
