@@ -114,7 +114,7 @@ const styles = {
   },
   content: {
     width: '100%',
-    maxWidth: '1000px',
+    maxWidth: '1400px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
@@ -179,8 +179,8 @@ const styles = {
     flexWrap: 'wrap'
   },
   card: {
-    flex: '1 1 400px',
-    maxWidth: '450px',
+    flex: '1 1 300px',
+    maxWidth: '400px',
     backgroundColor: 'white',
     border: '1px solid var(--color-border)',
     borderRadius: '24px',
