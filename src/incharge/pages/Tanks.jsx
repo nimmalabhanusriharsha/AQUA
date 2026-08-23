@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
 import { useMockData } from '../../context/MockDataContext';
-import { Search, Filter, Eye } from 'lucide-react';
+import { Search, Filter, Eye, X } from 'lucide-react';
 
 const Tanks = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTank, setSelectedTank] = useState(null);
   const { db, getFarmerById, getAgentById } = useMockData();
   
   const mockInchargeTanks = db.tanks.map(t => {
@@ -107,7 +108,10 @@ const Tanks = () => {
                         </span>
                       </td>
                       <td style={{ padding: '16px', textAlign: 'right' }}>
-                        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}>
+                        <button 
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
+                          onClick={() => setSelectedTank(tank)}
+                        >
                           <Eye size={18} />
                         </button>
                       </td>
@@ -119,6 +123,49 @@ const Tanks = () => {
           </div>
         </div>
       </div>
+
+      {/* Inspect Tank Modal */}
+      {selectedTank && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
+            <button
+              onClick={() => setSelectedTank(null)}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Tank Details</h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tank Name</p><p style={{ fontWeight: 600 }}>{selectedTank.name}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Farmer</p><p style={{ fontWeight: 600 }}>{selectedTank.farmer}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Locality</p><p style={{ fontWeight: 600 }}>{selectedTank.locality}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Assigned Agent</p><p style={{ fontWeight: 600 }}>{selectedTank.agent}</p></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Last Test</p><p style={{ fontWeight: 600 }}>{selectedTank.lastTest}</p></div>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Next Due</p><p style={{ fontWeight: 600 }}>{selectedTank.nextDue}</p></div>
+              </div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Status</p>
+                <span style={{
+                  padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+                  backgroundColor: getStatusColor(selectedTank.status).bg,
+                  color: getStatusColor(selectedTank.status).text
+                }}>
+                  {selectedTank.status}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-primary" style={{ width: 'auto', padding: '10px 24px' }} onClick={() => setSelectedTank(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

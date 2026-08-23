@@ -18,7 +18,7 @@ const Allocations = () => {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedFarmers, setSelectedFarmers] = useState([]);
   const [success, setSuccess] = useState(false);
-  
+
   const { db, getFarmersByAgentId, getTanksByFarmerId, assignFarmerToAgent } = useMockData();
 
   const availableAgents = db.agents.map(a => {
@@ -44,7 +44,7 @@ const Allocations = () => {
   });
 
   const toggleFarmer = (farmerId) => {
-    setSelectedFarmers(prev => 
+    setSelectedFarmers(prev =>
       prev.includes(farmerId) ? prev.filter(id => id !== farmerId) : [...prev, farmerId]
     );
   };
@@ -70,15 +70,15 @@ const Allocations = () => {
       <InchargeHeader title="Farmer Allocations" />
       <div className="content-inner">
         <div className="card" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px' }}>
-          
+
           {/* Stepper Header */}
           {!success && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '32px', position: 'relative' }}>
               <div style={{ position: 'absolute', top: '16px', left: '10%', right: '10%', height: '2px', backgroundColor: 'var(--color-border)', zIndex: 0 }} />
               {steps.map(step => (
                 <div key={step.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 1, width: '25%' }}>
-                  <div style={{ 
-                    width: '32px', height: '32px', borderRadius: '50%', 
+                  <div style={{
+                    width: '32px', height: '32px', borderRadius: '50%',
                     backgroundColor: currentStep >= step.id ? 'var(--color-primary)' : 'white',
                     border: `2px solid ${currentStep >= step.id ? 'var(--color-primary)' : 'var(--color-border)'}`,
                     color: currentStep >= step.id ? 'white' : 'var(--color-text-muted)',
@@ -101,7 +101,7 @@ const Allocations = () => {
               <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Select Locality</h3>
               <div className="grid md:grid-cols-3">
                 {mockLocalities.map(loc => (
-                  <div 
+                  <div
                     key={loc}
                     onClick={() => setSelectedLocality(loc)}
                     style={{
@@ -124,7 +124,7 @@ const Allocations = () => {
               <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Select Agent</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {availableAgents.map(agent => (
-                  <div 
+                  <div
                     key={agent.id}
                     onClick={() => setSelectedAgent(agent)}
                     style={{
@@ -153,7 +153,7 @@ const Allocations = () => {
               <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Select Farmers to Allocate</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {availableFarmers.map(farmer => (
-                  <div 
+                  <div
                     key={farmer.id}
                     onClick={() => toggleFarmer(farmer.id)}
                     style={{
@@ -161,9 +161,9 @@ const Allocations = () => {
                       borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '16px',
                     }}
                   >
-                    <input 
-                      type="checkbox" 
-                      checked={selectedFarmers.includes(farmer.id)} 
+                    <input
+                      type="checkbox"
+                      checked={selectedFarmers.includes(farmer.id)}
                       readOnly
                       style={{ width: '18px', height: '18px', cursor: 'pointer' }}
                     />
@@ -195,7 +195,7 @@ const Allocations = () => {
                     <p style={{ fontWeight: 600, fontSize: '16px' }}>{selectedAgent?.name}</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '8px' }}>Selected Farmers ({selectedFarmers.length})</p>
                   <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '14px', fontWeight: 500 }}>
@@ -211,7 +211,7 @@ const Allocations = () => {
           {/* Success State */}
           {success && (
             <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <div style={{ 
+              <div style={{
                 width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#dcfce7', color: 'var(--status-green)',
                 display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 24px'
               }}>
@@ -230,12 +230,12 @@ const Allocations = () => {
           {/* Footer Actions */}
           {!success && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--color-border)' }}>
-              <button 
+              <button
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                style={{ 
-                  display: 'flex', alignItems: 'center', gap: '8px', 
-                  padding: '10px 24px', backgroundColor: 'white', 
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  padding: '10px 24px', backgroundColor: 'white',
                   border: '1px solid var(--color-border)', borderRadius: '8px',
                   cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
                   opacity: currentStep === 1 ? 0.5 : 1, fontWeight: 500
@@ -243,9 +243,9 @@ const Allocations = () => {
               >
                 <ArrowLeft size={18} /> Back
               </button>
-              
+
               {currentStep < 4 ? (
-                <button 
+                <button
                   onClick={nextStep}
                   disabled={
                     (currentStep === 1 && !selectedLocality) ||
@@ -258,7 +258,7 @@ const Allocations = () => {
                   Continue <ArrowRight size={18} />
                 </button>
               ) : (
-                <button 
+                <button
                   onClick={handleAllocate}
                   className="btn-primary"
                   style={{ width: 'auto', padding: '10px 24px', backgroundColor: 'var(--status-green)' }}

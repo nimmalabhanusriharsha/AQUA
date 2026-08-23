@@ -7,7 +7,7 @@ import { ArrowLeft, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 const RecordReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { db, getFarmerById, getTankById, getAgentById, updateSubmissionStatus } = useMockData();
+  const { db, getFarmerById, getTankById, getAgentById, updateSubmissionStatus, addNotification } = useMockData();
   const [record, setRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState(''); // 'Reject' or 'Request Changes'
@@ -36,6 +36,10 @@ const RecordReview = () => {
 
   const handleApprove = () => {
     updateSubmissionStatus(record.id, 'Approved');
+    const s = db.submissions.find(v => v.id === record.id);
+    if (s) {
+      addNotification(s.agentId, `Record for Tank ${record.tank} (${record.farmer}) was Approved.`, 'success');
+    }
     navigate('/incharge/verifications');
   };
 
@@ -46,9 +50,17 @@ const RecordReview = () => {
 
   const handleModalSubmit = () => {
     if (!remarks) return;
-    updateSubmissionStatus(record.id, modalAction === 'Reject' ? 'Rejected' : 'Changes Requested');
-    // We aren't storing remarks in the mock DB for now to keep it simple, 
-    // but in a real app we'd pass remarks as well.
+    const status = modalAction === 'Reject' ? 'Rejected' : 'Changes Requested';
+    updateSubmissionStatus(record.id, status);
+    
+    // Notify the agent
+    // Since record.agent holds agent name, we should retrieve agentId. Actually wait, we only stored agent name in `record`. Let's get the original agentId from `s.agentId`. 
+    // We need to modify `record` to include `agentId` to do this correctly, or we can look it up.
+    const s = db.submissions.find(v => v.id === record.id);
+    if (s) {
+      addNotification(s.agentId, `Record for Tank ${record.tank} (${record.farmer}) was ${status}. Reason: ${remarks}`, status === 'Rejected' ? 'error' : 'warning');
+    }
+
     setShowModal(false);
     navigate('/incharge/verifications');
   };

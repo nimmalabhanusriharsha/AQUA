@@ -9,7 +9,8 @@ import TodaysWork from '../components/TodaysWork';
 const AgentDashboard = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-  const { getAgentDashboardMetrics, db } = useMockData();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { getAgentDashboardMetrics, getAgentNotifications, markNotificationRead, db } = useMockData();
 
   useEffect(() => {
     const s = getSession();
@@ -23,6 +24,8 @@ const AgentDashboard = () => {
   const data = getAgentDashboardMetrics(session.agentId);
   const kpi = data.kpi;
   const todaysWork = data.todaysWork;
+  const notifications = getAgentNotifications(session.agentId);
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const calculateProgress = () => {
     const total = kpi.testsCompleted + kpi.testsDue + kpi.overdue;
@@ -49,8 +52,52 @@ const AgentDashboard = () => {
           </div>
         </div>
         <div style={styles.headerRight}>
-          <div style={styles.iconCircle}>
-            <Bell size={20} color="var(--color-primary)" />
+          <div style={{ position: 'relative' }}>
+            <div 
+              style={styles.iconCircle}
+              onClick={() => setShowNotifications(!showNotifications)}
+            >
+              <Bell size={20} color="var(--color-primary)" />
+              {unreadCount > 0 && (
+                <div style={styles.notificationDot}>
+                  {unreadCount}
+                </div>
+              )}
+            </div>
+            
+            {showNotifications && (
+              <div style={styles.notificationDropdown}>
+                <h3 style={styles.notificationTitle}>Notifications</h3>
+                {notifications.length === 0 ? (
+                  <div style={styles.noNotifications}>No notifications</div>
+                ) : (
+                  <div style={styles.notificationList}>
+                    {notifications.map(notification => (
+                      <div 
+                        key={notification.id} 
+                        style={{
+                          ...styles.notificationItem,
+                          backgroundColor: notification.read ? 'transparent' : '#f0f9ff'
+                        }}
+                        onClick={() => {
+                          if (!notification.read) {
+                            markNotificationRead(notification.id);
+                          }
+                        }}
+                      >
+                        <p style={{
+                          ...styles.notificationMessage,
+                          color: notification.type === 'error' ? 'var(--status-red)' : notification.type === 'warning' ? 'var(--status-orange)' : 'var(--status-green)'
+                        }}>
+                          {notification.message}
+                        </p>
+                        <span style={styles.notificationTime}>{notification.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -142,6 +189,66 @@ const styles = {
     fontWeight: '700',
     color: 'var(--color-text-main)',
     marginBottom: '8px',
+  },
+  notificationDot: {
+    position: 'absolute',
+    top: '-4px',
+    right: '-4px',
+    backgroundColor: 'var(--status-red)',
+    color: 'white',
+    fontSize: '10px',
+    fontWeight: 'bold',
+    borderRadius: '50%',
+    width: '18px',
+    height: '18px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notificationDropdown: {
+    position: 'absolute',
+    top: '48px',
+    right: '0',
+    width: '320px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+    zIndex: 100,
+    overflow: 'hidden',
+    border: '1px solid var(--color-border)',
+  },
+  notificationTitle: {
+    padding: '16px',
+    borderBottom: '1px solid var(--color-border)',
+    fontSize: '16px',
+    fontWeight: '600',
+    margin: 0,
+    backgroundColor: '#f8fafc',
+  },
+  noNotifications: {
+    padding: '24px 16px',
+    textAlign: 'center',
+    color: 'var(--color-text-muted)',
+    fontSize: '14px',
+  },
+  notificationList: {
+    maxHeight: '300px',
+    overflowY: 'auto',
+  },
+  notificationItem: {
+    padding: '16px',
+    borderBottom: '1px solid var(--color-border)',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+  },
+  notificationMessage: {
+    fontSize: '14px',
+    margin: '0 0 8px 0',
+    lineHeight: '1.4',
+  },
+  notificationTime: {
+    fontSize: '12px',
+    color: 'var(--color-text-muted)',
   },
   locationContainer: {
     display: 'flex',

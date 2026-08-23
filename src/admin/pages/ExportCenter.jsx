@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { Download, Table, CheckSquare } from 'lucide-react';
+import { getIncharges, getAgentsByIncharge, getFarmersByAgent, getFarmerById, getTanksByFarmer } from '../utils/adminMockData';
 
 const ExportCenter = () => {
   const [selectedFields, setSelectedFields] = useState({
@@ -15,6 +16,44 @@ const ExportCenter = () => {
     siteVisits: false,
     verifications: false
   });
+
+  const [selectedIncharge, setSelectedIncharge] = useState('');
+  const [selectedAgent, setSelectedAgent] = useState('');
+  const [selectedFarmer, setSelectedFarmer] = useState('');
+
+  const incharges = getIncharges();
+  const agents = selectedIncharge ? getAgentsByIncharge(selectedIncharge) : [];
+  const farmers = selectedAgent ? getFarmersByAgent(selectedAgent) : [];
+
+  const handleDownload = () => {
+    if (!selectedFarmer) {
+      alert("Please select a farmer to download their data.");
+      return;
+    }
+    
+    const farmer = getFarmerById(selectedFarmer);
+    const tanks = getTanksByFarmer(selectedFarmer);
+    
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "FARMER DETAILS\n";
+    csvContent += "Name,Phone,Village,Acres,Agent,Incharge,Region,Status\n";
+    csvContent += `${farmer.name},${farmer.phone},${farmer.village},${farmer.acres},${farmer.agent},${farmer.incharge},${farmer.region},${farmer.status}\n\n`;
+
+    csvContent += "TANKS\n";
+    csvContent += "Tank Name,Culture Cycle,ABW (g),Biomass (kg),FCR,Weekly Compliance (%)\n";
+    
+    tanks.forEach(tank => {
+      csvContent += `${tank.name},${tank.currentCycle},${tank.abw},${tank.biomass},${tank.fcr},${tank.compliance}\n`;
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${farmer.name.replace(/\s+/g, '_')}_data.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const toggleField = (key) => {
     setSelectedFields(prev => ({ ...prev, [key]: !prev[key] }));
@@ -46,22 +85,47 @@ const ExportCenter = () => {
             </h3>
             
             <div className="input-group">
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Date Range</label>
-              <select style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: '#f8fafc', outline: 'none' }}>
-                <option>This Month</option>
-                <option>Last Month</option>
-                <option>Year to Date</option>
-                <option>Custom Range...</option>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Select Incharge</label>
+              <select 
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: '#f8fafc', outline: 'none' }}
+                value={selectedIncharge}
+                onChange={(e) => {
+                  setSelectedIncharge(e.target.value);
+                  setSelectedAgent('');
+                  setSelectedFarmer('');
+                }}
+              >
+                <option value="">-- Select Incharge --</option>
+                {incharges.map(inc => <option key={inc.id} value={inc.id}>{inc.name}</option>)}
               </select>
             </div>
             
             <div className="input-group">
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Region Filter</label>
-              <select style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: '#f8fafc', outline: 'none' }}>
-                <option>All Regions (Organization-wide)</option>
-                <option>Bhimavaram</option>
-                <option>Narsapur</option>
-                <option>Undi</option>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Select Agent</label>
+              <select 
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: '#f8fafc', outline: 'none' }}
+                value={selectedAgent}
+                onChange={(e) => {
+                  setSelectedAgent(e.target.value);
+                  setSelectedFarmer('');
+                }}
+                disabled={!selectedIncharge}
+              >
+                <option value="">-- Select Agent --</option>
+                {agents.map(ag => <option key={ag.id} value={ag.id}>{ag.name}</option>)}
+              </select>
+            </div>
+
+            <div className="input-group">
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>Select Farmer</label>
+              <select 
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--color-border)', backgroundColor: '#f8fafc', outline: 'none' }}
+                value={selectedFarmer}
+                onChange={(e) => setSelectedFarmer(e.target.value)}
+                disabled={!selectedAgent}
+              >
+                <option value="">-- Select Farmer --</option>
+                {farmers.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
             </div>
           </div>
@@ -106,7 +170,11 @@ const ExportCenter = () => {
               <div style={{ fontSize: '13px', color: 'var(--color-text-muted)' }}>
                 {Object.values(selectedFields).filter(Boolean).length} modules selected for export
               </div>
-              <button className="btn-primary" style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button 
+                className="btn-primary" 
+                style={{ padding: '12px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                onClick={handleDownload}
+              >
                 <Download size={18} /> Download Excel
               </button>
             </div>

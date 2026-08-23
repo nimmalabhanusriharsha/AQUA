@@ -7,7 +7,8 @@ const Farmers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { db, createFarmerWithTanks, getTanksByFarmerId, getAgentById } = useMockData();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [selectedFarmer, setSelectedFarmer] = useState(null);
+
   // Form State
   const [farmerName, setFarmerName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -30,7 +31,7 @@ const Farmers = () => {
     };
   });
 
-  const filteredFarmers = farmers.filter(farmer => 
+  const filteredFarmers = farmers.filter(farmer =>
     farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     farmer.locality.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -42,7 +43,7 @@ const Farmers = () => {
     // We assign it to INC001's first agent as a default, or an unassigned state if we had one
     // For this mock, we'll assign to 'agent001' by default when created from incharge panel
     const defaultAgentId = db.agents.length > 0 ? db.agents[0].id : 'agent001';
-    
+
     createFarmerWithTanks(
       defaultAgentId,
       {
@@ -55,7 +56,7 @@ const Farmers = () => {
       },
       Array(parseInt(numberOfTanks) || 1).fill({})
     );
-    
+
     // Reset and close
     setFarmerName('');
     setPhoneNumber('');
@@ -76,16 +77,16 @@ const Farmers = () => {
             <div style={{ display: 'flex', gap: '16px', flex: 1, maxWidth: '500px' }}>
               <div className="input-field" style={{ flex: 1, margin: 0, padding: '8px 12px' }}>
                 <Search size={18} color="var(--color-text-muted)" />
-                <input 
-                  type="text" 
-                  placeholder="Search farmers..." 
+                <input
+                  type="text"
+                  placeholder="Search farmers..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <button style={{ 
-                display: 'flex', alignItems: 'center', gap: '8px', 
-                padding: '8px 16px', backgroundColor: 'white', 
+              <button style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '8px 16px', backgroundColor: 'white',
                 border: '1px solid var(--color-border)', borderRadius: '8px',
                 cursor: 'pointer'
               }}>
@@ -124,7 +125,7 @@ const Farmers = () => {
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.agent}</td>
                     <td style={{ padding: '16px', fontSize: '14px', color: 'var(--color-text-muted)' }}>{farmer.lastTest}</td>
                     <td style={{ padding: '16px' }}>
-                      <span style={{ 
+                      <span style={{
                         padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
                         backgroundColor: farmer.status === 'Active' ? '#dcfce7' : '#f1f5f9',
                         color: farmer.status === 'Active' ? 'var(--status-green)' : 'var(--color-text-muted)'
@@ -133,7 +134,10 @@ const Farmers = () => {
                       </span>
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right' }}>
-                      <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}>
+                      <button 
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
+                        onClick={() => setSelectedFarmer(farmer)}
+                      >
                         <Eye size={18} />
                       </button>
                     </td>
@@ -153,19 +157,19 @@ const Farmers = () => {
       {/* Add Farmer Modal */}
       {isModalOpen && (
         <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
           display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '500px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
               style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
             >
               <X size={20} />
             </button>
             <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Add New Farmer</h2>
-            
+
             <form onSubmit={handleAddFarmer}>
               <div className="input-group">
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Farmer Name *</label>
@@ -173,7 +177,7 @@ const Farmers = () => {
                   <input type="text" placeholder="e.g. Ramesh Kumar" required value={farmerName} onChange={e => setFarmerName(e.target.value)} />
                 </div>
               </div>
-              
+
               <div className="input-group">
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Phone Number *</label>
                 <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
@@ -215,9 +219,9 @@ const Farmers = () => {
 
               <div className="input-group" style={{ marginBottom: '32px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Water Source</label>
-                <select 
+                <select
                   style={{ width: '100%', padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: '#f1f5f9', fontSize: '14px', outline: 'none' }}
-                  value={waterSource} 
+                  value={waterSource}
                   onChange={e => setWaterSource(e.target.value)}
                 >
                   <option value="">Select Source</option>
@@ -227,7 +231,7 @@ const Farmers = () => {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              
+
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>
                   Cancel
@@ -237,6 +241,50 @@ const Farmers = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Inspect Farmer Modal */}
+      {selectedFarmer && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
+            <button
+              onClick={() => setSelectedFarmer(null)}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Farmer Details</h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Name</p><p style={{ fontWeight: 600 }}>{selectedFarmer.name}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Phone</p><p style={{ fontWeight: 600 }}>{selectedFarmer.phone}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Locality</p><p style={{ fontWeight: 600 }}>{selectedFarmer.locality}</p></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Acres</p><p style={{ fontWeight: 600 }}>{selectedFarmer.acres}</p></div>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tanks</p><p style={{ fontWeight: 600 }}>{selectedFarmer.tanks}</p></div>
+              </div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Assigned Agent</p><p style={{ fontWeight: 600 }}>{selectedFarmer.agent}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Last Test</p><p style={{ fontWeight: 600 }}>{selectedFarmer.lastTest}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Status</p>
+                <span style={{
+                  padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+                  backgroundColor: selectedFarmer.status === 'Active' ? '#dcfce7' : '#f1f5f9',
+                  color: selectedFarmer.status === 'Active' ? 'var(--status-green)' : 'var(--color-text-muted)'
+                }}>
+                  {selectedFarmer.status}
+                </span>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-primary" style={{ width: 'auto', padding: '10px 24px' }} onClick={() => setSelectedFarmer(null)}>Close</button>
+            </div>
           </div>
         </div>
       )}

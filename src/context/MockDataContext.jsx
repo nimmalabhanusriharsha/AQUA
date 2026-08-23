@@ -22,7 +22,12 @@ const initialFarmers = [
   { id: 'F002', name: 'Ravi', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543211', location: 'Chinnamiram', waterSource: 'Canal', acres: 20 },
   { id: 'F003', name: 'Kumar', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543212', location: 'Kalla', waterSource: 'Borewell', acres: 18 },
   { id: 'F004', name: 'Ramesh', status: 'ACTIVE', agentId: 'agent003', phone: '+91 9876543213', location: 'Akuruvu', waterSource: 'Borewell', acres: 30 },
-  { id: 'F005', name: 'Ganesh', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543214', location: 'Narasapuram', waterSource: 'Canal', acres: 15 }
+  { id: 'F005', name: 'Ganesh', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543214', location: 'Narasapuram', waterSource: 'Canal', acres: 15 },
+  { id: 'F006', name: 'Siva', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543215', location: 'Chinnamiram', waterSource: 'Borewell', acres: 22 },
+  { id: 'F007', name: 'Nagesh', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543216', location: 'Undi', waterSource: 'Canal', acres: 12 },
+  { id: 'F008', name: 'Srinu', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543217', location: 'Bhimavaram', waterSource: 'Borewell', acres: 40 },
+  { id: 'F009', name: 'Venkatesh', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543218', location: 'Narasapuram', waterSource: 'Borewell', acres: 18 },
+  { id: 'F010', name: 'Krishna', status: 'ACTIVE', agentId: 'agent003', phone: '+91 9876543219', location: 'Akuruvu', waterSource: 'Canal', acres: 28 }
 ];
 
 const initialTanks = [
@@ -30,7 +35,12 @@ const initialTanks = [
   { id: 'T002', name: 'Tank 2', farmerId: 'F001', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '14g', biomass: '950kg', fcr: '1.1', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
   { id: 'T003', name: 'Tank 3', farmerId: 'F002', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Completed', abw: '10g', biomass: '600kg', fcr: '1.3', lastTest: '21 Aug 2026', nextTest: '28 Aug 2026' },
   { id: 'T004', name: 'Tank 4', farmerId: 'F004', agentId: 'agent003', status: 'ACTIVE', testStatus: 'Due', abw: '20g', biomass: '1500kg', fcr: '1.0', lastTest: '22 Aug 2026', nextTest: '29 Aug 2026' },
-  { id: 'T007', name: 'Tank 7', farmerId: 'F005', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Completed', abw: '11g', biomass: '700kg', fcr: '1.25', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' }
+  { id: 'T007', name: 'Tank 7', farmerId: 'F005', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Completed', abw: '11g', biomass: '700kg', fcr: '1.25', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
+  { id: 'T008', name: 'Tank 8', farmerId: 'F006', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '18g', biomass: '1200kg', fcr: '1.15', lastTest: '20 Aug 2026', nextTest: '27 Aug 2026' },
+  { id: 'T009', name: 'Tank 9', farmerId: 'F007', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Overdue', abw: '9g', biomass: '400kg', fcr: '1.4', lastTest: '08 Aug 2026', nextTest: '15 Aug 2026' },
+  { id: 'T010', name: 'Tank 10', farmerId: 'F008', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '16g', biomass: '2000kg', fcr: '1.2', lastTest: '19 Aug 2026', nextTest: '26 Aug 2026' },
+  { id: 'T011', name: 'Tank 11', farmerId: 'F009', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Due', abw: '13g', biomass: '900kg', fcr: '1.1', lastTest: '21 Aug 2026', nextTest: '28 Aug 2026' },
+  { id: 'T012', name: 'Tank 12', farmerId: 'F010', agentId: 'agent003', status: 'ACTIVE', testStatus: 'Overdue', abw: '21g', biomass: '1600kg', fcr: '1.35', lastTest: '11 Aug 2026', nextTest: '18 Aug 2026' }
 ];
 
 const initialSubmissions = [
@@ -76,7 +86,7 @@ export const MockDataProvider = ({ children }) => {
 
   // Load from LocalStorage or Initialize
   useEffect(() => {
-    const savedData = localStorage.getItem('aqua_feed_mock_database');
+    const savedData = localStorage.getItem('aqua_feed_mock_database_v2');
     if (savedData) {
       setDb(JSON.parse(savedData));
     } else {
@@ -89,20 +99,21 @@ export const MockDataProvider = ({ children }) => {
         submissions: initialSubmissions,
         cultureCycles: [],
         drafts: [],
+        notifications: [],
         activities: [
           { id: 1, time: '2026-08-22 10:00 AM', action: 'Approved Test', detail: 'Approved water test for Tank 1' },
           { id: 2, time: '2026-08-22 11:30 AM', action: 'Added Agent', detail: 'Added new agent Agent D' }
         ]
       };
       setDb(initialDb);
-      localStorage.setItem('aqua_feed_mock_database', JSON.stringify(initialDb));
+      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(initialDb));
     }
   }, []);
 
   // Save to LocalStorage whenever DB changes
   useEffect(() => {
     if (db) {
-      localStorage.setItem('aqua_feed_mock_database', JSON.stringify(db));
+      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(db));
     }
   }, [db]);
 
@@ -135,6 +146,8 @@ export const MockDataProvider = ({ children }) => {
   const getTankById = (id) => db.tanks.find(t => t.id === id);
   
   const getSubmissionsByAgentId = (agentId) => db.submissions.filter(s => s.agentId === agentId);
+
+  const getAgentNotifications = (agentId) => (db.notifications || []).filter(n => n.agentId === agentId);
 
   // Advanced Selectors for Agent Dashboard
   const getAgentDashboardMetrics = (agentId) => {
@@ -348,6 +361,20 @@ export const MockDataProvider = ({ children }) => {
 
   const getDraft = (tankId) => db.drafts.find(d => d.tankId === tankId) || null;
 
+  const addNotification = (agentId, message, type = 'info') => {
+    setDb(prev => ({
+      ...prev,
+      notifications: [{ id: Date.now(), agentId, message, type, read: false, time: new Date().toLocaleString() }, ...(prev.notifications || [])]
+    }));
+  };
+
+  const markNotificationRead = (notificationId) => {
+    setDb(prev => ({
+      ...prev,
+      notifications: (prev.notifications || []).map(n => n.id === notificationId ? { ...n, read: true } : n)
+    }));
+  };
+
   return (
     <MockDataContext.Provider value={{
       db,
@@ -357,6 +384,7 @@ export const MockDataProvider = ({ children }) => {
       getTanksByFarmerId,
       getTankById,
       getSubmissionsByAgentId,
+      getAgentNotifications,
       getAgentDashboardMetrics,
       getInchargeDashboardMetrics,
       updateTank,
@@ -368,7 +396,9 @@ export const MockDataProvider = ({ children }) => {
       saveDraft,
       getDraft,
       addAgent,
-      addActivity
+      addActivity,
+      addNotification,
+      markNotificationRead
     }}>
       {children}
       {toastMessage && (

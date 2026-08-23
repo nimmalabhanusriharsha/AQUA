@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFarmerById, getTanksByFarmer } from '../utils/adminMockData';
 import AdminHeader from '../components/AdminHeader';
-import { Database, Eye } from 'lucide-react';
+import { Database, Eye, Download } from 'lucide-react';
 
 const FarmerDetail = () => {
   const { farmerId } = useParams();
@@ -14,6 +14,29 @@ const FarmerDetail = () => {
   if (!farmer) {
     return <div style={{ padding: '40px', textAlign: 'center' }}>Farmer not found</div>;
   }
+
+  const handleDownload = () => {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    csvContent += "FARMER DETAILS\n";
+    csvContent += "Name,Phone,Village,Acres,Agent,Incharge,Region,Status\n";
+    csvContent += `${farmer.name},${farmer.phone},${farmer.village},${farmer.acres},${farmer.agent},${farmer.incharge},${farmer.region},${farmer.status}\n\n`;
+
+    csvContent += "TANKS\n";
+    csvContent += "Tank Name,Culture Cycle,ABW (g),Biomass (kg),FCR,Weekly Compliance (%)\n";
+    
+    tanks.forEach(tank => {
+      csvContent += `${tank.name},${tank.currentCycle},${tank.abw},${tank.biomass},${tank.fcr},${tank.compliance}\n`;
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${farmer.name.replace(/\s+/g, '_')}_data.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <>
@@ -29,7 +52,16 @@ const FarmerDetail = () => {
         
         {/* Farmer Info */}
         <div className="card" style={{ marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px' }}>Farmer Details</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Farmer Details</h3>
+            <button 
+              className="btn-primary" 
+              style={{ width: 'auto', padding: '8px 16px', fontSize: '14px', gap: '8px' }}
+              onClick={handleDownload}
+            >
+              <Download size={16} /> Download Excel (CSV)
+            </button>
+          </div>
           <div className="grid md:grid-cols-4" style={{ gap: '20px' }}>
             <div>
               <div style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Farmer Name</div>

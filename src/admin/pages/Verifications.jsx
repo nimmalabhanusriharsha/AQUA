@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import AdminHeader from '../components/AdminHeader';
 import { adminVerifications } from '../utils/adminMockData';
-import { Search, Filter, Eye } from 'lucide-react';
+import { Search, Filter, Eye, X } from 'lucide-react';
 
 const Verifications = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedVerification, setSelectedVerification] = useState(null);
 
   return (
     <>
@@ -70,7 +71,11 @@ const Verifications = () => {
                       </span>
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right' }}>
-                      <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <button 
+                        className="btn-secondary" 
+                        style={{ padding: '6px 12px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                        onClick={() => setSelectedVerification(v)}
+                      >
                         <Eye size={16} /> Inspect
                       </button>
                     </td>
@@ -81,6 +86,89 @@ const Verifications = () => {
           </div>
         </div>
       </div>
+
+      {/* Inspect Modal */}
+      {selectedVerification && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '500px', position: 'relative' }}>
+            <button 
+              onClick={() => setSelectedVerification(null)}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Verification Details</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Verification ID</p>
+                  <p style={{ fontWeight: 600 }}>{selectedVerification.id}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Status</p>
+                  <span style={{ 
+                    padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+                    backgroundColor: selectedVerification.status === 'Pending' ? '#fffbeb' : (selectedVerification.status === 'Approved' ? '#ecfdf5' : '#fef2f2'),
+                    color: selectedVerification.status === 'Pending' ? 'var(--status-yellow)' : (selectedVerification.status === 'Approved' ? 'var(--status-green)' : 'var(--status-red)')
+                  }}>
+                    {selectedVerification.status}
+                  </span>
+                </div>
+              </div>
+              
+              <div style={{ borderTop: '1px solid var(--color-border)', margin: '8px 0' }} />
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Region</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.region}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Incharge</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.incharge}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Agent</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.agent}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Farmer</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.farmer}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tank</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.tank}</p>
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid var(--color-border)', margin: '8px 0' }} />
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Test Type</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.testType}</p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Submitted</p>
+                  <p style={{ fontWeight: 500 }}>{selectedVerification.submitted}</p>
+                </div>
+              </div>
+
+            </div>
+            
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-primary" style={{ width: 'auto', padding: '10px 24px' }} onClick={() => setSelectedVerification(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

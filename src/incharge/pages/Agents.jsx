@@ -7,6 +7,7 @@ const Agents = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { db, addAgent, getFarmersByAgentId, getTanksByFarmerId, getSubmissionsByAgentId } = useMockData();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState(null);
   
   // Form State
   const [newAgentName, setNewAgentName] = useState('');
@@ -119,7 +120,10 @@ const Agents = () => {
                       </span>
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right' }}>
-                      <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}>
+                      <button 
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
+                        onClick={() => setSelectedAgent(agent)}
+                      >
                         <Eye size={18} />
                       </button>
                     </td>
@@ -181,6 +185,49 @@ const Agents = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Inspect Agent Modal */}
+      {selectedAgent && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', position: 'relative' }}>
+            <button 
+              onClick={() => setSelectedAgent(null)}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Agent Details</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Name</p><p style={{ fontWeight: 600 }}>{selectedAgent.name}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Mobile</p><p style={{ fontWeight: 600 }}>{selectedAgent.mobile}</p></div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Locality</p><p style={{ fontWeight: 600 }}>{selectedAgent.locality}</p></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Farmers</p><p style={{ fontWeight: 600 }}>{selectedAgent.farmers}</p></div>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tanks</p><p style={{ fontWeight: 600 }}>{selectedAgent.tanks}</p></div>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tests</p><p style={{ fontWeight: 600 }}>{selectedAgent.tests}</p></div>
+              </div>
+              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Status</p>
+                <span style={{ 
+                  padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
+                  backgroundColor: selectedAgent.status === 'Active' ? '#dcfce7' : '#f1f5f9',
+                  color: selectedAgent.status === 'Active' ? 'var(--status-green)' : 'var(--color-text-muted)'
+                }}>
+                  {selectedAgent.status}
+                </span>
+              </div>
+            </div>
+            
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-primary" style={{ width: 'auto', padding: '10px 24px' }} onClick={() => setSelectedAgent(null)}>Close</button>
+            </div>
           </div>
         </div>
       )}
