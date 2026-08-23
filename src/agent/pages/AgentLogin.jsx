@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import { login, isAuthenticated } from '../utils/agentAuth';
-import logo from '../../assets/splash-logo.png';
+import logo from '../../assets/logo-trans2.png';
 
 const AgentLogin = () => {
   const navigate = useNavigate();
@@ -122,7 +122,7 @@ const styles = {
   },
   logoImage: {
     width: '100%',
-    maxWidth: '180px',
+    maxWidth: '140px',
     height: 'auto',
   },
   formSection: {

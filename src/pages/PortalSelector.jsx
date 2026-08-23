@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, LayoutTemplate, ArrowRight, Shield, HardHat, Waves } from 'lucide-react';
-import logo from '../assets/splash-logo.png';
+import logo from '../assets/logo-trans2.png';
 
 const PortalSelector = () => {
   const navigate = useNavigate();
@@ -100,13 +100,8 @@ const PortalSelector = () => {
         <div style={{ width: '100%', maxWidth: '1400px', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10 }}>
           {/* Header Section */}
           <div style={{ textAlign: 'center', marginBottom: '64px', animation: 'float 6s ease-in-out infinite' }}>
-            <div style={{
-              width: '90px', height: '90px', backgroundColor: 'rgba(255,255,255,0.9)', 
-              borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              margin: '0 auto 24px', boxShadow: '0 8px 32px rgba(37, 99, 235, 0.15)',
-              border: '1px solid rgba(255,255,255,0.8)'
-            }}>
-              <img src={logo} alt="Aqua Feed" style={{ width: '60px', height: 'auto' }} />
+            <div style={{ margin: '0 auto 24px' }}>
+              <img src={logo} alt="Aqua Feed" style={{ width: '160px', height: 'auto', filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.15)) contrast(1.1) brightness(1.2)' }} />
             </div>
             <h1 style={{ fontSize: '42px', fontWeight: '800', marginBottom: '8px', letterSpacing: '-1.5px', color: 'var(--color-primary)' }}>
               Aqua Feed
@@ -116,7 +111,7 @@ const PortalSelector = () => {
             </p>
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(220, 252, 231, 0.8)',
-              backdropFilter: 'blur(8px)', border: '1px solid rgba(187, 247, 208, 0.8)', padding: '8px 18px', 
+              backdropFilter: 'blur(8px)', border: '1px solid rgba(187, 247, 208, 0.8)', padding: '8px 18px',
               borderRadius: '30px', fontSize: '13px', color: '#166534', fontWeight: 600, boxShadow: '0 4px 12px rgba(22, 163, 74, 0.1)'
             }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a', boxShadow: '0 0 8px #16a34a' }}></div>
@@ -126,7 +121,7 @@ const PortalSelector = () => {
 
           {/* Cards Section */}
           <div style={{ display: 'flex', flexDirection: 'row', gap: '28px', width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
-            
+
             {/* Agent Portal Card */}
             <div className="portal-card" onClick={() => navigate('/agent-login')}>
               <div className="portal-icon-wrapper" style={{

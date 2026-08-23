@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Droplets, Lock, User } from 'lucide-react';
+import { Lock, User } from 'lucide-react';
 import { loginIncharge } from '../utils/inchargeAuth';
+import logo from '../../assets/logo-trans2.png';
 
 const InchargeLogin = () => {
   const [identifier, setIdentifier] = useState('');
@@ -30,19 +31,7 @@ const InchargeLogin = () => {
     <div className="auth-container">
       <div className="auth-box card">
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{
-            width: '64px',
-            height: '64px',
-            backgroundColor: 'var(--color-primary)',
-            borderRadius: '16px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: '0 auto',
-            color: 'white'
-          }}>
-            <Droplets size={32} />
-          </div>
+          <img src={logo} alt="Aqua Feed Logo" style={{ width: '140px', height: 'auto', marginBottom: '16px' }} />
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--color-text-main)', marginBottom: '8px' }}>
             Incharge Login
           </h2>
