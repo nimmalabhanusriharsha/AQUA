@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { getActivities } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 
 const ActivityLog = () => {
-  const [activities] = useState(getActivities());
+  const { db } = useMockData();
+  const activities = db.activities || [];
 
   return (
     <>

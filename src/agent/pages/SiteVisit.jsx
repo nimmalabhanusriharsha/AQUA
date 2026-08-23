@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Save, Send, MapPin, AlertTriangle, Droplet, Fish, Pill, Bug, Ship, ChevronRight, Check } from 'lucide-react';
-import { getDB, getDraft, saveDraft, submitVisit } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 
 const STEPS = [
@@ -27,6 +27,7 @@ const SiteVisit = () => {
   const [tank, setTank] = useState(null);
   const [session, setSession] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const { getTankById, getDraft, saveDraft, submitRecord } = useMockData();
   
   // GPS State
   const [gpsStatus, setGpsStatus] = useState('pending');
@@ -44,9 +45,7 @@ const SiteVisit = () => {
     const s = getSession();
     setSession(s);
     
-    const allTanks = getDB('aqua_tanks');
-    const foundTank = allTanks.find(t => t.id === tankId);
-    setTank(foundTank);
+    setTank(getTankById(tankId));
 
     // Load draft if exists
     const draft = getDraft(tankId);
@@ -55,7 +54,7 @@ const SiteVisit = () => {
       setCurrentStep('MENU'); 
       setGpsStatus('success'); 
     }
-  }, [tankId]);
+  }, [tankId, getTankById, getDraft]);
 
   // FCR Calculation Effect
   useEffect(() => {
@@ -173,7 +172,7 @@ const SiteVisit = () => {
   };
 
   const handleSubmit = () => {
-    submitVisit({
+    submitRecord({
       tankId,
       agentId: session.agentId,
       formData,

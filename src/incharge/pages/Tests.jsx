@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { mockInchargeVerifications } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye } from 'lucide-react';
 
 const Tests = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { db, getFarmerById, getTankById, getAgentById } = useMockData();
   
-  // Reuse the verifications mock data but we could use a dedicated tests mock data. 
-  // Let's assume tests list shows all, including completed/approved. For now we use the available mock data.
+  const mockInchargeVerifications = db.submissions.map(s => {
+    const farmer = getFarmerById(s.farmerId);
+    const tank = getTankById(s.tankId);
+    const agent = getAgentById(s.agentId);
+    return {
+      id: s.id,
+      date: s.date,
+      agent: agent ? agent.name : 'Unknown',
+      farmer: farmer ? farmer.name : 'Unknown',
+      tank: tank ? tank.name : 'Unknown',
+      testType: s.testType || 'Water Analysis',
+      status: s.status === 'PENDING_VERIFICATION' ? 'Pending' : 'Approved'
+    };
+  });
+
   const filteredTests = mockInchargeVerifications.filter(test => 
     test.farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||
     test.testType.toLowerCase().includes(searchTerm.toLowerCase()) ||

@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Search, MapPin, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
-import { getAssignedFarmers } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 
 const Farmers = () => {
-  const [farmers, setFarmers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('ALL'); // ALL, ACTIVE, TEST DUE, OVERDUE
   const navigate = useNavigate();
+  const { getFarmersByAgentId, getTanksByFarmerId, db } = useMockData();
 
-  useEffect(() => {
-    const session = getSession();
-    if (session) {
-      setFarmers(getAssignedFarmers(session.agentId));
-    }
-  }, []);
+  const session = getSession();
+  const farmers = session ? getFarmersByAgentId(session.agentId).map(f => ({
+    ...f,
+    tanks: getTanksByFarmerId(f.id)
+  })) : [];
 
   const filters = ['ALL', 'ACTIVE', 'TEST DUE', 'OVERDUE'];
 

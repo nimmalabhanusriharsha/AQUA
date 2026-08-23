@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClipboardList, ArrowRight, Filter } from 'lucide-react';
 import { getSession } from '../utils/agentAuth';
-import { getAssignedFarmers } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import StatusBadge from '../components/StatusBadge';
 
 const Tests = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-  const [allTests, setAllTests] = useState([]);
   const [activeTab, setActiveTab] = useState('Due'); // 'Due', 'Overdue', 'Completed'
+  const { getFarmersByAgentId, getTanksByFarmerId, db } = useMockData();
 
   useEffect(() => {
     const s = getSession();
@@ -18,29 +18,21 @@ const Tests = () => {
       return;
     }
     setSession(s);
-
-    // Compile all tanks across all assigned farmers into "tests"
-    const farmers = getAssignedFarmers(s.agentId);
-    const compiledTests = [];
-    
-    farmers.forEach(farmer => {
-      farmer.tanks.forEach(tank => {
-        compiledTests.push({
-          id: tank.id,
-          farmerName: farmer.name,
-          tankName: tank.name,
-          type: 'Weekly Test',
-          date: tank.nextTest,
-          lastTest: tank.lastTest,
-          status: tank.testStatus // 'Due', 'Overdue', or 'Completed'
-        });
-      });
-    });
-
-    setAllTests(compiledTests);
   }, [navigate]);
 
   if (!session) return null;
+
+  const allTests = getFarmersByAgentId(session.agentId).flatMap(farmer => 
+    getTanksByFarmerId(farmer.id).map(tank => ({
+      id: tank.id,
+      farmerName: farmer.name,
+      tankName: tank.name,
+      type: 'Weekly Test',
+      date: tank.nextTest,
+      lastTest: tank.lastTest,
+      status: tank.testStatus
+    }))
+  );
 
   // Filter based on active tab
   const filteredTests = allTests.filter(test => test.status === activeTab);

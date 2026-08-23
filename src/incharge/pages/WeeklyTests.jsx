@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { mockInchargeAgents } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye } from 'lucide-react';
 
 const WeeklyTests = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { db, getFarmersByAgentId, getTanksByFarmerId, getSubmissionsByAgentId } = useMockData();
   
-  const filteredAgents = mockInchargeAgents.filter(agent => 
+  const agents = db.agents.map(a => {
+    const farmers = getFarmersByAgentId(a.id);
+    const tanks = farmers.reduce((acc, f) => acc + getTanksByFarmerId(f.id).length, 0);
+    const tests = getSubmissionsByAgentId(a.id).length;
+    return { ...a, tanks, tests, compliance: 100 }; // Mock compliance
+  });
+  
+  const filteredAgents = agents.filter(agent => 
     agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     agent.locality.toLowerCase().includes(searchTerm.toLowerCase())
   );

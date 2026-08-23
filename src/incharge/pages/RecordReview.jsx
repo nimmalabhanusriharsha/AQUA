@@ -1,26 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import InchargeHeader from '../components/InchargeHeader';
-import { getVerifications, updateVerificationStatus } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { ArrowLeft, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 
 const RecordReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { db, getFarmerById, getTankById, getAgentById, updateSubmissionStatus } = useMockData();
   const [record, setRecord] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalAction, setModalAction] = useState(''); // 'Reject' or 'Request Changes'
   const [remarks, setRemarks] = useState('');
 
   useEffect(() => {
-    const item = getVerifications().find(v => v.id === id);
-    if (item) setRecord(item);
-  }, [id]);
+    const s = db.submissions.find(v => v.id === id);
+    if (s) {
+      const farmer = getFarmerById(s.farmerId);
+      const tank = getTankById(s.tankId);
+      const agent = getAgentById(s.agentId);
+      setRecord({
+        id: s.id,
+        farmer: farmer ? farmer.name : 'Unknown',
+        tank: tank ? tank.name : 'Unknown',
+        testType: s.testType || 'Weekly Test',
+        date: s.date,
+        agent: agent ? agent.name : 'Unknown',
+        submitted: s.submittedAgo || 'Just now',
+        status: s.status
+      });
+    }
+  }, [id, db, getFarmerById, getTankById, getAgentById]);
 
   if (!record) return <div>Loading...</div>;
 
   const handleApprove = () => {
-    updateVerificationStatus(record.id, 'Approved', '');
+    updateSubmissionStatus(record.id, 'Approved');
     navigate('/incharge/verifications');
   };
 
@@ -31,7 +46,9 @@ const RecordReview = () => {
 
   const handleModalSubmit = () => {
     if (!remarks) return;
-    updateVerificationStatus(record.id, modalAction === 'Reject' ? 'Rejected' : 'Changes Requested', remarks);
+    updateSubmissionStatus(record.id, modalAction === 'Reject' ? 'Rejected' : 'Changes Requested');
+    // We aren't storing remarks in the mock DB for now to keep it simple, 
+    // but in a real app we'd pass remarks as well.
     setShowModal(false);
     navigate('/incharge/verifications');
   };

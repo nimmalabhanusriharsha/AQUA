@@ -1,26 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, FlaskConical, ClipboardList, Clock } from 'lucide-react';
-import { getDB } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import StatusBadge from '../components/StatusBadge';
 
 const TankDetails = () => {
   const { tankId } = useParams();
   const navigate = useNavigate();
-  const [tank, setTank] = useState(null);
-  const [farmer, setFarmer] = useState(null);
+  const { getTankById, getFarmerById } = useMockData();
 
-  useEffect(() => {
-    const allTanks = getDB('aqua_tanks');
-    const allFarmers = getDB('aqua_farmers');
-    const foundTank = allTanks.find(t => t.id === tankId);
-    
-    if (foundTank) {
-      setTank(foundTank);
-      const foundFarmer = allFarmers.find(f => f.id === foundTank.farmerId);
-      setFarmer(foundFarmer);
-    }
-  }, [tankId]);
+  const tank = getTankById(tankId);
+  const farmer = tank ? getFarmerById(tank.farmerId) : null;
 
   if (!tank || !farmer) return <div style={styles.loading}>Loading tank details...</div>;
 

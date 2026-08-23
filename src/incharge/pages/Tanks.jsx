@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { mockInchargeTanks } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye } from 'lucide-react';
 
 const Tanks = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { db, getFarmerById, getAgentById } = useMockData();
   
+  const mockInchargeTanks = db.tanks.map(t => {
+    const farmer = getFarmerById(t.farmerId);
+    const agent = getAgentById(t.agentId);
+    const hasPending = db.submissions.some(s => s.tankId === t.id && s.status === 'PENDING_VERIFICATION');
+    let status = t.testStatus;
+    if (hasPending) status = 'Pending Verification';
+
+    return {
+      id: t.id,
+      name: t.name,
+      farmer: farmer ? farmer.name : 'Unknown',
+      locality: farmer ? farmer.location : 'Unknown',
+      agent: agent ? agent.name : 'Unknown',
+      lastTest: t.lastTest,
+      nextDue: t.nextTest,
+      status: status
+    };
+  });
+
   const filteredTanks = mockInchargeTanks.filter(tank => 
     tank.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tank.farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||

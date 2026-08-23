@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import InchargeHeader from '../components/InchargeHeader';
-import { getVerifications } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 
 const Verifications = () => {
   const navigate = useNavigate();
-  // Get all verifications, for this mock we'll just filter by 'Pending'
-  const [verifications] = useState(getVerifications().filter(v => v.status === 'Pending'));
+  const { db, getFarmerById, getTankById, getAgentById } = useMockData();
+
+  const verifications = db.submissions
+    .filter(s => s.status === 'PENDING_VERIFICATION')
+    .map(s => {
+      const farmer = getFarmerById(s.farmerId);
+      const tank = getTankById(s.tankId);
+      const agent = getAgentById(s.agentId);
+      return {
+        id: s.id,
+        farmer: farmer ? farmer.name : 'Unknown',
+        tank: tank ? tank.name : 'Unknown',
+        testType: s.testType || 'Weekly Test',
+        date: s.date,
+        agent: agent ? agent.name : 'Unknown',
+        submitted: s.submittedAgo || 'Just now',
+        status: 'Pending'
+      };
+    });
 
   return (
     <>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { mockInchargeAgents, mockInchargeFarmers, addActivity } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { CheckCircle, MapPin, Users, UserSquare, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const steps = [
@@ -18,8 +18,30 @@ const Allocations = () => {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedFarmers, setSelectedFarmers] = useState([]);
   const [success, setSuccess] = useState(false);
+  
+  const { db, getFarmersByAgentId, getTanksByFarmerId, assignFarmerToAgent } = useMockData();
 
-  const availableFarmers = mockInchargeFarmers.filter(f => f.agent !== selectedAgent?.name);
+  const availableAgents = db.agents.map(a => {
+    const farmers = getFarmersByAgentId(a.id);
+    return {
+      id: a.id,
+      name: a.name,
+      locality: a.locality,
+      farmers: farmers.length,
+      compliance: 100
+    };
+  });
+
+  const availableFarmers = db.farmers.filter(f => f.agentId !== selectedAgent?.id).map(f => {
+    const tanks = getTanksByFarmerId(f.id);
+    return {
+      id: f.id,
+      name: f.name,
+      acres: f.acres,
+      tanks: tanks.length,
+      agentId: f.agentId
+    };
+  });
 
   const toggleFarmer = (farmerId) => {
     setSelectedFarmers(prev => 
@@ -28,8 +50,7 @@ const Allocations = () => {
   };
 
   const handleAllocate = () => {
-    // In a real app, API call goes here
-    addActivity('You allocated new farmers', `${selectedFarmers.length} farmers to ${selectedAgent.name}`);
+    selectedFarmers.forEach(fId => assignFarmerToAgent(fId, selectedAgent.id));
     setSuccess(true);
   };
 
@@ -102,7 +123,7 @@ const Allocations = () => {
             <div>
               <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Select Agent</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {mockInchargeAgents.map(agent => (
+                {availableAgents.map(agent => (
                   <div 
                     key={agent.id}
                     onClick={() => setSelectedAgent(agent)}

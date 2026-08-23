@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { getFarmers, addFarmer } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye, X } from 'lucide-react';
 
 const Farmers = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [farmers, setFarmers] = useState([]);
+  const { db, createFarmerWithTanks, getTanksByFarmerId, getAgentById } = useMockData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Form State
@@ -17,9 +17,18 @@ const Farmers = () => {
   const [waterSource, setWaterSource] = useState('');
   const [numberOfTanks, setNumberOfTanks] = useState('');
 
-  useEffect(() => {
-    setFarmers(getFarmers());
-  }, []);
+  const farmers = db.farmers.map(f => {
+    const tanks = getTanksByFarmerId(f.id);
+    const agent = getAgentById(f.agentId);
+    return {
+      ...f,
+      locality: f.location,
+      tanks: tanks.length,
+      agent: agent ? agent.name : 'Unassigned',
+      lastTest: tanks[0] ? tanks[0].lastTest : 'N/A',
+      status: f.status === 'ACTIVE' ? 'Active' : 'Inactive'
+    };
+  });
 
   const filteredFarmers = farmers.filter(farmer => 
     farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -30,16 +39,22 @@ const Farmers = () => {
     e.preventDefault();
     if (!farmerName || !phoneNumber || !numberOfTanks) return;
 
-    addFarmer({
-      name: farmerName,
-      phone: phoneNumber,
-      locality: village || areaMandal || 'Unknown',
-      acres: totalLandArea || 0,
-      tanks: numberOfTanks
-    });
-
-    // Refresh list
-    setFarmers([...getFarmers()]);
+    // We assign it to INC001's first agent as a default, or an unassigned state if we had one
+    // For this mock, we'll assign to 'agent001' by default when created from incharge panel
+    const defaultAgentId = db.agents.length > 0 ? db.agents[0].id : 'agent001';
+    
+    createFarmerWithTanks(
+      defaultAgentId,
+      {
+        name: farmerName,
+        phone: phoneNumber,
+        village: village || 'Unknown',
+        area: areaMandal || 'Unknown',
+        acres: totalLandArea || 0,
+        waterSource: waterSource
+      },
+      Array(parseInt(numberOfTanks) || 1).fill({})
+    );
     
     // Reset and close
     setFarmerName('');

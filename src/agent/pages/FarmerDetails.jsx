@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, User, Activity, UserCheck, Droplets, Database } from 'lucide-react';
-import { getAssignedFarmers } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 import StatusBadge from '../components/StatusBadge';
 
 const FarmerDetails = () => {
   const { farmerId } = useParams();
   const navigate = useNavigate();
-  const [farmer, setFarmer] = useState(null);
+  const { getFarmerById, getTanksByFarmerId, db } = useMockData();
 
-  useEffect(() => {
-    const session = getSession();
-    if (session) {
-      const farmers = getAssignedFarmers(session.agentId);
-      const found = farmers.find(f => f.id === farmerId);
-      setFarmer(found);
-    }
-  }, [farmerId]);
+  const baseFarmer = getFarmerById(farmerId);
+  const farmer = baseFarmer ? { ...baseFarmer, tanks: getTanksByFarmerId(farmerId) } : null;
 
   if (!farmer) return <div style={styles.loading}>Loading farmer details...</div>;
 

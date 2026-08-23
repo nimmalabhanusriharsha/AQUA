@@ -6,11 +6,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import InchargeHeader from '../components/InchargeHeader';
-import { 
-  initialInchargeKPIs, 
-  getVerifications, 
-  getActivities 
-} from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 
 const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#94a3b8']; // Green, Yellow, Red, Grey
 
@@ -62,13 +58,33 @@ const KPICard = ({ title, value, subtext, subtextPrefix, isPositive, icon: Icon,
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [verifications, setVerifications] = useState([]);
-  const [activities, setActivities] = useState([]);
+  const { getInchargeDashboardMetrics, db, getFarmerById, getTankById, getAgentById } = useMockData();
   
-  useEffect(() => {
-    setVerifications(getVerifications().filter(v => v.status === 'Pending').slice(0, 4));
-    setActivities(getActivities().slice(0, 5));
-  }, []);
+  const metrics = getInchargeDashboardMetrics('INC001');
+  const pendingVerifications = db.submissions
+    .filter(s => s.status === 'PENDING_VERIFICATION')
+    .slice(0, 4)
+    .map(s => {
+      const farmer = getFarmerById(s.farmerId);
+      const tank = getTankById(s.tankId);
+      const agent = getAgentById(s.agentId);
+      return {
+        id: s.id,
+        farmer: farmer ? farmer.name : 'Unknown',
+        tank: tank ? tank.name : 'Unknown',
+        testType: s.testType || 'Unknown',
+        date: s.date,
+        agent: agent ? agent.name : 'Unknown',
+        submitted: s.submittedAgo || 'Just now',
+        status: s.status
+      };
+    });
+    
+  // Keep mock activities for now since the prompt didn't ask to convert them
+  const activities = [
+    { id: 1, action: 'Agent A submitted Water Analysis', detail: 'Ashok - Tank 2', time: '10 mins ago' },
+    { id: 2, action: 'Agent B submitted Feed Test', detail: 'Ravi - Tank 3', time: '25 mins ago' },
+  ];
 
   return (
     <>
@@ -77,34 +93,34 @@ const Dashboard = () => {
         {/* KPI Grid */}
         <div className="grid lg:grid-cols-3" style={{ marginBottom: '24px' }}>
           <KPICard 
-            title="Total Agents" value={initialInchargeKPIs.totalAgents} 
-            subtextPrefix={`${initialInchargeKPIs.newAgentsMonth} `} subtext="this month"
+            title="Total Agents" value={metrics.totalAgents} 
+            subtextPrefix={`${metrics.newAgentsMonth} `} subtext="this month"
             isPositive={true} icon={Users} color="#3b82f6"
           />
           <KPICard 
-            title="Total Farmers" value={initialInchargeKPIs.totalFarmers} 
-            subtextPrefix={`${initialInchargeKPIs.newFarmersMonth} `} subtext="this month"
+            title="Total Farmers" value={metrics.totalFarmers} 
+            subtextPrefix={`${metrics.newFarmersMonth} `} subtext="this month"
             isPositive={true} icon={UserSquare} color="#10b981"
           />
           <KPICard 
-            title="Total Tanks" value={initialInchargeKPIs.totalTanks.toLocaleString()} 
-            subtextPrefix={`${initialInchargeKPIs.newTanksMonth} `} subtext="this month"
+            title="Total Tanks" value={metrics.totalTanks.toLocaleString()} 
+            subtextPrefix={`${metrics.newTanksMonth} `} subtext="this month"
             isPositive={true} icon={Droplets} color="#0ea5e9"
           />
           <KPICard 
-            title="Tests This Month" value={initialInchargeKPIs.testsMonth.toLocaleString()} 
-            subtextPrefix={`${initialInchargeKPIs.newTestsMonth} `} subtext="this month"
+            title="Tests Completed" value={metrics.testsCompleted.toLocaleString()} 
+            subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={true} icon={TestTube} color="#8b5cf6"
           />
           <KPICard 
-            title="Pending Verification" value={initialInchargeKPIs.pendingVerification} 
-            subtextPrefix={`${Math.abs(initialInchargeKPIs.pendingVerificationChange)} `} subtext="from yesterday"
-            isPositive={initialInchargeKPIs.pendingVerificationChange <= 0} icon={CheckCircle} color="#f59e0b"
+            title="Pending Verification" value={metrics.pendingVerification} 
+            subtextPrefix={`0 `} subtext="from yesterday"
+            isPositive={true} icon={CheckCircle} color="#f59e0b"
           />
           <KPICard 
-            title="Overdue Tests" value={initialInchargeKPIs.overdueTests} 
-            subtextPrefix={`${Math.abs(initialInchargeKPIs.overdueTestsChange)} `} subtext="from yesterday"
-            isPositive={initialInchargeKPIs.overdueTestsChange <= 0} icon={AlertTriangle} color="#ef4444"
+            title="Overdue Tests" value={metrics.overdueTests} 
+            subtextPrefix={`0 `} subtext="from yesterday"
+            isPositive={false} icon={AlertTriangle} color="#ef4444"
           />
         </div>
 
@@ -161,7 +177,7 @@ const Dashboard = () => {
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {verifications.map(item => (
+              {pendingVerifications.map(item => (
                 <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px' }}>
                   <div>
                     <h4 style={{ fontSize: '14px', fontWeight: 600 }}>{item.farmer} - {item.tank}</h4>

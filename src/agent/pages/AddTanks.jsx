@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, Droplet } from 'lucide-react';
-import { createFarmerWithTanks } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 
 const AddTanks = () => {
@@ -9,6 +9,7 @@ const AddTanks = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [tanksData, setTanksData] = useState([]);
+  const { createFarmerWithTanks } = useMockData();
   
   const farmerData = location.state?.farmerData;
 

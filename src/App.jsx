@@ -67,51 +67,56 @@ const PlaceholderPage = ({ title }) => (
   </div>
 );
 
+// Mock Data Context
+import { MockDataProvider } from './context/MockDataContext';
+
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Splash />} />
-        <Route path="/login" element={<PortalSelector />} />
-        <Route path="/agent-login" element={<AgentLogin />} />
-        <Route path="/incharge-login" element={<InchargeLogin />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin/*" element={
-          <AdminProtectedRoute>
-            <AdminLayout>
-              <AdminRoutes />
-            </AdminLayout>
-          </AdminProtectedRoute>
-        } />
+    <MockDataProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Splash />} />
+          <Route path="/login" element={<PortalSelector />} />
+          <Route path="/agent-login" element={<AgentLogin />} />
+          <Route path="/incharge-login" element={<InchargeLogin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/*" element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminRoutes />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          } />
 
-        {/* Incharge Routes */}
-        <Route path="/incharge/*" element={
-          <InchargeProtectedRoute>
-            <InchargeLayout>
-              <InchargeRoutes />
-            </InchargeLayout>
-          </InchargeProtectedRoute>
-        } />
-        
-        {/* Authenticated Routes wrapped in ProtectedRoute and Layout */}
-        <Route path="/dashboard" element={<ProtectedRoute><Layout><AgentDashboard /></Layout></ProtectedRoute>} />
-        <Route path="/farmers" element={<ProtectedRoute><Layout><Farmers /></Layout></ProtectedRoute>} />
-        <Route path="/farmers/:farmerId" element={<ProtectedRoute><Layout><FarmerDetails /></Layout></ProtectedRoute>} />
-        <Route path="/tanks/:tankId" element={<ProtectedRoute><Layout><TankDetails /></Layout></ProtectedRoute>} />
-        <Route path="/visit/:tankId" element={<ProtectedRoute><Layout><SiteVisit /></Layout></ProtectedRoute>} />
-        <Route path="/add-farmer" element={<ProtectedRoute><Layout><AddFarmer /></Layout></ProtectedRoute>} />
-        <Route path="/add-tanks" element={<ProtectedRoute><Layout><AddTanks /></Layout></ProtectedRoute>} />
-        
-        <Route path="/tests" element={<ProtectedRoute><Layout><Tests /></Layout></ProtectedRoute>} />
-        <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
-        
-        {/* Catch-all */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+          {/* Incharge Routes */}
+          <Route path="/incharge/*" element={
+            <InchargeProtectedRoute>
+              <InchargeLayout>
+                <InchargeRoutes />
+              </InchargeLayout>
+            </InchargeProtectedRoute>
+          } />
+          
+          {/* Authenticated Routes wrapped in ProtectedRoute and Layout */}
+          <Route path="/dashboard" element={<ProtectedRoute><Layout><AgentDashboard /></Layout></ProtectedRoute>} />
+          <Route path="/farmers" element={<ProtectedRoute><Layout><Farmers /></Layout></ProtectedRoute>} />
+          <Route path="/farmers/:farmerId" element={<ProtectedRoute><Layout><FarmerDetails /></Layout></ProtectedRoute>} />
+          <Route path="/tanks/:tankId" element={<ProtectedRoute><Layout><TankDetails /></Layout></ProtectedRoute>} />
+          <Route path="/visit/:tankId" element={<ProtectedRoute><Layout><SiteVisit /></Layout></ProtectedRoute>} />
+          <Route path="/add-farmer" element={<ProtectedRoute><Layout><AddFarmer /></Layout></ProtectedRoute>} />
+          <Route path="/add-tanks" element={<ProtectedRoute><Layout><AddTanks /></Layout></ProtectedRoute>} />
+          
+          <Route path="/tests" element={<ProtectedRoute><Layout><Tests /></Layout></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+          
+          {/* Catch-all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </MockDataProvider>
   );
 }
 

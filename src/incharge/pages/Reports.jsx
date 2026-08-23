@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { mockInchargeFarmers } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Filter, FileText } from 'lucide-react';
 
 const Reports = () => {
   const [reportGenerated, setReportGenerated] = useState(false);
+  const { db, getTanksByFarmerId } = useMockData();
+  const mockInchargeFarmers = db.farmers.map(f => {
+    const tanks = getTanksByFarmerId(f.id).length;
+    return { ...f, tanks };
+  });
 
   const handleGenerate = () => {
     setReportGenerated(true);

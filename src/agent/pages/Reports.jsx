@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Download, Filter } from 'lucide-react';
 import { getSession } from '../utils/agentAuth';
-import { getDB, getAssignedFarmers } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import StatusBadge from '../components/StatusBadge';
 
 const Reports = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
+  const { getSubmissionsByAgentId, getFarmersByAgentId } = useMockData();
   const [submissions, setSubmissions] = useState([]);
   const [farmers, setFarmers] = useState([]);
   
@@ -26,13 +27,12 @@ const Reports = () => {
     setSession(s);
 
     // Get only submissions for this agent
-    const allSubmissions = getDB('aqua_submissions');
-    const agentSubmissions = allSubmissions.filter(sub => sub.agentId === s.agentId);
+    const agentSubmissions = getSubmissionsByAgentId(s.agentId);
     setSubmissions(agentSubmissions);
 
     // Get assigned farmers for dropdowns
-    setFarmers(getAssignedFarmers(s.agentId));
-  }, [navigate]);
+    setFarmers(getFarmersByAgentId(s.agentId));
+  }, [navigate, getSubmissionsByAgentId, getFarmersByAgentId]);
 
   if (!session) return null;
 

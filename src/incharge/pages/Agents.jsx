@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
-import { getAgents, addAgent } from '../utils/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye, X } from 'lucide-react';
 
 const Agents = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [agents, setAgents] = useState([]);
+  const { db, addAgent, getFarmersByAgentId, getTanksByFarmerId, getSubmissionsByAgentId } = useMockData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   // Form State
@@ -13,9 +13,14 @@ const Agents = () => {
   const [newAgentMobile, setNewAgentMobile] = useState('');
   const [newAgentLocality, setNewAgentLocality] = useState('');
 
-  useEffect(() => {
-    setAgents(getAgents());
-  }, []);
+  const agents = db.agents.map(a => {
+    const farmers = getFarmersByAgentId(a.id);
+    const tanks = farmers.reduce((acc, f) => acc + getTanksByFarmerId(f.id).length, 0);
+    const tests = getSubmissionsByAgentId(a.id).length;
+    // mock compliance logic
+    const compliance = 100;
+    return { ...a, mobile: a.phone, farmers: farmers.length, tanks, tests, compliance, status: a.status === 'ACTIVE' ? 'Active' : 'Inactive' };
+  });
 
   const filteredAgents = agents.filter(agent => 
     agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,12 +33,11 @@ const Agents = () => {
 
     addAgent({
       name: newAgentName,
-      mobile: newAgentMobile,
-      locality: newAgentLocality
+      phone: newAgentMobile,
+      locality: newAgentLocality,
+      status: 'ACTIVE',
+      inchargeId: 'INC001'
     });
-
-    // Refresh list
-    setAgents([...getAgents()]);
     
     // Reset and close
     setNewAgentName('');

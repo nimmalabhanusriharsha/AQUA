@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, MapPin } from 'lucide-react';
 import { getSession } from '../utils/agentAuth';
-import { getDashboardMetrics } from '../data/mockData';
+import { useMockData } from '../../context/MockDataContext';
 import KPIcard from '../components/KPIcard';
 import TodaysWork from '../components/TodaysWork';
 
 const AgentDashboard = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-  const [data, setData] = useState(null);
+  const { getAgentDashboardMetrics, db } = useMockData();
 
   useEffect(() => {
     const s = getSession();
     if (s) {
       setSession(s);
-      setData(getDashboardMetrics(s.agentId));
     }
   }, []);
 
-  if (!session || !data) return null;
+  if (!session) return null;
 
+  const data = getAgentDashboardMetrics(session.agentId);
   const kpi = data.kpi;
   const todaysWork = data.todaysWork;
 
