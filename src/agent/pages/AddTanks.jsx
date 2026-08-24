@@ -33,7 +33,7 @@ const AddTanks = () => {
       soilType: '',
       hatchery: '',
       brooder: '',
-      seedDate: '',
+      seedDate: new Date().toISOString().split('T')[0],
       seedType: ''
     }));
     setTanksData(initialTanksArray);

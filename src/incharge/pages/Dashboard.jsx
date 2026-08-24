@@ -93,7 +93,7 @@ const Dashboard = () => {
         {/* KPI Grid */}
         <div className="grid lg:grid-cols-3" style={{ marginBottom: '24px' }}>
           <KPICard
-            title="Total Agents" value={metrics.totalAgents}
+            title="My Agents" value={metrics.totalAgents}
             subtextPrefix={`${metrics.newAgentsMonth} `} subtext="this month"
             isPositive={true} icon={Users} color="#3b82f6"
           />

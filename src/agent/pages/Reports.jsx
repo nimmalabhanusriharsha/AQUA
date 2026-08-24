@@ -13,7 +13,7 @@ const Reports = () => {
   const [farmers, setFarmers] = useState([]);
   
   // Filter states
-  const [filterDate, setFilterDate] = useState('');
+  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
   const [filterFarmer, setFilterFarmer] = useState('');
   const [filterTank, setFilterTank] = useState('');
   const [filterModule, setFilterModule] = useState('');

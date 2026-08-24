@@ -19,7 +19,7 @@ import { logoutIncharge } from '../utils/inchargeAuth';
 
 const navItems = [
   { path: '/incharge/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/incharge/agents', label: 'Agents', icon: Users },
+  { path: '/incharge/agents', label: 'My Agents', icon: Users },
   { path: '/incharge/farmers', label: 'Farmers', icon: UserSquare },
   { path: '/incharge/tanks', label: 'Tanks', icon: Droplets },
   { path: '/incharge/allocations', label: 'Allocations', icon: Network },

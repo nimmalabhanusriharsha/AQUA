@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, LayoutTemplate, ArrowRight, Shield, HardHat, Waves } from 'lucide-react';
 import logo from '../assets/logo-trans2.png';
+import background from '../assets/login_background.jpg';
 
 const PortalSelector = () => {
   const navigate = useNavigate();
@@ -10,11 +11,6 @@ const PortalSelector = () => {
     <>
       <style>
         {`
-          @keyframes mesh {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
           @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -22,9 +18,8 @@ const PortalSelector = () => {
           }
           .portal-container {
             min-height: 100vh;
-            background: linear-gradient(-45deg, #eff6ff, #dbeafe, #bfdbfe, #e0f2fe, #f0f9ff);
-            background-size: 400% 400%;
-            animation: mesh 15s ease infinite;
+            background: url(${background}) no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -34,27 +29,6 @@ const PortalSelector = () => {
             position: relative;
             overflow-x: hidden;
             overflow-y: auto;
-          }
-          /* Decorative background blobs */
-          .blob-1 {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
-          }
-          .blob-2 {
-            position: absolute;
-            bottom: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: float 10s ease-in-out infinite reverse;
           }
           .portal-card {
             flex: 1 1 320px;
@@ -94,9 +68,6 @@ const PortalSelector = () => {
       </style>
 
       <div className="portal-container">
-        <div className="blob-1"></div>
-        <div className="blob-2"></div>
-
         <div style={{ width: '100%', maxWidth: '1400px', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10 }}>
           {/* Header Section */}
           <div style={{ textAlign: 'center', marginBottom: '64px', animation: 'float 6s ease-in-out infinite' }}>
@@ -109,14 +80,7 @@ const PortalSelector = () => {
             <p style={{ fontSize: '18px', color: '#4b5563', marginBottom: '24px', fontWeight: 500 }}>
               Intelligent Performance Management System
             </p>
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(220, 252, 231, 0.8)',
-              backdropFilter: 'blur(8px)', border: '1px solid rgba(187, 247, 208, 0.8)', padding: '8px 18px',
-              borderRadius: '30px', fontSize: '13px', color: '#166534', fontWeight: 600, boxShadow: '0 4px 12px rgba(22, 163, 74, 0.1)'
-            }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16a34a', boxShadow: '0 0 8px #16a34a' }}></div>
-              All systems operational
-            </div>
+
           </div>
 
           {/* Cards Section */}

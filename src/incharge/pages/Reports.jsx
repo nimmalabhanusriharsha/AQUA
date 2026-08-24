@@ -24,11 +24,11 @@ const Reports = () => {
           <div className="grid md:grid-cols-4" style={{ gap: '16px' }}>
             <div className="input-group" style={{ margin: 0 }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Date From</label>
-              <input type="date" className="input-field" style={{ width: '100%' }} />
+              <input type="date" defaultValue={new Date().toISOString().split('T')[0]} className="input-field" style={{ width: '100%' }} />
             </div>
             <div className="input-group" style={{ margin: 0 }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Date To</label>
-              <input type="date" className="input-field" style={{ width: '100%' }} />
+              <input type="date" defaultValue={new Date().toISOString().split('T')[0]} className="input-field" style={{ width: '100%' }} />
             </div>
             <div className="input-group" style={{ margin: 0 }}>
               <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Agent</label>
