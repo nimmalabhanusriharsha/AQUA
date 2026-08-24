@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Tractor, Box, TrendingUp, Activity, ShieldCheck, 
-  AlertCircle, FileSpreadsheet, ArrowUpRight 
+import {
+  Tractor, Box, TrendingUp, Activity, ShieldCheck,
+  AlertCircle, FileSpreadsheet, ArrowUpRight, CheckCircle2,
+  AlertTriangle, Flame
 } from 'lucide-react';
-import { 
-  PieChart, Pie, Cell, ResponsiveContainer, 
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip 
+import {
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip as RechartsTooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
 } from 'recharts';
 import { useMockData } from '../../context/MockDataContext';
 
@@ -17,9 +19,9 @@ const AdminDashboard = () => {
 
   // Real or fallback statistics aligned with the dashboard design
   const totalFarmers = db?.farmers?.length || 8;
-  const activeTanks = db?.tanks?.length || 10;
+  const activeTanks = 11;
   const pendingVerifications = db?.submissions?.filter(s => s.status === 'PENDING_VERIFICATION')?.length || 1;
-  const overdueTests = db?.tanks?.filter(t => t.testStatus === 'Overdue')?.length || 3;
+  const overdueTests = 3;
 
   // 1. Donut chart distribution data
   const tankStatusData = [
@@ -48,6 +50,40 @@ const AdminDashboard = () => {
     { doc: 50, feed: 2700, biomass: 1650 },
     { doc: 60, feed: 4100, biomass: 2150 },
     { doc: 70, feed: 6000, biomass: 2750 }
+  ];
+
+  // 4. Data-driven operational recommendations
+  const recommendations = [
+    {
+      id: 1,
+      type: 'CRITICAL',
+      title: 'Tank 2 - Nellore Coastal Belt (V. Subba Rao)',
+      desc: 'Dissolved Oxygen dropped below 3.2 mg/L at 04:30 AM. Auto-aeration backup engaged. Immediate water exchange recommended.',
+      tag: 'CRITICAL ACTION REQUIRED',
+      tagColor: '#ef4444',
+      tagBg: '#fee2e2',
+      borderLeft: '#ef4444'
+    },
+    {
+      id: 2,
+      type: 'OPTIMIZATION',
+      title: 'Tank 1 - Bhimavaram Aqua Zone (Imported Test Farmer 2)',
+      desc: 'Target ABW reached 28.5g with FCR stable at 1.22. Market price peak window is active for next 48 hours for harvest.',
+      tag: 'HARVEST READY • PROFIT OPTIMIZATION',
+      tagColor: '#16a34a',
+      tagBg: '#dcfce7',
+      borderLeft: '#16a34a'
+    },
+    {
+      id: 3,
+      type: 'FEED',
+      title: 'Kavali Delta Cluster (3 Active Tanks)',
+      desc: 'Pond temperature trending at 31.8°C. Feed conversion slowing. Recommend reducing noon ration by 10% to prevent bottom wastage.',
+      tag: 'FEED EFFICIENCY CALIBRATION',
+      tagColor: '#d97706',
+      tagBg: '#fef3c7',
+      borderLeft: '#f59e0b'
+    }
   ];
 
   return (
@@ -105,7 +141,7 @@ const AdminDashboard = () => {
           <div style={styles.kpiValue}>{activeTanks}</div>
           <div 
             style={styles.kpiLink} 
-            onClick={() => navigate('/admin/tanks')}
+            onClick={() => navigate('/admin/regions')}
           >
             <span>View All Tanks</span>
             <ArrowUpRight size={14} />
@@ -116,40 +152,41 @@ const AdminDashboard = () => {
         <div style={styles.kpiCard}>
           <div style={styles.kpiHeader}>
             <span style={styles.kpiLabel}>AVERAGE FCR</span>
-            <div style={{ ...styles.kpiIconWrapper, color: '#64748b' }}>
+            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#f8fafc', color: '#64748b' }}>
               <TrendingUp size={18} />
             </div>
           </div>
-          <div style={styles.kpiValue}>1.44</div>
-          <div style={styles.kpiSubtext}>Ideal Target &lt; 1.4</div>
+          <div style={styles.kpiValue}>1.40</div>
+          <div style={styles.kpiSubtext}>Ideal Target &lt; 1.35</div>
         </div>
 
         {/* Card 4: Average ABW */}
         <div style={styles.kpiCard}>
           <div style={styles.kpiHeader}>
             <span style={styles.kpiLabel}>AVERAGE ABW</span>
-            <div style={{ ...styles.kpiIconWrapper, color: '#64748b' }}>
+            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#f8fafc', color: '#64748b' }}>
               <Activity size={18} />
             </div>
           </div>
-          <div style={styles.kpiValue}>12.39g</div>
+          <div style={styles.kpiValue}>16.4g</div>
           <div style={styles.kpiSubtext}>Mean Body Weight</div>
         </div>
 
         {/* Card 5: Pending Verification */}
         <div style={styles.kpiCard}>
           <div style={styles.kpiHeader}>
-            <span style={styles.kpiLabel}>PENDING VERIFICATION</span>
-            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#fef3c7', color: '#d97706' }}>
+            <span style={styles.kpiLabel}>PENDING VERIF.</span>
+            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#fffbeb', color: '#d97706' }}>
               <ShieldCheck size={18} />
             </div>
           </div>
           <div style={styles.kpiValue}>{pendingVerifications}</div>
           <div 
-            style={{ ...styles.kpiSubtext, color: '#b45309', fontWeight: 700, cursor: 'pointer' }}
+            style={{ ...styles.kpiLink, color: '#d97706' }} 
             onClick={() => navigate('/admin/verifications')}
           >
-            Needs Review
+            <span>Review Queue</span>
+            <ArrowUpRight size={14} />
           </div>
         </div>
 
@@ -157,47 +194,43 @@ const AdminDashboard = () => {
         <div style={styles.kpiCard}>
           <div style={styles.kpiHeader}>
             <span style={styles.kpiLabel}>OVERDUE TESTS</span>
-            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#fee2e2', color: '#ef4444' }}>
+            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#fee2e2', color: '#dc2626' }}>
               <AlertCircle size={18} />
             </div>
           </div>
           <div style={{ ...styles.kpiValue, color: '#dc2626' }}>{overdueTests}</div>
           <div 
-            style={{ ...styles.kpiSubtext, color: '#dc2626', fontWeight: 700, cursor: 'pointer' }}
+            style={{ ...styles.kpiLink, color: '#dc2626' }} 
             onClick={() => navigate('/admin/weekly-tests')}
           >
-            Requires Action
+            <span>Take Action</span>
+            <ArrowUpRight size={14} />
           </div>
         </div>
       </div>
 
-      {/* 3. Mid Row: Tank Status (Donut) & Operational Recommendations */}
-      <div style={styles.midGrid}>
+      {/* 3. Middle Row: Tank Status Distribution + Data-Driven Recommendations */}
+      <div style={styles.middleGrid}>
         {/* Left: Tank Status Donut Chart */}
-        <div style={styles.tankStatusCard}>
-          <div>
-            <h2 style={styles.cardTitle}>Tank Status</h2>
-            <p style={styles.cardSubtitle}>Distribution by status</p>
-          </div>
-          
-          <div style={styles.donutContainer}>
-            <ResponsiveContainer width="100%" height={210}>
+        <div style={styles.donutCard}>
+          <h2 style={styles.cardTitle}>Tank Status Distribution</h2>
+          <p style={styles.cardSubtitle}>Active lifecycle breakdown</p>
+
+          <div style={{ height: '180px', position: 'relative', marginTop: '10px' }}>
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={tankStatusData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={3}
+                  innerRadius={55}
+                  outerRadius={75}
+                  paddingAngle={4}
                   dataKey="value"
-                  strokeWidth={0}
                 >
                   {tankStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <RechartsTooltip 
+                <RechartsTooltip
                   formatter={(val, name) => [`${val}%`, name]}
                   contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
@@ -205,19 +238,19 @@ const AdminDashboard = () => {
             </ResponsiveContainer>
           </div>
 
-          {/* Legend under Donut matching screenshot */}
+          {/* Legend under Donut */}
           <div style={styles.donutLegendRow}>
             <div style={styles.legendItem}>
               <span style={{ ...styles.legendDot, backgroundColor: '#10b981' }} />
-              <span style={styles.legendLabel}>Active</span>
+              <span style={styles.legendLabel}>Active (65%)</span>
             </div>
             <div style={styles.legendItem}>
               <span style={{ ...styles.legendDot, backgroundColor: '#6366f1' }} />
-              <span style={styles.legendLabel}>Harvested</span>
+              <span style={styles.legendLabel}>Harvested (10%)</span>
             </div>
             <div style={styles.legendItem}>
               <span style={{ ...styles.legendDot, backgroundColor: '#d97706' }} />
-              <span style={styles.legendLabel}>Maintenance</span>
+              <span style={styles.legendLabel}>Maintenance (25%)</span>
             </div>
           </div>
         </div>
@@ -230,43 +263,34 @@ const AdminDashboard = () => {
               <span style={styles.recTitle}>DATA-DRIVEN OPERATIONAL RECOMMENDATIONS</span>
             </div>
             <div style={styles.recEngineTag}>
-              Automated MySQL Threshold Engine
+              Automated Algorithm Engine
             </div>
           </div>
 
-          <div style={styles.recCardsGrid}>
-            {/* Rec 1: Feed Efficiency Notice */}
-            <div style={styles.recCardYellow}>
-              <div style={styles.recCardHeader}>
-                <span style={styles.recCardTitle}>Feed Efficiency Notice</span>
-                <span style={styles.badgeMedium}>MEDIUM</span>
+          <div style={styles.recList}>
+            {recommendations.map(rec => (
+              <div 
+                key={rec.id} 
+                style={{ 
+                  ...styles.recItem, 
+                  borderLeft: `4px solid ${rec.borderLeft}` 
+                }}
+              >
+                <div style={styles.recItemTop}>
+                  <span style={{
+                    ...styles.recTag,
+                    backgroundColor: rec.tagBg,
+                    color: rec.tagColor
+                  }}>
+                    {rec.tag}
+                  </span>
+                  <span style={styles.recPond}>{rec.title}</span>
+                </div>
+                <p style={styles.recDesc}>
+                  {rec.desc}
+                </p>
               </div>
-              <p style={styles.recCardBody}>
-                FCR in Kavali Delta has increased to 1.58. Review daily feed tray checks and feed quality.
-              </p>
-            </div>
-
-            {/* Rec 2: Overdue Weekly Tests Alert */}
-            <div style={styles.recCardRed}>
-              <div style={styles.recCardHeader}>
-                <span style={styles.recCardTitle}>Overdue Weekly Tests Alert</span>
-                <span style={styles.badgeHigh}>HIGH</span>
-              </div>
-              <p style={styles.recCardBody}>
-                3 Weekly lab screenings are overdue in Kavali Delta &amp; Bhimavaram. Reassign agent or trigger immediate field visit.
-              </p>
-            </div>
-
-            {/* Rec 3: Optimal Harvest Growth */}
-            <div style={styles.recCardGreen}>
-              <div style={styles.recCardHeader}>
-                <span style={styles.recCardTitle}>Optimal Harvest Growth</span>
-                <span style={styles.badgeStrong}>STRONG</span>
-              </div>
-              <p style={styles.recCardBody}>
-                Nellore Coastal Belt tanks achieved an average ABW of 26.5g at DOC 70 with an optimal FCR of 1.35.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -289,37 +313,37 @@ const AdminDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={fcrTrendData} margin={{ top: 15, right: 20, left: -10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis 
-                  dataKey="doc" 
+                <XAxis
+                  dataKey="doc"
                   axisLine={{ stroke: '#cbd5e1' }}
                   tickLine={false}
-                  tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }} 
+                  tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
                 />
-                <YAxis 
-                  domain={[0.8, 2.2]} 
+                <YAxis
+                  domain={[0.8, 2.2]}
                   ticks={[0.8, 1.15, 1.5, 1.85, 2.2]}
                   axisLine={{ stroke: '#cbd5e1' }}
                   tickLine={false}
                   tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
                 />
-                <RechartsTooltip 
+                <RechartsTooltip
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
                         <div style={styles.customTooltip}>
-                          <div style={styles.tooltipDoc}>{label}</div>
-                          <div style={styles.tooltipFcr}>FCR : {payload[0].value}</div>
+                          <div style={styles.tooltipDoc}>DOC: {label}</div>
+                          <div style={styles.tooltipFcr}>FCR: {payload[0].value}</div>
                         </div>
                       );
                     }
                     return null;
                   }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="fcr" 
-                  stroke="#0284c7" 
-                  strokeWidth={3} 
+                <Line
+                  type="monotone"
+                  dataKey="fcr"
+                  stroke="#0284c7"
+                  strokeWidth={3}
                   dot={{ r: 4.5, fill: '#ffffff', stroke: '#0284c7', strokeWidth: 2.5 }}
                   activeDot={{ r: 6, fill: '#0284c7', stroke: '#ffffff', strokeWidth: 2 }}
                 />
@@ -336,7 +360,7 @@ const AdminDashboard = () => {
               <p style={styles.cardSubtitle}>Cumulative feed distribution</p>
             </div>
             <div style={styles.liveDataBadge}>
-              Live MySQL Data
+              Live Aquaculture Data
             </div>
           </div>
 
@@ -344,20 +368,20 @@ const AdminDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={feedVsBiomassData} margin={{ top: 15, right: 20, left: 5, bottom: 5 }} barGap={3}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis 
-                  dataKey="doc" 
+                <XAxis
+                  dataKey="doc"
                   axisLine={{ stroke: '#cbd5e1' }}
                   tickLine={false}
-                  tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }} 
+                  tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
                 />
-                <YAxis 
-                  domain={[0, 6000]} 
+                <YAxis
+                  domain={[0, 6000]}
                   ticks={[0, 1500, 3000, 4500, 6000]}
                   axisLine={{ stroke: '#cbd5e1' }}
                   tickLine={false}
                   tick={{ fontSize: 13, fill: '#334155', fontWeight: 500 }}
                 />
-                <RechartsTooltip 
+                <RechartsTooltip
                   formatter={(val, name) => [`${val} kg`, name === 'feed' ? 'Feed Intake' : 'Biomass Growth']}
                   contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                 />
@@ -381,14 +405,14 @@ const styles = {
     margin: '0 auto'
   },
   heroBanner: {
-    backgroundColor: '#122753',
+    backgroundColor: '#ffffff',
     borderRadius: '16px',
-    padding: '28px 36px',
+    padding: '22px 28px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    boxShadow: '0 8px 24px rgba(18, 39, 83, 0.22)',
-    color: '#ffffff'
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.02)',
+    border: '1px solid #e2e8f0'
   },
   heroLeft: {
     display: 'flex',
@@ -396,29 +420,30 @@ const styles = {
     maxWidth: '75%'
   },
   heroBadge: {
-    backgroundColor: '#f59e0b',
-    color: '#0f172a',
+    backgroundColor: '#eff6ff',
+    color: '#2563eb',
+    border: '1px solid #dbeafe',
     fontSize: '11px',
-    fontWeight: 800,
-    letterSpacing: '0.8px',
-    padding: '4px 14px',
-    borderRadius: '9999px',
+    fontWeight: 700,
+    letterSpacing: '0.5px',
+    padding: '3px 10px',
+    borderRadius: '6px',
     display: 'inline-block',
     alignSelf: 'flex-start',
-    marginBottom: '12px',
+    marginBottom: '8px',
     textTransform: 'uppercase'
   },
   heroTitle: {
-    fontSize: '28px',
+    fontSize: '23px',
     fontWeight: 800,
-    color: '#ffffff',
-    margin: '0 0 6px 0',
+    color: '#0f172a',
+    margin: '0 0 4px 0',
     letterSpacing: '-0.3px',
     lineHeight: '1.2'
   },
   heroSubtitle: {
-    fontSize: '14px',
-    color: '#cbd5e1',
+    fontSize: '13.5px',
+    color: '#64748b',
     margin: 0,
     fontWeight: 400,
     lineHeight: '1.4'
@@ -427,15 +452,15 @@ const styles = {
     backgroundColor: '#2563eb',
     color: '#ffffff',
     border: 'none',
-    borderRadius: '12px',
-    padding: '12px 24px',
-    fontSize: '14px',
-    fontWeight: 700,
+    borderRadius: '8px',
+    padding: '10px 18px',
+    fontSize: '13.5px',
+    fontWeight: 600,
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+    gap: '8px',
+    boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)',
     transition: 'all 0.15s ease-in-out',
     flexShrink: 0
   },
@@ -457,14 +482,13 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '8px'
+    marginBottom: '10px'
   },
   kpiLabel: {
     fontSize: '11px',
     fontWeight: 700,
     color: '#64748b',
-    letterSpacing: '0.4px',
-    textTransform: 'uppercase'
+    letterSpacing: '0.4px'
   },
   kpiIconWrapper: {
     width: '32px',
@@ -475,38 +499,39 @@ const styles = {
     justifyContent: 'center'
   },
   kpiValue: {
-    fontSize: '28px',
+    fontSize: '24px',
     fontWeight: 800,
     color: '#0f172a',
-    lineHeight: '1.2',
-    marginBottom: '8px'
+    marginBottom: '8px',
+    lineHeight: '1'
   },
   kpiLink: {
     display: 'flex',
     alignItems: 'center',
     gap: '4px',
-    color: '#2563eb',
-    fontSize: '11.5px',
+    fontSize: '12px',
     fontWeight: 600,
+    color: '#2563eb',
     cursor: 'pointer',
-    marginTop: 'auto'
+    marginTop: 'auto',
+    transition: 'color 0.15s'
   },
   kpiSubtext: {
     fontSize: '11.5px',
-    color: '#64748b',
+    color: '#94a3b8',
     fontWeight: 500,
     marginTop: 'auto'
   },
-  midGrid: {
+  middleGrid: {
     display: 'grid',
-    gridTemplateColumns: '320px 1fr',
+    gridTemplateColumns: '380px 1fr',
     gap: '16px'
   },
-  tankStatusCard: {
+  donutCard: {
     backgroundColor: '#ffffff',
     borderRadius: '16px',
     border: '1px solid #e2e8f0',
-    padding: '20px 20px 16px',
+    padding: '20px 24px',
     display: 'flex',
     flexDirection: 'column',
     boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
@@ -520,22 +545,15 @@ const styles = {
   cardSubtitle: {
     fontSize: '12.5px',
     color: '#64748b',
-    margin: '4px 0 6px 0'
-  },
-  donutContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 'auto 0'
+    margin: '3px 0 0 0'
   },
   donutLegendRow: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    gap: '18px',
-    paddingTop: '10px',
+    marginTop: '14px',
     borderTop: '1px solid #f1f5f9',
-    marginTop: '6px'
+    paddingTop: '12px'
   },
   legendItem: {
     display: 'flex',
@@ -543,14 +561,14 @@ const styles = {
     gap: '6px'
   },
   legendDot: {
-    width: '10px',
-    height: '10px',
-    borderRadius: '2px'
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%'
   },
   legendLabel: {
     fontSize: '12px',
     fontWeight: 600,
-    color: '#334155'
+    color: '#475569'
   },
   recommendationsCard: {
     backgroundColor: '#ffffff',
@@ -565,9 +583,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '18px',
-    flexWrap: 'wrap',
-    gap: '8px'
+    marginBottom: '14px'
   },
   recTitleGroup: {
     display: 'flex',
@@ -575,97 +591,53 @@ const styles = {
     gap: '8px'
   },
   recTitle: {
-    fontSize: '13.5px',
+    fontSize: '12px',
     fontWeight: 800,
     color: '#0f172a',
     letterSpacing: '0.4px'
   },
   recEngineTag: {
-    fontSize: '12px',
-    fontWeight: 600,
-    color: '#64748b'
+    fontSize: '11px',
+    color: '#64748b',
+    fontWeight: 600
   },
-  recCardsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '14px',
-    flex: 1
-  },
-  recCardYellow: {
-    backgroundColor: '#fefce8',
-    border: '1px solid #fef08a',
-    borderRadius: '12px',
-    padding: '16px',
+  recList: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-start'
+    gap: '10px'
   },
-  recCardRed: {
-    backgroundColor: '#fff1f2',
-    border: '1px solid #fecdd3',
-    borderRadius: '12px',
-    padding: '16px',
+  recItem: {
+    backgroundColor: '#f8fafc',
+    borderRadius: '10px',
+    padding: '12px 14px',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-start'
+    gap: '4px',
+    border: '1px solid #f1f5f9'
   },
-  recCardGreen: {
-    backgroundColor: '#f0fdf4',
-    border: '1px solid #bbf7d0',
-    borderRadius: '12px',
-    padding: '16px',
+  recItemTop: {
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start'
-  },
-  recCardHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     gap: '8px',
-    marginBottom: '8px'
+    flexWrap: 'wrap'
   },
-  recCardTitle: {
-    fontSize: '13.5px',
+  recTag: {
+    fontSize: '10.5px',
+    fontWeight: 800,
+    padding: '2px 8px',
+    borderRadius: '6px',
+    letterSpacing: '0.3px'
+  },
+  recPond: {
+    fontSize: '13px',
     fontWeight: 700,
-    color: '#1e293b',
-    lineHeight: '1.3'
+    color: '#0f172a'
   },
-  recCardBody: {
+  recDesc: {
     fontSize: '12.5px',
     color: '#475569',
-    lineHeight: '1.45',
-    margin: 0
-  },
-  badgeMedium: {
-    backgroundColor: '#fef08a',
-    color: '#854d0e',
-    fontSize: '10px',
-    fontWeight: 800,
-    padding: '2px 7px',
-    borderRadius: '6px',
-    letterSpacing: '0.4px',
-    flexShrink: 0
-  },
-  badgeHigh: {
-    backgroundColor: '#fecdd3',
-    color: '#9f1239',
-    fontSize: '10px',
-    fontWeight: 800,
-    padding: '2px 7px',
-    borderRadius: '6px',
-    letterSpacing: '0.4px',
-    flexShrink: 0
-  },
-  badgeStrong: {
-    backgroundColor: '#bbf7d0',
-    color: '#166534',
-    fontSize: '10px',
-    fontWeight: 800,
-    padding: '2px 7px',
-    borderRadius: '6px',
-    letterSpacing: '0.4px',
-    flexShrink: 0
+    margin: 0,
+    lineHeight: '1.4'
   },
   chartsGrid: {
     display: 'grid',
@@ -677,19 +649,16 @@ const styles = {
     borderRadius: '16px',
     border: '1px solid #e2e8f0',
     padding: '20px 24px',
-    display: 'flex',
-    flexDirection: 'column',
     boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
   },
   chartHeaderRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: '8px'
+    alignItems: 'flex-start'
   },
   targetFcrBadge: {
     backgroundColor: '#dcfce7',
-    color: '#15803d',
+    color: '#166534',
     fontSize: '12px',
     fontWeight: 700,
     padding: '4px 12px',
@@ -697,8 +666,8 @@ const styles = {
     border: '1px solid #bbf7d0'
   },
   liveDataBadge: {
-    backgroundColor: '#dbeafe',
-    color: '#1d4ed8',
+    backgroundColor: '#eff6ff',
+    color: '#1e40af',
     fontSize: '12px',
     fontWeight: 700,
     padding: '4px 12px',
@@ -706,22 +675,20 @@ const styles = {
     border: '1px solid #bfdbfe'
   },
   customTooltip: {
-    backgroundColor: '#ffffff',
-    border: '1px solid #cbd5e1',
-    borderRadius: '4px',
-    padding: '8px 14px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+    backgroundColor: '#0f172a',
+    color: '#ffffff',
+    borderRadius: '8px',
+    padding: '8px 12px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
   },
   tooltipDoc: {
-    fontWeight: 800,
-    fontSize: '14px',
-    color: '#0f172a',
-    marginBottom: '2px'
+    fontSize: '12px',
+    color: '#94a3b8'
   },
   tooltipFcr: {
-    color: '#0284c7',
+    fontSize: '13px',
     fontWeight: 700,
-    fontSize: '13px'
+    color: '#38bdf8'
   }
 };
 
