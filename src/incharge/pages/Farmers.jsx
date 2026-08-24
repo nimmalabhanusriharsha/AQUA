@@ -27,6 +27,7 @@ const Farmers = () => {
       tanks: tanks.length,
       agent: agent ? agent.name : 'Unassigned',
       lastTest: tanks[0] ? tanks[0].lastTest : 'N/A',
+      nextTest: tanks[0] ? tanks[0].nextTest : 'N/A',
       status: f.status === 'ACTIVE' ? 'Active' : 'Inactive'
     };
   });
@@ -110,6 +111,7 @@ const Farmers = () => {
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Tanks</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Assigned Agent</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Last Test</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Next Test</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Status</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px', textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -124,6 +126,7 @@ const Farmers = () => {
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.tanks}</td>
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.agent}</td>
                     <td style={{ padding: '16px', fontSize: '14px', color: 'var(--color-text-muted)' }}>{farmer.lastTest}</td>
+                    <td style={{ padding: '16px', fontSize: '14px', color: 'var(--color-text-muted)' }}>{farmer.nextTest}</td>
                     <td style={{ padding: '16px' }}>
                       <span style={{
                         padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
@@ -145,7 +148,7 @@ const Farmers = () => {
                 ))}
                 {filteredFarmers.length === 0 && (
                   <tr>
-                    <td colSpan="9" style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted)' }}>No farmers found.</td>
+                    <td colSpan="10" style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted)' }}>No farmers found.</td>
                   </tr>
                 )}
               </tbody>
@@ -270,7 +273,10 @@ const Farmers = () => {
                 <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Tanks</p><p style={{ fontWeight: 600 }}>{selectedFarmer.tanks}</p></div>
               </div>
               <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Assigned Agent</p><p style={{ fontWeight: 600 }}>{selectedFarmer.agent}</p></div>
-              <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Last Test</p><p style={{ fontWeight: 600 }}>{selectedFarmer.lastTest}</p></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Last Test</p><p style={{ fontWeight: 600 }}>{selectedFarmer.lastTest}</p></div>
+                <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Next Test</p><p style={{ fontWeight: 600 }}>{selectedFarmer.nextTest}</p></div>
+              </div>
               <div><p style={{ fontSize: '13px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>Status</p>
                 <span style={{
                   padding: '4px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600,
