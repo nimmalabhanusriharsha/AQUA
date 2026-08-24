@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { getActivities } from '../utils/adminMockData';
 import { Shield, Users, HardHat, Search } from 'lucide-react';
 
@@ -8,7 +8,7 @@ const ActivityLog = () => {
 
   return (
     <>
-      <AdminHeader title="Organization Activity Log" breadcrumbs={[{ label: 'System' }, { label: 'Activity Log', active: true }]} />
+      <PageHeader title="Organization Activity Log" breadcrumbs={[{ label: 'System' }, { label: 'Activity Log', active: true }]} />
       <div className="content-inner">
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTanks } from '../utils/adminMockData';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { Search, Filter, Eye } from 'lucide-react';
 
 const TanksList = () => {
@@ -17,7 +17,7 @@ const TanksList = () => {
 
   return (
     <>
-      <AdminHeader title="All Tanks" breadcrumbs={[{ label: 'Organization' }, { label: 'Tanks', active: true }]} />
+      <PageHeader title="All Tanks" breadcrumbs={[{ label: 'Organization' }, { label: 'Tanks', active: true }]} />
       <div className="content-inner">
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>

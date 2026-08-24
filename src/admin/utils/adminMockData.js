@@ -1,45 +1,308 @@
-// Core hierarchy data
+// Core hierarchy data aligned with Regional Command Center
 export const adminRegions = [
-  { id: 'REG01', name: 'Bhimavaram', incharges: 3, agents: 25, farmers: 820, tanks: 2450, compliance: 92, testsThisMonth: 12450, status: 'Active' },
-  { id: 'REG02', name: 'Narsapur', incharges: 2, agents: 18, farmers: 610, tanks: 1920, compliance: 88, testsThisMonth: 8900, status: 'Active' },
-  { id: 'REG03', name: 'Undi', incharges: 2, agents: 20, farmers: 710, tanks: 2180, compliance: 95, testsThisMonth: 11200, status: 'Active' },
-  { id: 'REG04', name: 'Palakollu', incharges: 1, agents: 12, farmers: 350, tanks: 980, compliance: 81, testsThisMonth: 4200, status: 'Active' }
+  { 
+    id: 'REG-SOUTH', 
+    code: 'REG-SOUTH',
+    name: 'South Andhra Region (Nellore/Prakasam)', 
+    shortName: 'South Andhra',
+    farmers: 3, 
+    tanks: 6, 
+    avgFcr: 1.40,
+    compliance: 94, 
+    incharges: 2, 
+    agents: 6,
+    status: 'Active',
+    localities: [
+      { id: 'LOC-01', name: 'Nellore Coastal Belt', fcr: 1.42, farmers: 1, tanks: 3 },
+      { id: 'LOC-02', name: 'Kavali Delta', fcr: 1.46, farmers: 2, tanks: 3 }
+    ]
+  },
+  { 
+    id: 'REG-CENTRAL', 
+    code: 'REG-CENTRAL',
+    name: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    shortName: 'Central Andhra',
+    farmers: 5, 
+    tanks: 6, 
+    avgFcr: 1.40,
+    compliance: 91, 
+    incharges: 3, 
+    agents: 8,
+    status: 'Active',
+    localities: [
+      { id: 'LOC-03', name: 'Bhimavaram Aqua Zone', fcr: 1.38, farmers: 3, tanks: 4 },
+      { id: 'LOC-04', name: 'Kakinada Creek', fcr: 1.42, farmers: 2, tanks: 2 }
+    ]
+  }
 ];
 
 export const adminIncharges = [
-  { id: 'INC001', name: 'Ravi Kumar', regionId: 'REG01', region: 'Bhimavaram', agents: 10, farmers: 320, tanks: 950, compliance: 94, status: 'Active' },
-  { id: 'INC002', name: 'Suresh', regionId: 'REG01', region: 'Bhimavaram', agents: 8, farmers: 280, tanks: 800, compliance: 91, status: 'Active' },
-  { id: 'INC003', name: 'Pranavi', regionId: 'REG01', region: 'Bhimavaram', agents: 7, farmers: 220, tanks: 700, compliance: 89, status: 'Active' },
-  { id: 'INC004', name: 'Venkatesh', regionId: 'REG02', region: 'Narsapur', agents: 9, farmers: 300, tanks: 950, compliance: 87, status: 'Active' }
+  { 
+    id: 'EMP-INC-02', 
+    name: 'M. Srinivas (Incharge - Bhimavaram)', 
+    shortName: 'M. Srinivas',
+    role: 'Incharge - Bhimavaram',
+    regionId: 'REG-CENTRAL', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Bhimavaram Aqua Zone',
+    phone: '+91 9876543212',
+    email: 'srinivas.inc@royalsmarine.com',
+    agents: 2, 
+    farmers: 3, 
+    tanks: 4, 
+    compliance: 94, 
+    status: 'ACTIVE' 
+  },
+  { 
+    id: 'EMP-INC-01', 
+    name: 'K. V. Rajesh (Incharge - Nellore)', 
+    shortName: 'K. V. Rajesh',
+    role: 'Incharge - Nellore',
+    regionId: 'REG-SOUTH', 
+    region: 'South Andhra Region (Nellore/Prakasam)', 
+    locality: 'Nellore Coastal Belt',
+    phone: '+91 9876543211',
+    email: 'rajesh.inc@royalsmarine.com',
+    agents: 1, 
+    farmers: 3, 
+    tanks: 3, 
+    compliance: 95, 
+    status: 'ACTIVE' 
+  }
 ];
 
 export const adminAgents = [
-  { id: 'A001', name: 'Agent A', inchargeId: 'INC001', incharge: 'Ravi Kumar', region: 'Bhimavaram', locality: 'Chinnamiram', farmers: 45, tanks: 112, tests: 98, compliance: 87.5, status: 'Active' },
-  { id: 'A002', name: 'Agent B', inchargeId: 'INC001', incharge: 'Ravi Kumar', region: 'Bhimavaram', locality: 'Undi', farmers: 52, tanks: 128, tests: 110, compliance: 85.9, status: 'Active' },
-  { id: 'A003', name: 'Agent C', inchargeId: 'INC001', incharge: 'Ravi Kumar', region: 'Bhimavaram', locality: 'Akuruvu', farmers: 38, tanks: 98, tests: 92, compliance: 93.9, status: 'Active' },
-  { id: 'A004', name: 'Agent D', inchargeId: 'INC002', incharge: 'Suresh', region: 'Bhimavaram', locality: 'Kalla', farmers: 40, tanks: 120, tests: 105, compliance: 90.0, status: 'Active' }
+  { 
+    id: 'EMP-AGT-03', 
+    name: 'Ch. Suresh (Field Agent - Kakinada)', 
+    shortName: 'Ch. Suresh',
+    role: 'Field Agent - Kakinada',
+    inchargeId: 'EMP-INC-02', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    regionId: 'REG-CENTRAL',
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Kakinada Creek', 
+    phone: '+91 9876543215',
+    email: 'suresh.agt@royalsmarine.com',
+    farmers: 1, 
+    tanks: 2, 
+    siteVisits: 0, 
+    tests: 34, 
+    compliance: 90.0, 
+    status: 'ACTIVE' 
+  },
+  { 
+    id: 'EMP-AGT-02', 
+    name: 'V. Kumar (Field Agent - Bhimavaram)', 
+    shortName: 'V. Kumar',
+    role: 'Field Agent - Bhimavaram',
+    inchargeId: 'EMP-INC-02', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    regionId: 'REG-CENTRAL',
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Bhimavaram Aqua Zone', 
+    phone: '+91 9876543214',
+    email: 'kumar.agt@royalsmarine.com',
+    farmers: 2, 
+    tanks: 2, 
+    siteVisits: 0, 
+    tests: 45, 
+    compliance: 91.5, 
+    status: 'ACTIVE' 
+  },
+  { 
+    id: 'EMP-AGT-01', 
+    name: 'P. Raju (Field Agent - Nellore)', 
+    shortName: 'P. Raju',
+    role: 'Field Agent - Nellore',
+    inchargeId: 'EMP-INC-01', 
+    incharge: 'K. V. Rajesh (Incharge - Nellore)', 
+    regionId: 'REG-SOUTH',
+    region: 'South Andhra Region (Nellore/Prakasam)', 
+    locality: 'Nellore Coastal Belt', 
+    phone: '+91 9876543213',
+    email: 'raju.agt@royalsmarine.com',
+    farmers: 3, 
+    tanks: 6, 
+    siteVisits: 8, 
+    tests: 62, 
+    compliance: 96.0, 
+    status: 'ACTIVE' 
+  }
 ];
 
 export const adminFarmers = [
-  { id: 'F001', name: 'Ashok', agentId: 'A001', agent: 'Agent A', incharge: 'Ravi Kumar', region: 'Bhimavaram', phone: '9888888801', locality: 'Chinnamiram', village: 'Chinnamiram', acres: 25, tanks: 5, status: 'Active' },
-  { id: 'F002', name: 'Ravi', agentId: 'A002', agent: 'Agent B', incharge: 'Ravi Kumar', region: 'Bhimavaram', phone: '9888888802', locality: 'Undi', village: 'Undi', acres: 20, tanks: 4, status: 'Active' },
-  { id: 'F003', name: 'Kumar', agentId: 'A001', agent: 'Agent A', incharge: 'Ravi Kumar', region: 'Bhimavaram', phone: '9888888803', locality: 'Chinnamiram', village: 'Chinnamiram', acres: 18, tanks: 3, status: 'Active' },
-  { id: 'F004', name: 'Ramesh', agentId: 'A003', agent: 'Agent C', incharge: 'Ravi Kumar', region: 'Bhimavaram', phone: '9888888804', locality: 'Akuruvu', village: 'Akuruvu', acres: 30, tanks: 6, status: 'Active' }
+  { 
+    id: 'FAR-349', 
+    name: 'Imported Test Farmer 2', 
+    agentId: 'EMP-AGT-02', 
+    agent: 'V. Kumar (Field Agent - Bhimavaram)', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Bhimavaram Aqua Zone', 
+    phone: '9876543298', 
+    village: 'Kavali East', 
+    acres: '4.5 Acres', 
+    totalAcres: 4.5,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-349-1', name: 'Tank 1', acres: 4.5, doc: 45, abw: 12.5, fcr: 1.22, biomass: 1500 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-581', 
+    name: 'Imported Test Farmer 1', 
+    agentId: 'EMP-AGT-02', 
+    agent: 'V. Kumar (Field Agent - Bhimavaram)', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Bhimavaram Aqua Zone', 
+    phone: '9876543299', 
+    village: 'Nellore North', 
+    acres: '6.0 Acres', 
+    totalAcres: 6.0,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-581-1', name: 'Tank 1', acres: 6.0, doc: 52, abw: 15.0, fcr: 1.25, biomass: 2100 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-006', 
+    name: 'D. Prasad', 
+    agentId: 'EMP-AGT-02', 
+    agent: 'V. Kumar (Field Agent - Bhimavaram)', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Bhimavaram Aqua Zone', 
+    phone: '+91 9440667788', 
+    village: 'Akividu Aqua Belt', 
+    acres: '4.0 Acres', 
+    totalAcres: 4.0,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-006-1', name: 'Tank 1', acres: 4.0, doc: 30, abw: 8.5, fcr: 1.10, biomass: 800 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-005', 
+    name: 'B. Nageswara Rao', 
+    agentId: 'EMP-AGT-01', 
+    agent: 'P. Raju (Field Agent - Nellore)', 
+    incharge: 'K. V. Rajesh (Incharge - Nellore)', 
+    region: 'South Andhra Region (Nellore/Prakasam)', 
+    locality: 'Kavali Delta', 
+    phone: '+91 9440556677', 
+    village: 'Allur Village', 
+    acres: '5.0 Acres', 
+    totalAcres: 5.0,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-005-1', name: 'Tank 1', acres: 5.0, doc: 65, abw: 22.0, fcr: 1.40, biomass: 3200 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-004', 
+    name: 'Ch. Satyanarayana', 
+    agentId: 'EMP-AGT-03', 
+    agent: 'Ch. Suresh (Field Agent - Kakinada)', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Kakinada Creek', 
+    phone: '+91 9440445566', 
+    village: 'Coringa Creek', 
+    acres: '3.5 Acres', 
+    totalAcres: 3.5,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-004-1', name: 'Tank 1', acres: 3.5, doc: 48, abw: 14.2, fcr: 1.35, biomass: 1800 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-003', 
+    name: 'V. Subba Rao', 
+    agentId: 'EMP-AGT-01', 
+    agent: 'P. Raju (Field Agent - Nellore)', 
+    incharge: 'K. V. Rajesh (Incharge - Nellore)', 
+    region: 'South Andhra Region (Nellore/Prakasam)', 
+    locality: 'Nellore Coastal Belt', 
+    phone: '+91 9440334455', 
+    village: 'Mypadu Coastal', 
+    acres: '8.0 Acres', 
+    totalAcres: 8.0,
+    tanks: 3, 
+    tankBreakdown: [
+      { id: 'T-003-1', name: 'Tank 1', acres: 3.0, doc: 70, abw: 26.5, fcr: 1.35, biomass: 4200 },
+      { id: 'T-003-2', name: 'Tank 2', acres: 2.5, doc: 55, abw: 18.0, fcr: 1.30, biomass: 2800 },
+      { id: 'T-003-3', name: 'Tank 3', acres: 2.5, doc: 40, abw: 12.0, fcr: 1.25, biomass: 1600 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-002', 
+    name: 'M. Srinivas', 
+    agentId: 'EMP-AGT-01', 
+    agent: 'P. Raju (Field Agent - Nellore)', 
+    incharge: 'K. V. Rajesh (Incharge - Nellore)', 
+    region: 'South Andhra Region (Nellore/Prakasam)', 
+    locality: 'Kavali Delta', 
+    phone: '+91 9440223344', 
+    village: 'Kavali Rural', 
+    acres: '6.0 Acres', 
+    totalAcres: 6.0,
+    tanks: 2, 
+    tankBreakdown: [
+      { id: 'T-002-1', name: 'Tank 1', acres: 3.0, doc: 60, abw: 20.5, fcr: 1.38, biomass: 3100 },
+      { id: 'T-002-2', name: 'Tank 2', acres: 3.0, doc: 45, abw: 13.5, fcr: 1.28, biomass: 1900 }
+    ],
+    status: 'Active' 
+  },
+  { 
+    id: 'FAR-001', 
+    name: 'K. Venkat Rao', 
+    agentId: 'EMP-AGT-03', 
+    agent: 'Ch. Suresh (Field Agent - Kakinada)', 
+    incharge: 'M. Srinivas (Incharge - Bhimavaram)', 
+    region: 'Central Andhra Region (Bhimavaram/Godavari)', 
+    locality: 'Kakinada Creek', 
+    phone: '+91 9440112233', 
+    village: 'Tallarevu', 
+    acres: '5.0 Acres', 
+    totalAcres: 5.0,
+    tanks: 1, 
+    tankBreakdown: [
+      { id: 'T-001-1', name: 'Tank 1', acres: 5.0, doc: 50, abw: 16.0, fcr: 1.32, biomass: 2400 }
+    ],
+    status: 'Active' 
+  }
 ];
 
 export const adminTanks = [
-  { id: 'T001', name: 'Tank 1', farmerId: 'F001', farmer: 'Ashok', agent: 'Agent A', incharge: 'Ravi Kumar', region: 'Bhimavaram', currentCycle: 'Cycle 1 (2026)', abw: 12.5, biomass: 1500, feed: 1800, fcr: 1.2, compliance: 100, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
-  { id: 'T002', name: 'Tank 2', farmerId: 'F001', farmer: 'Ashok', agent: 'Agent A', incharge: 'Ravi Kumar', region: 'Bhimavaram', currentCycle: 'Cycle 1 (2026)', abw: 15.0, biomass: 2100, feed: 2625, fcr: 1.25, compliance: 85, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
-  { id: 'T003', name: 'Tank 1', farmerId: 'F002', farmer: 'Ravi', agent: 'Agent B', incharge: 'Ravi Kumar', region: 'Bhimavaram', currentCycle: 'Cycle 1 (2026)', abw: 8.5, biomass: 800, feed: 880, fcr: 1.1, compliance: 100, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
-  { id: 'T004', name: 'Tank 1', farmerId: 'F004', farmer: 'Ramesh', agent: 'Agent C', incharge: 'Ravi Kumar', region: 'Bhimavaram', currentCycle: 'Cycle 1 (2026)', abw: 22.0, biomass: 3200, feed: 4480, fcr: 1.4, compliance: 90, lastTest: '21 Aug 2026', nextDue: '28 Aug 2026' }
+  { id: 'T001', name: 'Tank 1', farmerId: 'FAR-349', farmer: 'Imported Test Farmer 2', agent: 'V. Raju', incharge: 'Ravi Kumar', region: 'Central Andhra Region (Bhimavaram/Godavari)', locality: 'Bhimavaram Aqua Zone', currentCycle: 'Cycle 1 (2026)', abw: 12.5, biomass: 1500, feed: 1800, fcr: 1.2, compliance: 100, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
+  { id: 'T002', name: 'Tank 1', farmerId: 'FAR-581', farmer: 'Imported Test Farmer 1', agent: 'V. Raju', incharge: 'Ravi Kumar', region: 'Central Andhra Region (Bhimavaram/Godavari)', locality: 'Bhimavaram Aqua Zone', currentCycle: 'Cycle 1 (2026)', abw: 15.0, biomass: 2100, feed: 2625, fcr: 1.25, compliance: 85, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
+  { id: 'T003', name: 'Tank 1', farmerId: 'FAR-006', farmer: 'D. Prasad', agent: 'V. Kumar (Field Agent - Bhimavaram)', incharge: 'Ravi Kumar', region: 'Central Andhra Region (Bhimavaram/Godavari)', locality: 'Bhimavaram Aqua Zone', currentCycle: 'Cycle 1 (2026)', abw: 8.5, biomass: 800, feed: 880, fcr: 1.1, compliance: 100, lastTest: '22 Aug 2026', nextDue: '29 Aug 2026' },
+  { id: 'T004', name: 'Tank 1', farmerId: 'FAR-005', farmer: 'B. Nageswara Rao', agent: 'P. Raju (Field Agent - Nellore)', incharge: 'Pranavi', region: 'South Andhra Region (Nellore/Prakasam)', locality: 'Kavali Delta', currentCycle: 'Cycle 1 (2026)', abw: 22.0, biomass: 3200, feed: 4480, fcr: 1.4, compliance: 90, lastTest: '21 Aug 2026', nextDue: '28 Aug 2026' },
+  { id: 'T005', name: 'Tank 1', farmerId: 'FAR-004', farmer: 'Ch. Satyanarayana', agent: 'Ch. Suresh (Field Agent - Kakinada)', incharge: 'Suresh', region: 'Central Andhra Region (Bhimavaram/Godavari)', locality: 'Kakinada Creek', currentCycle: 'Cycle 1 (2026)', abw: 14.2, biomass: 1800, feed: 2430, fcr: 1.35, compliance: 92, lastTest: '20 Aug 2026', nextDue: '27 Aug 2026' },
+  { id: 'T006', name: 'Tank 1', farmerId: 'FAR-003', farmer: 'V. Subba Rao', agent: 'P. Raju (Field Agent - Nellore)', incharge: 'Pranavi', region: 'South Andhra Region (Nellore/Prakasam)', locality: 'Nellore Coastal Belt', currentCycle: 'Cycle 1 (2026)', abw: 26.5, biomass: 4200, feed: 5670, fcr: 1.35, compliance: 100, lastTest: '23 Aug 2026', nextDue: '30 Aug 2026' }
 ];
 
-// Historical Data arrays
+// Locality-wise FCR Efficiency Graph data
+export const adminLocalityFcrData = [
+  { locality: 'Nellore Coastal Belt', fcr: 1.42 },
+  { locality: 'Kavali Delta', fcr: 1.46 },
+  { locality: 'Bhimavaram Aqua Zone', fcr: 1.38 },
+  { locality: 'Kakinada Creek', fcr: 1.42 }
+];
+
 export const adminActivities = [
-  { id: 1, action: 'Incharge Ravi Kumar approved Water Analysis', detail: 'Ashok - Tank 2', time: '10 mins ago', module: 'Verifications', user: 'Ravi Kumar', role: 'Incharge', region: 'Bhimavaram' },
-  { id: 2, action: 'Agent A submitted Feed Test', detail: 'Ravi - Tank 1', time: '25 mins ago', module: 'Field Data', user: 'Agent A', role: 'Agent', region: 'Bhimavaram' },
-  { id: 3, action: 'Incharge Suresh allocated farmer', detail: 'Kumar', time: '45 mins ago', module: 'Allocations', user: 'Suresh', role: 'Incharge', region: 'Bhimavaram' },
-  { id: 4, action: 'Admin viewed Region', detail: 'Narsapur', time: '1 hour ago', module: 'Monitoring', user: 'Admin', role: 'Admin', region: 'Organization' },
+  { id: 1, action: 'Incharge Ravi Kumar approved Water Analysis', detail: 'FAR-349 - Tank 1', time: '10 mins ago', module: 'Verifications', user: 'Ravi Kumar', role: 'Incharge', region: 'Central Andhra' },
+  { id: 2, action: 'Agent V. Raju submitted Feed Test', detail: 'FAR-581 - Tank 1', time: '25 mins ago', module: 'Field Data', user: 'V. Raju', role: 'Agent', region: 'Central Andhra' },
+  { id: 3, action: 'Incharge Pranavi allocated farmer', detail: 'B. Nageswara Rao', time: '45 mins ago', module: 'Allocations', user: 'Pranavi', role: 'Incharge', region: 'South Andhra' },
+  { id: 4, action: 'Admin viewed Region', detail: 'South Andhra', time: '1 hour ago', module: 'Monitoring', user: 'Admin', role: 'Admin', region: 'Organization' }
 ];
 
 export const adminTrendData = [
@@ -49,7 +312,7 @@ export const adminTrendData = [
   { name: '19 Aug', tests: 520 },
   { name: '20 Aug', tests: 780 },
   { name: '21 Aug', tests: 620 },
-  { name: '22 Aug', tests: 770 },
+  { name: '22 Aug', tests: 770 }
 ];
 
 export const adminWeeklyCompliance = {
@@ -60,14 +323,14 @@ export const adminWeeklyCompliance = {
 };
 
 export const adminVerifications = [
-  { id: 'V001', region: 'Bhimavaram', incharge: 'Ravi Kumar', agent: 'Agent A', farmer: 'Ashok', tank: 'Tank 2', testType: 'Water Analysis', submitted: '10 mins ago', status: 'Pending' },
-  { id: 'V002', region: 'Bhimavaram', incharge: 'Ravi Kumar', agent: 'Agent B', farmer: 'Ravi', tank: 'Tank 1', testType: 'Feed Test', submitted: '25 mins ago', status: 'Approved' },
-  { id: 'V003', region: 'Narsapur', incharge: 'Venkatesh', agent: 'Agent D', farmer: 'Suresh', tank: 'Tank 1', testType: 'Medication', submitted: '2 hours ago', status: 'Rejected' },
+  { id: 'V001', region: 'Central Andhra Region', incharge: 'Ravi Kumar', agent: 'V. Raju', farmer: 'Imported Test Farmer 2', tank: 'Tank 1', testType: 'Water Analysis', submitted: '10 mins ago', status: 'Pending' },
+  { id: 'V002', region: 'South Andhra Region', incharge: 'Pranavi', agent: 'P. Raju', farmer: 'B. Nageswara Rao', tank: 'Tank 1', testType: 'Feed Test', submitted: '25 mins ago', status: 'Approved' },
+  { id: 'V003', region: 'Central Andhra Region', incharge: 'Suresh', agent: 'Ch. Suresh', farmer: 'Ch. Satyanarayana', tank: 'Tank 1', testType: 'Medication', submitted: '2 hours ago', status: 'Rejected' }
 ];
 
-// Helper methods for relationships
+// Helper methods
 export const getRegions = () => adminRegions;
-export const getRegionById = (id) => adminRegions.find(r => r.id === id);
+export const getRegionById = (id) => adminRegions.find(r => r.id === id || r.code === id);
 
 export const getIncharges = () => adminIncharges;
 export const getInchargesByRegion = (regionId) => adminIncharges.filter(i => i.regionId === regionId);

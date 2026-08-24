@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getTankById } from '../utils/adminMockData';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { Database, Droplet, Wheat, Pill, Bug, Fish, MapPin, CheckSquare, History } from 'lucide-react';
 
 const TankHistory = () => {
@@ -26,7 +26,7 @@ const TankHistory = () => {
 
   return (
     <>
-      <AdminHeader 
+      <PageHeader 
         title={`Tank History: ${tank.name} (${tank.farmer})`} 
         breadcrumbs={[
           { label: 'Organization' },

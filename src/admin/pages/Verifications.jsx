@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { adminVerifications } from '../utils/adminMockData';
 import { Search, Filter, Eye, X } from 'lucide-react';
 
@@ -9,7 +9,7 @@ const Verifications = () => {
 
   return (
     <>
-      <AdminHeader title="Organization Verifications Monitoring" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Verifications', active: true }]} />
+      <PageHeader title="Organization Verifications Monitoring" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Verifications', active: true }]} />
       <div className="content-inner">
         <div className="card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>

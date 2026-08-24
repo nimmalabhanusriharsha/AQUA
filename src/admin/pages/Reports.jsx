@@ -1,11 +1,11 @@
 import React from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { FileText, Calendar, Map, Filter, Download } from 'lucide-react';
 
 const Reports = () => {
   return (
     <>
-      <AdminHeader title="Consolidated Reports" breadcrumbs={[{ label: 'Reports' }, { label: 'Generate Reports', active: true }]} />
+      <PageHeader title="Consolidated Reports" breadcrumbs={[{ label: 'Reports' }, { label: 'Generate Reports', active: true }]} />
       <div className="content-inner">
         
         <div className="card" style={{ maxWidth: '800px', margin: '0 auto' }}>

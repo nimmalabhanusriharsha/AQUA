@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFarmerById, getTanksByFarmer } from '../utils/adminMockData';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { Database, Eye, Download } from 'lucide-react';
 
 const FarmerDetail = () => {
@@ -40,7 +40,7 @@ const FarmerDetail = () => {
 
   return (
     <>
-      <AdminHeader 
+      <PageHeader 
         title={`Farmer: ${farmer.name}`} 
         breadcrumbs={[
           { label: 'Organization' },

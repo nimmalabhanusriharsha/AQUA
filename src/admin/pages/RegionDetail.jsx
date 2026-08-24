@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getRegionById, getInchargesByRegion } from '../utils/adminMockData';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { Users, HardHat, Sprout, Database, Eye } from 'lucide-react';
 
 const RegionDetail = () => {
@@ -24,11 +24,11 @@ const RegionDetail = () => {
 
   return (
     <>
-      <AdminHeader 
+      <PageHeader 
         title={`${region.name} Region Details`} 
         breadcrumbs={[
           { label: 'Organization' }, 
-          { label: 'Regions', active: false },
+          { label: 'Regions', path: '/admin/regions' },
           { label: region.name, active: true }
         ]} 
       />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getInchargeById, getAgentsByIncharge } from '../utils/adminMockData';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { HardHat, Sprout, Database, CheckSquare, Eye } from 'lucide-react';
 
 const InchargeDetail = () => {
@@ -24,7 +24,7 @@ const InchargeDetail = () => {
 
   return (
     <>
-      <AdminHeader 
+      <PageHeader 
         title={`Incharge: ${incharge.name}`} 
         breadcrumbs={[
           { label: 'Organization' },

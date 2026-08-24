@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { Download, Table, CheckSquare } from 'lucide-react';
 import { getIncharges, getAgentsByIncharge, getFarmersByAgent, getFarmerById, getTanksByFarmer } from '../utils/adminMockData';
 
@@ -74,7 +74,7 @@ const ExportCenter = () => {
 
   return (
     <>
-      <AdminHeader title="Export Center" breadcrumbs={[{ label: 'Reports' }, { label: 'Export Center', active: true }]} />
+      <PageHeader title="Export Center" breadcrumbs={[{ label: 'Reports' }, { label: 'Export Center', active: true }]} />
       <div className="content-inner">
         
         <div className="grid md:grid-cols-3" style={{ gap: '24px' }}>
