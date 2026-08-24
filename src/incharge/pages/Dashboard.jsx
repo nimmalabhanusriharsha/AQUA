@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Users, UserSquare, Droplets, TestTube, CheckCircle, AlertTriangle, 
+import {
+  Users, UserSquare, Droplets, TestTube, CheckCircle, AlertTriangle,
   ArrowUpRight, ArrowDownRight, ChevronRight
 } from 'lucide-react';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';
 import InchargeHeader from '../components/InchargeHeader';
 import { useMockData } from '../../context/MockDataContext';
 
@@ -34,17 +34,17 @@ const KPICard = ({ title, value, subtext, subtextPrefix, isPositive, icon: Icon,
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>{title}</p>
         <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>{value}</h3>
       </div>
-      <div style={{ 
-        width: '40px', height: '40px', borderRadius: '8px', 
+      <div style={{
+        width: '40px', height: '40px', borderRadius: '8px',
         backgroundColor: `${color}15`, color: color,
-        display: 'flex', justifyContent: 'center', alignItems: 'center' 
+        display: 'flex', justifyContent: 'center', alignItems: 'center'
       }}>
         <Icon size={20} />
       </div>
     </div>
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-      <span style={{ 
-        display: 'flex', alignItems: 'center', 
+      <span style={{
+        display: 'flex', alignItems: 'center',
         color: isPositive ? 'var(--status-green)' : 'var(--status-red)',
         fontWeight: 500
       }}>
@@ -59,7 +59,7 @@ const KPICard = ({ title, value, subtext, subtextPrefix, isPositive, icon: Icon,
 const Dashboard = () => {
   const navigate = useNavigate();
   const { getInchargeDashboardMetrics, db, getFarmerById, getTankById, getAgentById } = useMockData();
-  
+
   const metrics = getInchargeDashboardMetrics('INC001');
   const pendingVerifications = db.submissions
     .filter(s => s.status === 'PENDING_VERIFICATION')
@@ -79,7 +79,7 @@ const Dashboard = () => {
         status: s.status
       };
     });
-    
+
   // Keep mock activities for now since the prompt didn't ask to convert them
   const activities = [
     { id: 1, action: 'Agent A submitted Water Analysis', detail: 'Ashok - Tank 2', time: '10 mins ago' },
@@ -92,33 +92,33 @@ const Dashboard = () => {
       <div className="content-inner">
         {/* KPI Grid */}
         <div className="grid lg:grid-cols-3" style={{ marginBottom: '24px' }}>
-          <KPICard 
-            title="Total Agents" value={metrics.totalAgents} 
+          <KPICard
+            title="Total Agents" value={metrics.totalAgents}
             subtextPrefix={`${metrics.newAgentsMonth} `} subtext="this month"
             isPositive={true} icon={Users} color="#3b82f6"
           />
-          <KPICard 
-            title="Total Farmers" value={metrics.totalFarmers} 
+          <KPICard
+            title="Total Farmers" value={metrics.totalFarmers}
             subtextPrefix={`${metrics.newFarmersMonth} `} subtext="this month"
             isPositive={true} icon={UserSquare} color="#10b981"
           />
-          <KPICard 
-            title="Total Tanks" value={metrics.totalTanks.toLocaleString()} 
+          <KPICard
+            title="Total Tanks" value={metrics.totalTanks.toLocaleString()}
             subtextPrefix={`${metrics.newTanksMonth} `} subtext="this month"
             isPositive={true} icon={Droplets} color="#0ea5e9"
           />
-          <KPICard 
-            title="Tests Completed" value={metrics.testsCompleted.toLocaleString()} 
+          <KPICard
+            title="Tests Completed" value={metrics.testsCompleted.toLocaleString()}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={true} icon={TestTube} color="#8b5cf6"
           />
-          <KPICard 
-            title="Pending Verification" value={metrics.pendingVerification} 
+          <KPICard
+            title="Pending Verification" value={metrics.pendingVerification}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={true} icon={CheckCircle} color="#f59e0b"
           />
-          <KPICard 
-            title="Overdue Tests" value={metrics.overdueTests} 
+          <KPICard
+            title="Overdue Tests" value={metrics.overdueTests}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={false} icon={AlertTriangle} color="#ef4444"
           />
@@ -145,7 +145,7 @@ const Dashboard = () => {
                     ))}
                   </Pie>
                   <RechartsTooltip />
-                  <Legend verticalAlign="bottom" height={36}/>
+                  <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -155,13 +155,13 @@ const Dashboard = () => {
             <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Tests Trend (Last 7 Days)</h3>
             <div style={{ height: '300px', width: '100%' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={mockTrendData}>
+                <BarChart data={mockTrendData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} />
-                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}/>
-                  <Line type="monotone" dataKey="tests" stroke="var(--color-primary)" strokeWidth={3} dot={{r: 4, fill: 'var(--color-primary)', strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 6}} />
-                </LineChart>
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
+                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} cursor={{fill: '#f3f4f6'}} />
+                  <Bar dataKey="tests" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -175,7 +175,7 @@ const Dashboard = () => {
               <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Pending Verifications</h3>
               <span className="link" onClick={() => navigate('/incharge/verifications')}>View All</span>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {pendingVerifications.map(item => (
                 <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px' }}>
@@ -186,10 +186,10 @@ const Dashboard = () => {
                       {item.submitted}
                     </span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => navigate('/incharge/verifications')}
-                    style={{ 
-                      padding: '6px 12px', backgroundColor: 'var(--color-bg-main)', 
+                    style={{
+                      padding: '6px 12px', backgroundColor: 'var(--color-bg-main)',
                       border: '1px solid var(--color-border)', borderRadius: '6px',
                       fontSize: '13px', fontWeight: 500, cursor: 'pointer'
                     }}
@@ -207,7 +207,7 @@ const Dashboard = () => {
               <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Recent Activity</h3>
               <span className="link" onClick={() => navigate('/incharge/activity-log')}>View All</span>
             </div>
-            
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {activities.map((act, idx) => (
                 <div key={act.id} style={{ display: 'flex', gap: '12px' }}>

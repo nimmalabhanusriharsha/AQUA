@@ -6,7 +6,7 @@ import {
 import AdminHeader from '../components/AdminHeader';
 import { Map, Users, HardHat, Sprout, Database, FileCheck2, ArrowRight } from 'lucide-react';
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -94,13 +94,13 @@ const AdminDashboard = () => {
             <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px' }}>Tests Trend (Last 7 Days)</h3>
             <div style={{ height: '220px' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={adminTrendData}>
+                <BarChart data={adminTrendData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dy={10} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#94a3b8' }} dx={-10} />
-                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                  <Line type="monotone" dataKey="tests" stroke="var(--color-primary)" strokeWidth={3} dot={{ r: 4, fill: 'var(--color-primary)', strokeWidth: 2, stroke: 'white' }} activeDot={{ r: 6 }} />
-                </LineChart>
+                  <RechartsTooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} cursor={{fill: '#f1f5f9'}} />
+                  <Bar dataKey="tests" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
