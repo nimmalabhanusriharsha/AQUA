@@ -1,9 +1,11 @@
 import React from 'react';
 import { Bell, User } from 'lucide-react';
 import { getInchargeSession } from '../utils/inchargeAuth';
+import { useNavigate } from 'react-router-dom';
 
 const InchargeHeader = ({ title = "Dashboard" }) => {
   const session = getInchargeSession();
+  const navigate = useNavigate();
   
   return (
     <div style={{
@@ -18,13 +20,25 @@ const InchargeHeader = ({ title = "Dashboard" }) => {
       top: 0,
       zIndex: 10
     }}>
-      <div>
-        <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-main)', margin: 0 }}>{title}</h1>
-        {session && title === 'Dashboard' && (
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
-            Welcome back, Incharge {session.name}
-          </p>
-        )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button 
+          onClick={() => navigate(-1)} 
+          style={{ 
+            background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', 
+            color: 'var(--color-text-muted)', padding: '4px', borderRadius: '4px' 
+          }}
+          title="Go Back"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-main)', margin: 0 }}>{title}</h1>
+          {session && title === 'Dashboard' && (
+            <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
+              Welcome back, Incharge {session.name}
+            </p>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>

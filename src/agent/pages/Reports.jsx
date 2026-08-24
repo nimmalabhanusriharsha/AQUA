@@ -97,6 +97,12 @@ const Reports = () => {
     <div>
       <div style={styles.header}>
         <div style={styles.headerLeft}>
+          <button 
+            onClick={() => navigate(-1)} 
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: 'var(--color-text-main)', padding: 0 }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
           <div style={styles.iconCircle}>
             <FileText size={24} color="var(--color-primary)" />
           </div>
