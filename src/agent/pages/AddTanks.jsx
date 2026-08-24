@@ -22,7 +22,7 @@ const AddTanks = () => {
     setSession(s);
 
     if (!farmerData) {
-      navigate('/add-farmer');
+      navigate('/dashboard');
       return;
     }
 
@@ -57,9 +57,9 @@ const AddTanks = () => {
   return (
     <div>
       <div style={styles.header}>
-        <button style={styles.backBtn} onClick={() => navigate('/add-farmer')}>
+        <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
           <ArrowLeft size={20} />
-          <span>Back to Farmer Details</span>
+          <span>Back to Dashboard</span>
         </button>
       </div>
 

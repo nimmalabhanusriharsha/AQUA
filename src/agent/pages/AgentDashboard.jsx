@@ -53,7 +53,7 @@ const AgentDashboard = () => {
         </div>
         <div style={styles.headerRight}>
           <div style={{ position: 'relative' }}>
-            <div 
+            <div
               style={styles.iconCircle}
               onClick={() => setShowNotifications(!showNotifications)}
             >
@@ -64,7 +64,7 @@ const AgentDashboard = () => {
                 </div>
               )}
             </div>
-            
+
             {showNotifications && (
               <div style={styles.notificationDropdown}>
                 <h3 style={styles.notificationTitle}>Notifications</h3>
@@ -73,8 +73,8 @@ const AgentDashboard = () => {
                 ) : (
                   <div style={styles.notificationList}>
                     {notifications.map(notification => (
-                      <div 
-                        key={notification.id} 
+                      <div
+                        key={notification.id}
                         style={{
                           ...styles.notificationItem,
                           backgroundColor: notification.read ? 'transparent' : '#f0f9ff'
@@ -124,32 +124,24 @@ const AgentDashboard = () => {
             <div className="card" style={styles.testStatusCard}>
               <h3 style={styles.cardTitle}>Weekly Test Status</h3>
               <div style={styles.progressBarContainer}>
-                <div style={{...styles.progressSegment, backgroundColor: 'var(--status-green)', width: `${progress.completed}%`}}></div>
-                <div style={{...styles.progressSegment, backgroundColor: 'var(--status-yellow)', width: `${progress.due}%`}}></div>
-                <div style={{...styles.progressSegment, backgroundColor: 'var(--status-red)', width: `${progress.overdue}%`}}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-green)', width: `${progress.completed}%` }}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-yellow)', width: `${progress.due}%` }}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-red)', width: `${progress.overdue}%` }}></div>
               </div>
               <div style={styles.progressLabels}>
                 <div style={styles.legendItem}>
-                  <div style={{...styles.legendDot, backgroundColor: 'var(--status-green)'}}></div>
+                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-green)' }}></div>
                   <span>Completed: {kpi.testsCompleted}</span>
                 </div>
                 <div style={styles.legendItem}>
-                  <div style={{...styles.legendDot, backgroundColor: 'var(--status-yellow)'}}></div>
+                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-yellow)' }}></div>
                   <span>Due: {kpi.testsDue}</span>
                 </div>
                 <div style={styles.legendItem}>
-                  <div style={{...styles.legendDot, backgroundColor: 'var(--status-red)'}}></div>
+                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-red)' }}></div>
                   <span>Overdue: {kpi.overdue}</span>
                 </div>
               </div>
-              
-              <button 
-                className="btn-primary" 
-                style={styles.newFarmerBtn}
-                onClick={() => navigate('/add-farmer')}
-              >
-                + NEW FARMER
-              </button>
             </div>
           </div>
         </div>

@@ -10,7 +10,6 @@ import Farmers from './agent/pages/Farmers';
 import FarmerDetails from './agent/pages/FarmerDetails';
 import TankDetails from './agent/pages/TankDetails';
 import SiteVisit from './agent/pages/SiteVisit';
-import AddFarmer from './agent/pages/AddFarmer';
 import AddTanks from './agent/pages/AddTanks';
 import Tests from './agent/pages/Tests';
 import Reports from './agent/pages/Reports';
@@ -105,7 +104,6 @@ function App() {
           <Route path="/farmers/:farmerId" element={<ProtectedRoute><Layout><FarmerDetails /></Layout></ProtectedRoute>} />
           <Route path="/tanks/:tankId" element={<ProtectedRoute><Layout><TankDetails /></Layout></ProtectedRoute>} />
           <Route path="/visit/:tankId" element={<ProtectedRoute><Layout><SiteVisit /></Layout></ProtectedRoute>} />
-          <Route path="/add-farmer" element={<ProtectedRoute><Layout><AddFarmer /></Layout></ProtectedRoute>} />
           <Route path="/add-tanks" element={<ProtectedRoute><Layout><AddTanks /></Layout></ProtectedRoute>} />
           
           <Route path="/tests" element={<ProtectedRoute><Layout><Tests /></Layout></ProtectedRoute>} />
