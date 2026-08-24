@@ -17,6 +17,7 @@ const Farmers = () => {
   const [totalLandArea, setTotalLandArea] = useState('');
   const [waterSource, setWaterSource] = useState('');
   const [numberOfTanks, setNumberOfTanks] = useState('');
+  const [phoneError, setPhoneError] = useState('');
 
   const farmers = db.farmers.map(f => {
     const tanks = getTanksByFarmerId(f.id);
@@ -39,7 +40,14 @@ const Farmers = () => {
 
   const handleAddFarmer = (e) => {
     e.preventDefault();
+    setPhoneError('');
     if (!farmerName || !phoneNumber || !numberOfTanks) return;
+
+    const isDuplicatePhone = db.farmers.some(f => f.phone === phoneNumber);
+    if (isDuplicatePhone) {
+      setPhoneError("You can't enter: A farmer with this phone number already exists.");
+      return;
+    }
 
     // We assign it to INC001's first agent as a default, or an unassigned state if we had one
     // For this mock, we'll assign to 'agent001' by default when created from incharge panel
@@ -66,6 +74,7 @@ const Farmers = () => {
     setTotalLandArea('');
     setWaterSource('');
     setNumberOfTanks('');
+    setPhoneError('');
     setIsModalOpen(false);
   };
 
@@ -166,7 +175,10 @@ const Farmers = () => {
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '500px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <button
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                setIsModalOpen(false);
+                setPhoneError('');
+              }}
               style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
             >
               <X size={20} />
@@ -183,9 +195,13 @@ const Farmers = () => {
 
               <div className="input-group">
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Phone Number *</label>
-                <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
-                  <input type="tel" placeholder="e.g. +91 9876543210" required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+                <div className="input-field" style={{ backgroundColor: '#f1f5f9', border: phoneError ? '1px solid red' : 'none' }}>
+                  <input type="tel" placeholder="e.g. +91 9876543210" required value={phoneNumber} onChange={e => {
+                    setPhoneNumber(e.target.value);
+                    setPhoneError('');
+                  }} />
                 </div>
+                {phoneError && <p style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>{phoneError}</p>}
               </div>
 
               <div className="grid md:grid-cols-2" style={{ gap: '16px' }}>
@@ -236,7 +252,10 @@ const Farmers = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>
+                <button type="button" className="btn-secondary" onClick={() => {
+                  setIsModalOpen(false);
+                  setPhoneError('');
+                }}>
                   Cancel
                 </button>
                 <button type="submit" className="btn-primary">
