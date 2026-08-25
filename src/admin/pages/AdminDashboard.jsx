@@ -2,8 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Tractor, Box, TrendingUp, Activity, ShieldCheck,
-  AlertCircle, FileSpreadsheet, ArrowUpRight, CheckCircle2,
-  AlertTriangle, Flame
+  AlertCircle, FileSpreadsheet, ArrowUpRight
 } from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
@@ -259,7 +258,7 @@ const AdminDashboard = () => {
         <div style={styles.recommendationsCard}>
           <div style={styles.recHeaderRow}>
             <div style={styles.recTitleGroup}>
-              <AlertCircle size={18} color="#f59e0b" />
+              <AlertCircle size={18} color="#2563eb" />
               <span style={styles.recTitle}>DATA-DRIVEN OPERATIONAL RECOMMENDATIONS</span>
             </div>
             <div style={styles.recEngineTag}>
