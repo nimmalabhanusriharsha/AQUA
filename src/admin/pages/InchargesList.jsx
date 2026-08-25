@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { getIncharges, getRegions, getAgents } from '../utils/adminMockData';
 import { 
   Plus, Search, ArrowLeftRight, UserX, Check, X, 
   MapPin, Phone, Mail, ShieldAlert, UserCheck, Edit,
   Users, UserPlus, UserMinus, Shield, CheckCircle2 
+=======
+import { getIncharges, getRegions, getAgents, getFarmers } from '../utils/adminMockData';
+import { 
+  Plus, Search, ArrowLeftRight, UserX, Check, X, 
+  MapPin, Phone, Mail, ShieldAlert, UserCheck, Eye, 
+  Edit, Users, UserMinus, UserPlus, Tractor, Briefcase 
+>>>>>>> 57a2c90 (updated admin details)
 } from 'lucide-react';
 
 const InchargesList = () => {
   const navigate = useNavigate();
   const regions = getRegions();
 
+<<<<<<< HEAD
   // 1. Load Incharges from localStorage or fallback mock data
+=======
+  // Load incharges from localStorage or fallback
+>>>>>>> 57a2c90 (updated admin details)
   const [incharges, setIncharges] = useState(() => {
     const saved = localStorage.getItem('royal_admin_incharges_data');
     if (saved) {
@@ -24,7 +36,11 @@ const InchargesList = () => {
     return getIncharges();
   });
 
+<<<<<<< HEAD
   // 2. Load Agents from localStorage or fallback mock data
+=======
+  // Load agents from localStorage or fallback
+>>>>>>> 57a2c90 (updated admin details)
   const [agents, setAgents] = useState(() => {
     const saved = localStorage.getItem('royal_admin_agents_data');
     if (saved) {
@@ -37,7 +53,11 @@ const InchargesList = () => {
     return getAgents();
   });
 
+<<<<<<< HEAD
   // Save to localStorage on change
+=======
+  // Save changes to localStorage
+>>>>>>> 57a2c90 (updated admin details)
   useEffect(() => {
     localStorage.setItem('royal_admin_incharges_data', JSON.stringify(incharges));
   }, [incharges]);
@@ -55,10 +75,19 @@ const InchargesList = () => {
   const [showTeamModal, setShowTeamModal] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+<<<<<<< HEAD
   const [showAssignAgentModal, setShowAssignAgentModal] = useState(false);
 
   const [selectedIncharge, setSelectedIncharge] = useState(null);
   const [selectedAgentToAssign, setSelectedAgentToAssign] = useState('');
+=======
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAssignAgentModal, setShowAssignAgentModal] = useState(false);
+
+  const [selectedIncharge, setSelectedIncharge] = useState(null);
+  const [agentToAssignId, setAgentToAssignId] = useState('');
+>>>>>>> 57a2c90 (updated admin details)
 
   // New Incharge Form
   const [newIncharge, setNewIncharge] = useState({
@@ -71,11 +100,16 @@ const InchargesList = () => {
   });
 
   // Edit Incharge Form
+<<<<<<< HEAD
   const [editForm, setEditForm] = useState({
     id: '',
     name: '',
     shortName: '',
     role: '',
+=======
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+>>>>>>> 57a2c90 (updated admin details)
     phone: '',
     email: '',
     regionId: '',
@@ -93,6 +127,16 @@ const InchargesList = () => {
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(''), 3500);
+  };
+
+  // Helper: Get active agents reporting to an incharge
+  const getAgentsForIncharge = (inchargeId) => {
+    return agents.filter(a => a.inchargeId === inchargeId);
+  };
+
+  // Helper: Get available agents not currently under this incharge
+  const getAvailableAgentsForIncharge = (inchargeId) => {
+    return agents.filter(a => a.inchargeId !== inchargeId);
   };
 
   // Filter incharges based on search term
@@ -152,7 +196,11 @@ const InchargesList = () => {
       agents: 0,
       farmers: 0,
       tanks: 0,
+<<<<<<< HEAD
       compliance: 95,
+=======
+      compliance: 94,
+>>>>>>> 57a2c90 (updated admin details)
       status: 'ACTIVE'
     };
 
@@ -169,6 +217,7 @@ const InchargesList = () => {
     });
   };
 
+<<<<<<< HEAD
   // 2. Open Edit Incharge Modal
   const openEditModal = (inc) => {
     setSelectedIncharge(inc);
@@ -181,11 +230,29 @@ const InchargesList = () => {
       email: inc.email,
       regionId: inc.regionId || 'REG-SOUTH',
       locality: inc.locality,
+=======
+  // 2. Open Details / Manage Team Modal
+  const openDetailModal = (inc) => {
+    setSelectedIncharge(inc);
+    setShowDetailModal(true);
+  };
+
+  // 3. Open Edit Modal
+  const openEditModal = (inc) => {
+    setSelectedIncharge(inc);
+    setEditFormData({
+      name: inc.name || '',
+      phone: inc.phone || '',
+      email: inc.email || '',
+      regionId: inc.regionId || 'REG-CENTRAL',
+      locality: inc.locality || '',
+>>>>>>> 57a2c90 (updated admin details)
       status: inc.status || 'ACTIVE'
     });
     setShowEditModal(true);
   };
 
+<<<<<<< HEAD
   // Handle Edit Submit
   const handleEditSubmit = (e) => {
     e.preventDefault();
@@ -212,10 +279,37 @@ const InchargesList = () => {
     setAgents(prev => prev.map(a => {
       if (a.inchargeId === selectedIncharge.id) {
         return { ...a, incharge: updatedIncharge.name };
+=======
+  // Save Edit Changes
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedIncharge) return;
+
+    const selectedRegionObj = regions.find(r => r.id === editFormData.regionId) || regions[0];
+
+    const updatedIncharge = {
+      ...selectedIncharge,
+      name: editFormData.name.trim(),
+      phone: editFormData.phone.trim(),
+      email: editFormData.email.trim(),
+      regionId: selectedRegionObj.id,
+      region: selectedRegionObj.name,
+      locality: editFormData.locality,
+      status: editFormData.status
+    };
+
+    setIncharges(prev => prev.map(inc => inc.id === selectedIncharge.id ? updatedIncharge : inc));
+    
+    // Also update incharge name in reporting agents
+    setAgents(prev => prev.map(a => {
+      if (a.inchargeId === selectedIncharge.id) {
+        return { ...a, incharge: updatedIncharge.name, region: updatedIncharge.region };
+>>>>>>> 57a2c90 (updated admin details)
       }
       return a;
     }));
 
+<<<<<<< HEAD
     showToast(`Incharge details for ${updatedIncharge.name} updated successfully!`);
     setShowEditModal(false);
   };
@@ -237,6 +331,24 @@ const InchargesList = () => {
 
     const updatedAgents = agents.map(a => {
       if (a.id === agentId) {
+=======
+    setSelectedIncharge(updatedIncharge);
+    showToast(`Incharge ${updatedIncharge.name} updated successfully!`);
+    setShowEditModal(false);
+  };
+
+  // 4. Assign Agent to this Incharge
+  const handleAssignAgentSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedIncharge || !agentToAssignId) return;
+
+    const agentToAssign = agents.find(a => a.id === agentToAssignId);
+    if (!agentToAssign) return;
+
+    // Update agent's incharge
+    setAgents(prev => prev.map(a => {
+      if (a.id === agentToAssignId) {
+>>>>>>> 57a2c90 (updated admin details)
         return {
           ...a,
           inchargeId: selectedIncharge.id,
@@ -244,6 +356,7 @@ const InchargesList = () => {
         };
       }
       return a;
+<<<<<<< HEAD
     });
 
     setAgents(updatedAgents);
@@ -257,10 +370,47 @@ const InchargesList = () => {
     if (!agentObj || !selectedIncharge) return;
 
     const updatedAgents = agents.map(a => {
+=======
+    }));
+
+    // Update incharge's agents and farmers counts
+    const updatedAgentsList = agents.map(a => a.id === agentToAssignId ? { ...a, inchargeId: selectedIncharge.id } : a);
+    const newAgentsForThisIncharge = updatedAgentsList.filter(a => a.inchargeId === selectedIncharge.id);
+    const newFarmersCount = newAgentsForThisIncharge.reduce((acc, a) => acc + (a.farmers || 1), 0);
+
+    setIncharges(prev => prev.map(inc => {
+      if (inc.id === selectedIncharge.id) {
+        const updated = {
+          ...inc,
+          agents: newAgentsForThisIncharge.length,
+          farmers: newFarmersCount
+        };
+        setSelectedIncharge(updated);
+        return updated;
+      }
+      return inc;
+    }));
+
+    showToast(`Agent ${agentToAssign.name} assigned to ${selectedIncharge.name}!`);
+    setShowAssignAgentModal(false);
+    setAgentToAssignId('');
+  };
+
+  // 5. Remove / Unassign Agent from this Incharge
+  const handleRemoveAgentFromIncharge = (agentId) => {
+    if (!selectedIncharge) return;
+
+    const agentToRemove = agents.find(a => a.id === agentId);
+    if (!agentToRemove) return;
+
+    // Set agent's incharge to unassigned
+    setAgents(prev => prev.map(a => {
+>>>>>>> 57a2c90 (updated admin details)
       if (a.id === agentId) {
         return {
           ...a,
           inchargeId: null,
+<<<<<<< HEAD
           incharge: 'Unassigned / HQ Pool'
         };
       }
@@ -272,6 +422,35 @@ const InchargesList = () => {
   };
 
   // 4. Handle Transfer
+=======
+          incharge: 'Unassigned'
+        };
+      }
+      return a;
+    }));
+
+    // Recalculate incharge counts
+    const remainingAgents = agents.filter(a => a.inchargeId === selectedIncharge.id && a.id !== agentId);
+    const newFarmersCount = remainingAgents.reduce((acc, a) => acc + (a.farmers || 1), 0);
+
+    setIncharges(prev => prev.map(inc => {
+      if (inc.id === selectedIncharge.id) {
+        const updated = {
+          ...inc,
+          agents: remainingAgents.length,
+          farmers: newFarmersCount
+        };
+        setSelectedIncharge(updated);
+        return updated;
+      }
+      return inc;
+    }));
+
+    showToast(`Agent ${agentToRemove.name} unassigned from ${selectedIncharge.name}.`);
+  };
+
+  // 6. Handle Transfer
+>>>>>>> 57a2c90 (updated admin details)
   const openTransferModal = (inc) => {
     setSelectedIncharge(inc);
     const targetRegion = regions.find(r => r.id !== inc.regionId) || regions[0];
@@ -296,12 +475,20 @@ const InchargesList = () => {
       locality: transferData.locality
     };
 
+<<<<<<< HEAD
     setIncharges(prev => prev.map(item => item.id === selectedIncharge.id ? updatedIncharge : item));
     showToast(`Incharge ${selectedIncharge.name} transferred to ${targetRegionObj.name} (${transferData.locality}).`);
+=======
+    showToast(`Transferred ${selectedIncharge.name} to ${selectedRegionObj.name} (${transferData.locality})`);
+>>>>>>> 57a2c90 (updated admin details)
     setShowTransferModal(false);
   };
 
+<<<<<<< HEAD
   // 5. Handle Deactivate / Reactivate
+=======
+  // 7. Handle Deactivate / Status Toggle
+>>>>>>> 57a2c90 (updated admin details)
   const openDeactivateModal = (inc) => {
     setSelectedIncharge(inc);
     setShowDeactivateModal(true);
@@ -320,6 +507,24 @@ const InchargesList = () => {
 
     showToast(`Incharge ${selectedIncharge.name} status changed to ${newStatus}.`);
     setShowDeactivateModal(false);
+<<<<<<< HEAD
+=======
+    setSelectedIncharge(null);
+  };
+
+  const handlePermanentRemove = () => {
+    if (!selectedIncharge) return;
+
+    setIncharges(prev => prev.filter(inc => inc.id !== selectedIncharge.id));
+    showToast(`Incharge ${selectedIncharge.name} removed from roster.`);
+    setShowDeactivateModal(false);
+    setSelectedIncharge(null);
+  };
+
+  const getLocalitiesForRegion = (regionId) => {
+    const region = regions.find(r => r.id === regionId);
+    return region?.localities || [];
+>>>>>>> 57a2c90 (updated admin details)
   };
 
   return (
@@ -380,14 +585,30 @@ const InchargesList = () => {
             <tbody>
               {filteredIncharges.length > 0 ? (
                 filteredIncharges.map(inc => {
+<<<<<<< HEAD
                   const assignedAgents = getAssignedAgents(inc);
+=======
+                  const incAgents = getAgentsForIncharge(inc.id);
+                  const activeAgentsCount = incAgents.length;
+                  const totalFarmersUnderIncharge = incAgents.reduce((acc, a) => acc + (a.farmers || 1), 0);
+>>>>>>> 57a2c90 (updated admin details)
 
                   return (
                     <tr key={inc.id} style={styles.tr}>
                       {/* Employee ID / Name */}
                       <td style={styles.td}>
                         <div style={styles.nameColumn}>
+<<<<<<< HEAD
                           <span style={styles.inchargeName}>{inc.name}</span>
+=======
+                          <span 
+                            style={{ ...styles.inchargeName, cursor: 'pointer' }}
+                            onClick={() => openDetailModal(inc)}
+                            title="Click to view full profile & team"
+                          >
+                            {inc.name}
+                          </span>
+>>>>>>> 57a2c90 (updated admin details)
                           <span style={styles.empIdBadge}>{inc.id}</span>
                         </div>
                       </td>
@@ -408,6 +629,7 @@ const InchargesList = () => {
                         </div>
                       </td>
 
+<<<<<<< HEAD
                       {/* Agents Managed (Clickable to open Team modal) */}
                       <td style={styles.td}>
                         <button 
@@ -417,13 +639,28 @@ const InchargesList = () => {
                         >
                           <Users size={14} />
                           <span>{assignedAgents.length} {assignedAgents.length === 1 ? 'Agent' : 'Agents'}</span>
+=======
+                      {/* Agents Managed */}
+                      <td style={styles.td}>
+                        <button 
+                          style={styles.agentsBadgeBtn}
+                          onClick={() => openDetailModal(inc)}
+                          title="Click to view & assign agents"
+                        >
+                          <Users size={14} color="#2563eb" />
+                          <span>{activeAgentsCount} Agents</span>
+>>>>>>> 57a2c90 (updated admin details)
                         </button>
                       </td>
 
                       {/* Farmers Scope */}
                       <td style={styles.td}>
                         <span style={styles.farmersScopeText}>
+<<<<<<< HEAD
                           {inc.farmers} Farmers
+=======
+                          {totalFarmersUnderIncharge || inc.farmers} Farmers
+>>>>>>> 57a2c90 (updated admin details)
                         </span>
                       </td>
 
@@ -438,6 +675,7 @@ const InchargesList = () => {
                         </span>
                       </td>
 
+<<<<<<< HEAD
                       {/* Actions: Edit, Team / Assign, Transfer, Deactivate */}
                       <td style={styles.td}>
                         <div style={styles.actionsGroup}>
@@ -446,11 +684,32 @@ const InchargesList = () => {
                             style={styles.editBtn}
                             onClick={() => openEditModal(inc)}
                             title="Edit Incharge Details & Contact"
+=======
+                      {/* Actions: View/Manage, Edit, Transfer, Deactivate */}
+                      <td style={styles.td}>
+                        <div style={styles.actionsGrid}>
+                          {/* 1. View & Manage Team Button */}
+                          <button 
+                            style={styles.viewManageBtn}
+                            onClick={() => openDetailModal(inc)}
+                            title="View all information, assigned agents & farmers"
+                          >
+                            <Eye size={13} />
+                            <span>Details &amp; Team</span>
+                          </button>
+
+                          {/* 2. Edit Details Button */}
+                          <button 
+                            style={styles.editBtn}
+                            onClick={() => openEditModal(inc)}
+                            title="Edit Incharge Details"
+>>>>>>> 57a2c90 (updated admin details)
                           >
                             <Edit size={13} />
                             <span>Edit</span>
                           </button>
 
+<<<<<<< HEAD
                           {/* 2. Assign / Manage Team */}
                           <button 
                             style={styles.teamBtn}
@@ -462,6 +721,9 @@ const InchargesList = () => {
                           </button>
 
                           {/* 3. Transfer Region */}
+=======
+                          {/* 3. Transfer Button */}
+>>>>>>> 57a2c90 (updated admin details)
                           <button 
                             style={styles.transferBtn}
                             onClick={() => openTransferModal(inc)}
@@ -471,7 +733,11 @@ const InchargesList = () => {
                             <span>Transfer</span>
                           </button>
 
+<<<<<<< HEAD
                           {/* 4. Deactivate */}
+=======
+                          {/* 4. Deactivate Button */}
+>>>>>>> 57a2c90 (updated admin details)
                           <button 
                             style={{
                               ...styles.deactivateBtn,
@@ -502,6 +768,7 @@ const InchargesList = () => {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* Modal 1: Edit Incharge Details */}
       {showEditModal && selectedIncharge && (
         <div style={styles.modalOverlay}>
@@ -520,6 +787,224 @@ const InchargesList = () => {
                   </div>
                 </div>
               </div>
+=======
+      {/* 3. Modal: Incharge Information, Agents Under Him & Team Management */}
+      {showDetailModal && selectedIncharge && (
+        <div style={styles.modalOverlay}>
+          <div style={{ ...styles.modalBox, width: '750px', maxWidth: '95vw' }}>
+            <div style={styles.modalHeader}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={styles.inchargeIconCircle}>
+                  <Users size={20} color="#2563eb" />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>
+                    {selectedIncharge.name}
+                  </h3>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                    {selectedIncharge.id} • {selectedIncharge.region}
+                  </div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button 
+                  onClick={() => {
+                    setShowDetailModal(false);
+                    openEditModal(selectedIncharge);
+                  }}
+                  style={styles.headerEditBtn}
+                >
+                  <Edit size={13} />
+                  <span>Edit Info</span>
+                </button>
+                <button onClick={() => setShowDetailModal(false)} style={styles.modalCloseBtn}>
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+
+            <div style={styles.modalBody}>
+              {/* Profile Details Card */}
+              <div style={styles.infoSummaryGrid}>
+                <div style={styles.infoItem}>
+                  <span style={styles.infoLabel}>PHONE</span>
+                  <span style={styles.infoValue}>{selectedIncharge.phone}</span>
+                </div>
+                <div style={styles.infoItem}>
+                  <span style={styles.infoLabel}>CORPORATE EMAIL</span>
+                  <span style={styles.infoValue}>{selectedIncharge.email}</span>
+                </div>
+                <div style={styles.infoItem}>
+                  <span style={styles.infoLabel}>ASSIGNED LOCALITY</span>
+                  <span style={{ ...styles.infoValue, color: '#2563eb' }}>{selectedIncharge.locality}</span>
+                </div>
+                <div style={styles.infoItem}>
+                  <span style={styles.infoLabel}>STATUS</span>
+                  <span style={{
+                    ...styles.statusBadge,
+                    backgroundColor: selectedIncharge.status === 'ACTIVE' ? '#dcfce7' : '#fee2e2',
+                    color: selectedIncharge.status === 'ACTIVE' ? '#16a34a' : '#dc2626'
+                  }}>
+                    {selectedIncharge.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Agents Under This Incharge Header + Assign Button */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '20px 0 12px 0' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: '#0f172a' }}>
+                    Agents Under This Incharge ({getAgentsForIncharge(selectedIncharge.id).length})
+                  </h4>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>
+                    Field agents directly reporting to {selectedIncharge.name}
+                  </p>
+                </div>
+                <button 
+                  style={styles.assignAgentBtn}
+                  onClick={() => setShowAssignAgentModal(true)}
+                >
+                  <UserPlus size={14} />
+                  <span>Assign Field Agent</span>
+                </button>
+              </div>
+
+              {/* Agents List Table */}
+              <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <th style={{ padding: '10px 14px', fontSize: '11px', fontWeight: 700, color: '#64748b' }}>AGENT NAME / ID</th>
+                      <th style={{ padding: '10px 14px', fontSize: '11px', fontWeight: 700, color: '#64748b' }}>CONTACT</th>
+                      <th style={{ padding: '10px 14px', fontSize: '11px', fontWeight: 700, color: '#64748b' }}>LOCALITY</th>
+                      <th style={{ padding: '10px 14px', fontSize: '11px', fontWeight: 700, color: '#64748b' }}>FARMERS</th>
+                      <th style={{ padding: '10px 14px', fontSize: '11px', fontWeight: 700, color: '#64748b', textAlign: 'right' }}>ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {getAgentsForIncharge(selectedIncharge.id).length > 0 ? (
+                      getAgentsForIncharge(selectedIncharge.id).map(ag => (
+                        <tr key={ag.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 700, color: '#0f172a' }}>{ag.name}</div>
+                            <div style={{ fontSize: '11px', fontWeight: 700, color: '#2563eb' }}>{ag.id}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px' }}>
+                            <div style={{ fontWeight: 500, color: '#1e293b' }}>{ag.phone}</div>
+                            <div style={{ fontSize: '11.5px', color: '#64748b' }}>{ag.email}</div>
+                          </td>
+                          <td style={{ padding: '12px 14px', color: '#334155', fontWeight: 500 }}>
+                            {ag.locality}
+                          </td>
+                          <td style={{ padding: '12px 14px', fontWeight: 700, color: '#16a34a' }}>
+                            {ag.farmers} Farmers
+                          </td>
+                          <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                            <button 
+                              style={styles.unassignBtn}
+                              onClick={() => handleRemoveAgentFromIncharge(ag.id)}
+                              title="Unassign this agent from incharge"
+                            >
+                              <UserMinus size={13} />
+                              <span>Remove</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
+                          No agents currently assigned to this incharge. Click "Assign Field Agent" above.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style={{ ...styles.modalFooter, marginTop: '20px' }}>
+              <button 
+                type="button" 
+                onClick={() => setShowDetailModal(false)}
+                style={styles.cancelBtn}
+              >
+                Close Window
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Modal: Assign Agent to Incharge */}
+      {showAssignAgentModal && selectedIncharge && (
+        <div style={styles.modalOverlay}>
+          <div style={{ ...styles.modalBox, width: '460px' }}>
+            <div style={styles.modalHeader}>
+              <h3 style={{ margin: 0, fontSize: '16.5px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <UserPlus size={18} color="#2563eb" />
+                Assign Agent to {selectedIncharge.name}
+              </h3>
+              <button onClick={() => setShowAssignAgentModal(false)} style={styles.modalCloseBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAssignAgentSubmit}>
+              <div style={styles.modalBody}>
+                <p style={{ fontSize: '13px', color: '#475569', margin: '0 0 14px 0' }}>
+                  Select a field agent to assign under <strong>{selectedIncharge.name}</strong>'s jurisdiction in <em>{selectedIncharge.region}</em>:
+                </p>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={styles.modalLabel}>Select Field Agent *</label>
+                  <select 
+                    style={styles.modalSelect}
+                    value={agentToAssignId}
+                    onChange={(e) => setAgentToAssignId(e.target.value)}
+                    required
+                  >
+                    <option value="">-- Choose an Agent --</option>
+                    {getAvailableAgentsForIncharge(selectedIncharge.id).map(ag => (
+                      <option key={ag.id} value={ag.id}>
+                        {ag.name} ({ag.id}) - Currently: {ag.incharge || 'Unassigned'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={styles.modalFooter}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowAssignAgentModal(false)}
+                  style={styles.cancelBtn}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  style={styles.submitBtn}
+                  disabled={!agentToAssignId}
+                >
+                  Confirm Assignment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Modal: Edit Incharge Details */}
+      {showEditModal && selectedIncharge && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalBox}>
+            <div style={styles.modalHeader}>
+              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit size={18} color="#2563eb" />
+                Edit Incharge Details
+              </h3>
+>>>>>>> 57a2c90 (updated admin details)
               <button onClick={() => setShowEditModal(false)} style={styles.modalCloseBtn}>
                 <X size={18} />
               </button>
@@ -527,6 +1012,7 @@ const InchargesList = () => {
 
             <form onSubmit={handleEditSubmit}>
               <div style={styles.modalBody}>
+<<<<<<< HEAD
                 {/* Full Name & Designation */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px', marginBottom: '14px' }}>
                   <div>
@@ -558,22 +1044,51 @@ const InchargesList = () => {
                       type="text" 
                       value={editForm.phone}
                       onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+=======
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={styles.modalLabel}>Incharge Full Name &amp; Title</label>
+                  <input 
+                    type="text"
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    style={styles.modalInput}
+                    required
+                  />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Phone Number</label>
+                    <input 
+                      type="text"
+                      value={editFormData.phone}
+                      onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+>>>>>>> 57a2c90 (updated admin details)
                       style={styles.modalInput}
                       required
                     />
                   </div>
                   <div>
+<<<<<<< HEAD
                     <label style={styles.modalLabel}>Corporate Email *</label>
                     <input 
                       type="email" 
                       value={editForm.email}
                       onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+=======
+                    <label style={styles.modalLabel}>Corporate Email</label>
+                    <input 
+                      type="email"
+                      value={editFormData.email}
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+>>>>>>> 57a2c90 (updated admin details)
                       style={styles.modalInput}
                       required
                     />
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {/* Region & Locality */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
                   <div>
@@ -588,6 +1103,21 @@ const InchargesList = () => {
                           ...editForm,
                           regionId: rId,
                           locality: rObj?.localities[0]?.name || ''
+=======
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Assigned Region</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFormData.regionId}
+                      onChange={(e) => {
+                        const regId = e.target.value;
+                        const locs = getLocalitiesForRegion(regId);
+                        setEditFormData({ 
+                          ...editFormData, 
+                          regionId: regId, 
+                          locality: locs[0]?.name || '' 
+>>>>>>> 57a2c90 (updated admin details)
                         });
                       }}
                     >
@@ -597,6 +1127,7 @@ const InchargesList = () => {
                     </select>
                   </div>
                   <div>
+<<<<<<< HEAD
                     <label style={styles.modalLabel}>Locality Headquarters</label>
                     <select 
                       style={styles.modalSelect}
@@ -604,12 +1135,22 @@ const InchargesList = () => {
                       onChange={(e) => setEditForm({ ...editForm, locality: e.target.value })}
                     >
                       {regions.find(r => r.id === editForm.regionId)?.localities.map(loc => (
+=======
+                    <label style={styles.modalLabel}>Locality</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFormData.locality}
+                      onChange={(e) => setEditFormData({ ...editFormData, locality: e.target.value })}
+                    >
+                      {getLocalitiesForRegion(editFormData.regionId).map(loc => (
+>>>>>>> 57a2c90 (updated admin details)
                         <option key={loc.id} value={loc.name}>{loc.name}</option>
                       ))}
                     </select>
                   </div>
                 </div>
 
+<<<<<<< HEAD
                 {/* Status Toggle */}
                 <div style={{ marginBottom: '14px' }}>
                   <label style={styles.modalLabel}>Account &amp; Operations Status</label>
@@ -620,6 +1161,17 @@ const InchargesList = () => {
                   >
                     <option value="ACTIVE">ACTIVE (In Service)</option>
                     <option value="INACTIVE">INACTIVE (On Leave / Suspended)</option>
+=======
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={styles.modalLabel}>Status</label>
+                  <select 
+                    style={styles.modalSelect}
+                    value={editFormData.status}
+                    onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
+                  >
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="INACTIVE">INACTIVE</option>
+>>>>>>> 57a2c90 (updated admin details)
                   </select>
                 </div>
               </div>
@@ -636,7 +1188,11 @@ const InchargesList = () => {
                   type="submit" 
                   style={styles.submitBtn}
                 >
+<<<<<<< HEAD
                   Save Incharge Details
+=======
+                  Save Changes
+>>>>>>> 57a2c90 (updated admin details)
                 </button>
               </div>
             </form>
@@ -644,6 +1200,7 @@ const InchargesList = () => {
         </div>
       )}
 
+<<<<<<< HEAD
       {/* Modal 2: Details & Team / Assign Agent */}
       {showTeamModal && selectedIncharge && (
         <div style={styles.modalOverlay}>
@@ -778,6 +1335,9 @@ const InchargesList = () => {
       )}
 
       {/* Modal 3: Add New Incharge */}
+=======
+      {/* 6. Modal: Add New Incharge */}
+>>>>>>> 57a2c90 (updated admin details)
       {showAddModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalBox}>
@@ -896,7 +1456,11 @@ const InchargesList = () => {
         </div>
       )}
 
+<<<<<<< HEAD
       {/* Modal 4: Transfer Incharge */}
+=======
+      {/* 7. Modal: Transfer Incharge */}
+>>>>>>> 57a2c90 (updated admin details)
       {showTransferModal && selectedIncharge && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalBox}>
@@ -952,6 +1516,20 @@ const InchargesList = () => {
                     ))}
                   </select>
                 </div>
+<<<<<<< HEAD
+=======
+
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={styles.modalLabel}>Transfer Reason / Audit Notes</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. Operational balancing for seasonal expansion"
+                    value={transferData.reason}
+                    onChange={(e) => setTransferData({ ...transferData, reason: e.target.value })}
+                    style={styles.modalInput}
+                  />
+                </div>
+>>>>>>> 57a2c90 (updated admin details)
               </div>
 
               <div style={styles.modalFooter}>
@@ -974,7 +1552,11 @@ const InchargesList = () => {
         </div>
       )}
 
+<<<<<<< HEAD
       {/* Modal 5: Deactivate Confirmation */}
+=======
+      {/* 8. Modal: Deactivate / Remove Incharge */}
+>>>>>>> 57a2c90 (updated admin details)
       {showDeactivateModal && selectedIncharge && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalBox}>
@@ -1152,7 +1734,11 @@ const styles = {
   inchargeName: {
     fontSize: '14px',
     fontWeight: 700,
-    color: '#0f172a'
+    color: '#0f172a',
+    transition: 'color 0.15s',
+    '&:hover': {
+      color: '#2563eb'
+    }
   },
   empIdBadge: {
     fontSize: '11.5px',
@@ -1187,6 +1773,7 @@ const styles = {
     fontSize: '11.5px',
     color: '#64748b'
   },
+<<<<<<< HEAD
   agentsManagedBtn: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -1200,6 +1787,20 @@ const styles = {
     fontWeight: 700,
     cursor: 'pointer',
     transition: 'all 0.15s'
+=======
+  agentsBadgeBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '5px',
+    backgroundColor: '#eff6ff',
+    color: '#2563eb',
+    border: '1px solid #dbeafe',
+    borderRadius: '6px',
+    padding: '4px 10px',
+    fontSize: '13px',
+    fontWeight: 700,
+    cursor: 'pointer'
+>>>>>>> 57a2c90 (updated admin details)
   },
   farmersScopeText: {
     fontSize: '13px',
@@ -1214,8 +1815,18 @@ const styles = {
     letterSpacing: '0.4px',
     display: 'inline-block'
   },
-  actionsGroup: {
+  actionsGrid: {
     display: 'flex',
+<<<<<<< HEAD
+=======
+    gap: '6px',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  },
+  viewManageBtn: {
+    display: 'inline-flex',
+>>>>>>> 57a2c90 (updated admin details)
     alignItems: 'center',
     justifyContent: 'center',
     gap: '6px',
@@ -1244,7 +1855,25 @@ const styles = {
     border: '1px solid #bfdbfe',
     borderRadius: '6px',
     padding: '5px 10px',
+<<<<<<< HEAD
     fontSize: '12px',
+=======
+    fontSize: '11.5px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.15s'
+  },
+  editBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    backgroundColor: '#f8fafc',
+    color: '#334155',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
+    padding: '5px 10px',
+    fontSize: '11.5px',
+>>>>>>> 57a2c90 (updated admin details)
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'all 0.15s'
@@ -1255,10 +1884,17 @@ const styles = {
     gap: '4px',
     backgroundColor: '#eff6ff',
     color: '#2563eb',
+<<<<<<< HEAD
     border: '1px solid #dbeafe',
     borderRadius: '6px',
     padding: '5px 10px',
     fontSize: '12px',
+=======
+    border: '1px solid #bfdbfe',
+    borderRadius: '6px',
+    padding: '5px 10px',
+    fontSize: '11.5px',
+>>>>>>> 57a2c90 (updated admin details)
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'all 0.15s'
@@ -1267,10 +1903,16 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '4px',
+<<<<<<< HEAD
     border: '1px solid',
     borderRadius: '6px',
     padding: '5px 10px',
     fontSize: '12px',
+=======
+    borderRadius: '6px',
+    padding: '5px 10px',
+    fontSize: '11.5px',
+>>>>>>> 57a2c90 (updated admin details)
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'all 0.15s'
@@ -1299,7 +1941,11 @@ const styles = {
   modalBox: {
     backgroundColor: '#ffffff',
     borderRadius: '16px',
+<<<<<<< HEAD
     width: '480px',
+=======
+    width: '500px',
+>>>>>>> 57a2c90 (updated admin details)
     maxWidth: '92vw',
     maxHeight: '90vh',
     overflowY: 'auto',
@@ -1313,16 +1959,93 @@ const styles = {
     marginBottom: '18px',
     paddingBottom: '12px',
     borderBottom: '1px solid #f1f5f9'
+<<<<<<< HEAD
+=======
+  },
+  inchargeIconCircle: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '10px',
+    backgroundColor: '#eff6ff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  headerEditBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    backgroundColor: '#f8fafc',
+    color: '#2563eb',
+    border: '1px solid #dbeafe',
+    borderRadius: '6px',
+    padding: '4px 10px',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer'
+>>>>>>> 57a2c90 (updated admin details)
   },
   modalCloseBtn: {
     background: 'none',
     border: 'none',
     color: '#94a3b8',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    padding: '4px'
   },
   modalBody: {
     display: 'flex',
     flexDirection: 'column'
+  },
+  infoSummaryGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px',
+    backgroundColor: '#f8fafc',
+    borderRadius: '10px',
+    padding: '14px',
+    border: '1px solid #e2e8f0'
+  },
+  infoItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px'
+  },
+  infoLabel: {
+    fontSize: '10.5px',
+    fontWeight: 700,
+    color: '#64748b',
+    letterSpacing: '0.4px'
+  },
+  infoValue: {
+    fontSize: '13.5px',
+    fontWeight: 700,
+    color: '#0f172a'
+  },
+  assignAgentBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    backgroundColor: '#2563eb',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '6px',
+    padding: '6px 12px',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer'
+  },
+  unassignBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    backgroundColor: '#fef2f2',
+    color: '#dc2626',
+    border: '1px solid #fecaca',
+    borderRadius: '5px',
+    padding: '3px 8px',
+    fontSize: '11.5px',
+    fontWeight: 600,
+    cursor: 'pointer'
   },
   modalLabel: {
     display: 'block',

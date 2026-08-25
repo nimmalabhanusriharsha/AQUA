@@ -7,7 +7,11 @@ import {
   Layers, ArrowLeft, Calendar, ShieldCheck, Scale, 
   CheckCircle2, Droplets, Edit, X, AlertTriangle, 
   Check, Sparkles, Sprout, Fish, UserCheck, Shield, 
+<<<<<<< HEAD
   Settings, Save, Plus 
+=======
+  Settings, Save 
+>>>>>>> 57a2c90 (updated admin details)
 } from 'lucide-react';
 import { 
   LineChart, Line, AreaChart, Area, XAxis, YAxis, 
@@ -18,7 +22,11 @@ const FarmerDetail = () => {
   const { farmerId } = useParams();
   const navigate = useNavigate();
   
+<<<<<<< HEAD
   // Load farmer from localStorage or fallback mock data
+=======
+  // Load farmer from localStorage or mock data
+>>>>>>> 57a2c90 (updated admin details)
   const [farmer, setFarmer] = useState(() => {
     const savedFarmers = localStorage.getItem('royal_admin_farmers_data');
     if (savedFarmers) {
@@ -31,6 +39,7 @@ const FarmerDetail = () => {
     return getFarmerById(farmerId) || getFarmers()[0];
   });
 
+<<<<<<< HEAD
   // Load and construct tanks with individual specifications
   const [tanksList, setTanksList] = useState(() => {
     const rawTanks = farmer?.tankBreakdown || getTanksByFarmer(farmer?.id) || [];
@@ -64,6 +73,50 @@ const FarmerDetail = () => {
       seedDate: t.seedDate || `2026-05-${10 + idx * 5}`,
       seedStockingLak: t.seedStockingLak || parseFloat(((parseFloat(t.acres) || 4.0) * 0.8).toFixed(1)), // Lakhs
       feedType: t.feedType || (idx % 2 === 0 ? 'Premium Pellets (Royal Pro)' : 'Functional Feed (Aqua Boost)') // Premium, Functional, Hypro, Tiger Feed, Other
+=======
+  // Load tanks
+  const rawTanks = farmer?.tankBreakdown || getTanksByFarmer(farmer?.id) || [];
+  const initialTanks = rawTanks.length > 0 ? rawTanks : [
+    { 
+      id: 'T-01', 
+      name: 'Tank 1', 
+      acres: farmer?.totalAcres || parseFloat(farmer?.acres) || 4.5, 
+      abw: 24.5, 
+      biomass: 3800, 
+      fcr: 1.30, 
+      compliance: 100, 
+      currentCycle: 'Cycle 1 (2026)',
+      waterSource: farmer?.waterSource || 'Creek / Estuary',
+      salinity: 15, // ppt
+      soilType: 'Clay Loam', // Loam, Clay, Sandy, Clay Loam
+      hatcheryName: 'Apex Marine Hatcheries (Nellore)',
+      brooder: 'Kona Bay (USA)', // Syaqua, Kona Bay, SIS, Other
+      seedDate: '2026-05-15',
+      seedStockingLak: 3.5, // Lakhs
+      feedType: 'Premium Pellets (Royal Pro)' // Premium, Functional, Hypro, Tiger Feed, Other
+    }
+  ];
+
+  // Enhanced tanks state with specifications
+  const [tanksList, setTanksList] = useState(() => {
+    return initialTanks.map((t, idx) => ({
+      ...t,
+      name: t.name || `Tank ${idx + 1}`,
+      acres: parseFloat(t.acres) || 4.0,
+      abw: t.abw || (22.0 + idx * 2.5),
+      biomass: t.biomass || Math.round((parseFloat(t.acres) || 4.0) * 850),
+      fcr: t.fcr || 1.30,
+      currentCycle: t.currentCycle || 'Cycle 1 (2026)',
+      compliance: t.compliance || 100,
+      waterSource: t.waterSource || farmer?.waterSource || 'Creek / Estuary',
+      salinity: t.salinity || (12 + idx * 3),
+      soilType: t.soilType || (idx % 2 === 0 ? 'Loam' : 'Clay'),
+      hatcheryName: t.hatcheryName || 'BMR Hatcheries Pvt Ltd',
+      brooder: t.brooder || (idx % 2 === 0 ? 'Kona Bay' : 'Syaqua'),
+      seedDate: t.seedDate || '2026-05-15',
+      seedStockingLak: t.seedStockingLak || parseFloat(((t.acres || 4.0) * 0.8).toFixed(2)),
+      feedType: t.feedType || 'Functional Feed (Aqua Boost)'
+>>>>>>> 57a2c90 (updated admin details)
     }));
   });
 
@@ -171,6 +224,7 @@ const FarmerDetail = () => {
     setShowEditTankModal(false);
   };
 
+<<<<<<< HEAD
   // Generate dynamic Water Quality logs specific to the active tank
   const baseSal = activeTank.salinity || 16;
   const waterQualityLogs = [
@@ -187,6 +241,23 @@ const FarmerDetail = () => {
       ammonia: 0.05,
       nitrite: 0.02,
       potassium: parseFloat((baseSal * 10.7).toFixed(1)),
+=======
+  // Water Quality Historical Logs collected by the assigned Field Agent (Image 2 parameters)
+  const [waterQualityLogs] = useState([
+    {
+      id: 1,
+      doc: 65,
+      date: '2026-08-20',
+      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
+      verificationStatus: 'VERIFIED ON-SITE',
+      salinity: activeTank.salinity || 18,
+      ph: 7.9,
+      alkalinity: 145,
+      hardness: (activeTank.salinity || 18) * 300,
+      ammonia: 0.05,
+      nitrite: 0.02,
+      potassium: parseFloat(((activeTank.salinity || 18) * 10.7).toFixed(1)),
+>>>>>>> 57a2c90 (updated admin details)
       do: 5.8,
       h2s: 0.00,
       cl: 0.01,
@@ -195,6 +266,7 @@ const FarmerDetail = () => {
     },
     {
       id: 2,
+<<<<<<< HEAD
       doc: (activeTank.doc || 65) - 10,
       date: '2026-08-10',
       collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
@@ -206,6 +278,19 @@ const FarmerDetail = () => {
       ammonia: 0.08,
       nitrite: 0.03,
       potassium: parseFloat(((Math.max(1, baseSal - 1)) * 10.7).toFixed(1)),
+=======
+      doc: 55,
+      date: '2026-08-10',
+      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
+      verificationStatus: 'VERIFIED ON-SITE',
+      salinity: (activeTank.salinity || 18) - 1,
+      ph: 8.1,
+      alkalinity: 150,
+      hardness: ((activeTank.salinity || 18) - 1) * 300,
+      ammonia: 0.08,
+      nitrite: 0.03,
+      potassium: parseFloat((((activeTank.salinity || 18) - 1) * 10.7).toFixed(1)),
+>>>>>>> 57a2c90 (updated admin details)
       do: 5.4,
       h2s: 0.00,
       cl: 0.01,
@@ -214,6 +299,7 @@ const FarmerDetail = () => {
     },
     {
       id: 3,
+<<<<<<< HEAD
       doc: (activeTank.doc || 65) - 20,
       date: '2026-07-31',
       collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
@@ -225,6 +311,19 @@ const FarmerDetail = () => {
       ammonia: 0.04,
       nitrite: 0.01,
       potassium: parseFloat(((Math.max(1, baseSal - 2)) * 10.7).toFixed(1)),
+=======
+      doc: 45,
+      date: '2026-07-31',
+      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
+      verificationStatus: 'VERIFIED ON-SITE',
+      salinity: (activeTank.salinity || 18) - 2,
+      ph: 8.0,
+      alkalinity: 140,
+      hardness: ((activeTank.salinity || 18) - 2) * 300,
+      ammonia: 0.04,
+      nitrite: 0.01,
+      potassium: parseFloat((((activeTank.salinity || 18) - 2) * 10.7).toFixed(1)),
+>>>>>>> 57a2c90 (updated admin details)
       do: 6.2,
       h2s: 0.00,
       cl: 0.00,
@@ -233,6 +332,7 @@ const FarmerDetail = () => {
     },
     {
       id: 4,
+<<<<<<< HEAD
       doc: (activeTank.doc || 65) - 30,
       date: '2026-07-21',
       collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
@@ -244,6 +344,19 @@ const FarmerDetail = () => {
       ammonia: 0.02,
       nitrite: 0.01,
       potassium: parseFloat(((Math.max(1, baseSal - 3)) * 10.7).toFixed(1)),
+=======
+      doc: 35,
+      date: '2026-07-21',
+      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
+      verificationStatus: 'VERIFIED ON-SITE',
+      salinity: (activeTank.salinity || 18) - 3,
+      ph: 7.8,
+      alkalinity: 135,
+      hardness: ((activeTank.salinity || 18) - 3) * 300,
+      ammonia: 0.02,
+      nitrite: 0.01,
+      potassium: parseFloat((((activeTank.salinity || 18) - 3) * 10.7).toFixed(1)),
+>>>>>>> 57a2c90 (updated admin details)
       do: 6.6,
       h2s: 0.00,
       cl: 0.00,
@@ -256,6 +369,7 @@ const FarmerDetail = () => {
       date: '2026-07-06',
       collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
       verificationStatus: 'VERIFIED ON-SITE',
+<<<<<<< HEAD
       salinity: Math.max(1, baseSal - 3),
       ph: 7.7,
       alkalinity: 130,
@@ -263,24 +377,47 @@ const FarmerDetail = () => {
       ammonia: 0.01,
       nitrite: 0.00,
       potassium: parseFloat(((Math.max(1, baseSal - 3)) * 10.7).toFixed(1)),
+=======
+      salinity: (activeTank.salinity || 18) - 3,
+      ph: 7.7,
+      alkalinity: 130,
+      hardness: ((activeTank.salinity || 18) - 3) * 300,
+      ammonia: 0.01,
+      nitrite: 0.00,
+      potassium: parseFloat((((activeTank.salinity || 18) - 3) * 10.7).toFixed(1)),
+>>>>>>> 57a2c90 (updated admin details)
       do: 7.1,
       h2s: 0.00,
       cl: 0.00,
       fe: 0.00,
       waterColor: 'Clear'
     }
+<<<<<<< HEAD
   ];
 
   // Generate historical growth sampling data for current active tank
+=======
+  ]);
+
+  // Generate historical growth sampling data for current active tank (sampled by field agent)
+>>>>>>> 57a2c90 (updated admin details)
   const docDays = [10, 20, 30, 40, 50, 60, 70];
   const growthData = docDays.map(doc => {
     const entry = { doc: `DOC ${doc}`, docNum: doc };
     const tankAcres = activeTank.acres || 4.0;
+<<<<<<< HEAD
     const baseABW = (doc / 70) * (activeTank.abw || 24.0);
     
     const abwVal = parseFloat(baseABW.toFixed(2));
     const biomassVal = Math.round(abwVal * tankAcres * 115);
     const fcrVal = parseFloat((0.88 + (doc / 70) * 0.44).toFixed(2));
+=======
+    const baseABW = (doc / 70) * (activeTank.abw || 26.0);
+    
+    const abwVal = parseFloat(baseABW.toFixed(2));
+    const biomassVal = Math.round(abwVal * tankAcres * 115);
+    const fcrVal = parseFloat((0.88 + (doc / 70) * 0.46).toFixed(2));
+>>>>>>> 57a2c90 (updated admin details)
     const feedVal = Math.round(biomassVal * fcrVal);
 
     entry.abw = abwVal;
@@ -387,11 +524,19 @@ const FarmerDetail = () => {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* 2. Tank Tabs Navigation Bar (Switch between each and every tank) */}
       <div style={styles.tankTabsContainer}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <span style={styles.selectTankLabel}>Select Tank to View:</span>
+=======
+      {/* 2. Tank Tabs Navigation Bar */}
+      <div style={styles.tankTabsContainer}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <span style={styles.selectTankLabel}>Selected Tank:</span>
+>>>>>>> 57a2c90 (updated admin details)
             {tanksList.map((tank, idx) => (
               <button
                 key={tank.id || idx}
@@ -431,7 +576,11 @@ const FarmerDetail = () => {
                 {activeTank.name} Specifications &amp; Setup Details
               </h3>
               <p style={styles.sectionCardSubtitle}>
+<<<<<<< HEAD
                 Key biophysical pond setup, stocking parameters, and water origin for {activeTank.name}
+=======
+                Key biophysical pond setup, stocking parameters, and water origin
+>>>>>>> 57a2c90 (updated admin details)
               </p>
             </div>
           </div>
@@ -451,7 +600,11 @@ const FarmerDetail = () => {
           </div>
         </div>
 
+<<<<<<< HEAD
         {/* Tank Specifications Grid (All Parameters from Image 1 + Source of Water) */}
+=======
+        {/* Tank Specifications Grid (Image 1 + Source of Water) */}
+>>>>>>> 57a2c90 (updated admin details)
         <div style={styles.specsGrid}>
           {/* 1. Tank Size - Acres */}
           <div style={styles.specItemCard}>
@@ -541,7 +694,11 @@ const FarmerDetail = () => {
               </h3>
             </div>
             <p style={styles.sectionCardSubtitle}>
+<<<<<<< HEAD
               Sampling telemetry collected by agent <strong>{farmer.agent}</strong> for <strong>{activeTank.name}</strong> across Day of Culture (DOC 10 to DOC 70)
+=======
+              Sampling telemetry collected by agent <strong>{farmer.agent}</strong> across Day of Culture (DOC 10 to DOC 70)
+>>>>>>> 57a2c90 (updated admin details)
             </p>
           </div>
 
@@ -679,7 +836,11 @@ const FarmerDetail = () => {
                 {activeTank.name} Water Quality Parameters &amp; Chemical Monitoring
               </h3>
               <p style={styles.sectionCardSubtitle}>
+<<<<<<< HEAD
                 On-site weekly sampling parameters collected &amp; submitted by field agent <strong>{farmer.agent}</strong> for <strong>{activeTank.name}</strong>
+=======
+                On-site weekly sampling parameters collected &amp; submitted by field agent <strong>{farmer.agent}</strong>
+>>>>>>> 57a2c90 (updated admin details)
               </p>
             </div>
           </div>
