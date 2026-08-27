@@ -8,17 +8,6 @@ import StatusBadge from '../components/StatusBadge';
 const Reports = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-<<<<<<< HEAD
-  const { getSubmissionsByAgentId, getFarmersByAgentId, getTanksByFarmerId } = useMockData();
-  const [submissions, setSubmissions] = useState([]);
-  const [farmers, setFarmers] = useState([]);
-  
-  // Filter states
-  const [filterDate, setFilterDate] = useState(new Date().toISOString().split('T')[0]);
-  const [filterFarmer, setFilterFarmer] = useState('');
-  const [filterTank, setFilterTank] = useState('');
-  const [filterModule, setFilterModule] = useState('');
-=======
   const { db } = useMockData();
 
   // Consolidation View Mode: 'DATE', 'MONTH'
@@ -30,7 +19,6 @@ const Reports = () => {
   const [endDate, setEndDate] = useState('');
   const [selectedFarmer, setSelectedFarmer] = useState('ALL');
   const [selectedTank, setSelectedTank] = useState('ALL');
->>>>>>> b87af3f6cce5f00140c805080c04cf34deb528b0
 
   useEffect(() => {
     const s = getSession();
@@ -100,10 +88,7 @@ const Reports = () => {
     document.body.removeChild(link);
   };
 
-<<<<<<< HEAD
-  // Get dynamic tank list for selected farmer filter securely from the database
-  const availableTanks = filterFarmer ? (getTanksByFarmerId(filterFarmer) || []) : [];
-=======
+
   // Export All Filtered Submissions CSV
   const handleExportCSV = () => {
     const headers = ['Date', 'Month', 'Locality / Area', 'Farmer Name', 'Pond (Tank)', 'Test Type', 'Status', 'Salinity (ppt)', 'pH', 'DO (mg/L)', 'Biomass', 'FCR'];
@@ -196,7 +181,6 @@ const Reports = () => {
   // Selected Objects
   const selectedFarmerObj = selectedFarmer !== 'ALL' ? localityFarmers.find(f => f.id === selectedFarmer) : null;
   const selectedTankObj = selectedTank !== 'ALL' ? availableTanks.find(t => t.id === selectedTank) : null;
->>>>>>> b87af3f6cce5f00140c805080c04cf34deb528b0
 
   return (
     <div style={{ paddingBottom: '30px' }}>
