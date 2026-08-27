@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, LayoutTemplate, ArrowRight, Shield, HardHat, Waves } from 'lucide-react';
 import logo from '../assets/logo-trans2.png';
+import background from '../assets/login_background.jpg';
 import BackButton from '../components/BackButton';
 
 const PortalSelector = () => {
@@ -11,11 +12,6 @@ const PortalSelector = () => {
     <>
       <style>
         {`
-          @keyframes mesh {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
           @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
@@ -23,9 +19,8 @@ const PortalSelector = () => {
           }
           .portal-container {
             min-height: 100vh;
-            background: linear-gradient(-45deg, #eff6ff, #dbeafe, #bfdbfe, #e0f2fe, #f0f9ff);
-            background-size: 400% 400%;
-            animation: mesh 15s ease infinite;
+            background: url(${background}) no-repeat center center fixed;
+            background-size: cover;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -35,27 +30,6 @@ const PortalSelector = () => {
             position: relative;
             overflow-x: hidden;
             overflow-y: auto;
-          }
-          /* Decorative background blobs */
-          .blob-1 {
-            position: absolute;
-            top: -10%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: float 8s ease-in-out infinite;
-          }
-          .blob-2 {
-            position: absolute;
-            bottom: -20%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, rgba(255,255,255,0) 70%);
-            border-radius: 50%;
-            animation: float 10s ease-in-out infinite reverse;
           }
           .portal-card {
             flex: 1 1 320px;
@@ -110,6 +84,7 @@ const PortalSelector = () => {
             <p style={{ fontSize: '18px', color: '#4b5563', marginBottom: '24px', fontWeight: 500 }}>
               Aqua Feed Management System
             </p>
+
           </div>
 
           {/* Cards Section */}

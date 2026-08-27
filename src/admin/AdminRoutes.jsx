@@ -12,6 +12,7 @@ import FarmersList from './pages/FarmersList';
 import FarmerDetail from './pages/FarmerDetail';
 import TanksList from './pages/TanksList';
 import TankHistory from './pages/TankHistory';
+import FieldData from './pages/FieldData';
 import WeeklyTests from './pages/WeeklyTests';
 import Verifications from './pages/Verifications';
 import Analytics from './pages/Analytics';
@@ -34,12 +35,14 @@ const AdminRoutes = () => {
       <Route path="farmers/:farmerId" element={<FarmerDetail />} />
       <Route path="tanks" element={<TanksList />} />
       <Route path="tanks/:tankId" element={<TankHistory />} />
+      <Route path="field-data" element={<FieldData />} />
       <Route path="weekly-tests" element={<WeeklyTests />} />
       <Route path="verifications" element={<Verifications />} />
       <Route path="analytics" element={<Analytics />} />
       <Route path="reports" element={<Reports />} />
       <Route path="export-center" element={<ExportCenter />} />
       <Route path="activity-log" element={<ActivityLog />} />
+      <Route path="audit-logs" element={<ActivityLog />} />
       <Route path="settings" element={<Settings />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>

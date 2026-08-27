@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { getRegions } from '../utils/adminMockData';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { TrendingUp, Scale, Wheat } from 'lucide-react';
@@ -24,7 +24,7 @@ const Analytics = () => {
 
   return (
     <>
-      <AdminHeader title="Management Analytics" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Analytics', active: true }]} />
+      <PageHeader title="Management Analytics" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Analytics', active: true }]} />
       <div className="content-inner">
         
         {/* KPI Cards */}

@@ -10,7 +10,6 @@ import Farmers from './agent/pages/Farmers';
 import FarmerDetails from './agent/pages/FarmerDetails';
 import TankDetails from './agent/pages/TankDetails';
 import SiteVisit from './agent/pages/SiteVisit';
-import AddFarmer from './agent/pages/AddFarmer';
 import AddTanks from './agent/pages/AddTanks';
 import Tests from './agent/pages/Tests';
 import Reports from './agent/pages/Reports';
@@ -81,7 +80,7 @@ function App() {
           <Route path="/agent-login" element={<AgentLogin />} />
           <Route path="/incharge-login" element={<InchargeLogin />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          
+
           {/* Admin Routes */}
           <Route path="/admin/*" element={
             <AdminProtectedRoute>
@@ -99,7 +98,7 @@ function App() {
               </InchargeLayout>
             </InchargeProtectedRoute>
           } />
-          
+
           {/* Authenticated Routes wrapped in ProtectedRoute and Layout */}
           <Route path="/dashboard" element={<ProtectedRoute><Layout><AgentDashboard /></Layout></ProtectedRoute>} />
           <Route path="/farmers" element={<ProtectedRoute><Layout><Farmers /></Layout></ProtectedRoute>} />
@@ -108,12 +107,12 @@ function App() {
           <Route path="/visit/:tankId" element={<ProtectedRoute><Layout><SiteVisit /></Layout></ProtectedRoute>} />
           <Route path="/add-farmer" element={<Navigate to="/farmers" replace />} />
           <Route path="/add-tanks" element={<ProtectedRoute><Layout><AddTanks /></Layout></ProtectedRoute>} />
-          
+
           <Route path="/tests" element={<ProtectedRoute><Layout><Tests /></Layout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
           <Route path="/harvest" element={<ProtectedRoute><Layout><Harvest /></Layout></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
-          
+
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

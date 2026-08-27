@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import AdminHeader from '../components/AdminHeader';
+import React from 'react';
+import PageHeader from '../components/PageHeader';
 import { FileText, Calendar, Map, Filter, Download } from 'lucide-react';
 import { useMockData } from '../../context/MockDataContext';
 
@@ -40,9 +40,9 @@ const Reports = () => {
 
   return (
     <>
-      <AdminHeader title="Consolidated Reports" breadcrumbs={[{ label: 'Reports' }, { label: 'Generate Reports', active: true }]} />
+      <PageHeader title="Consolidated Reports" breadcrumbs={[{ label: 'Reports' }, { label: 'Generate Reports', active: true }]} />
       <div className="content-inner">
-        
+
         <div className="card" style={{ maxWidth: '900px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <div style={{

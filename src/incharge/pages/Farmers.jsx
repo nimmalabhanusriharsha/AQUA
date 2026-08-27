@@ -42,6 +42,7 @@ const Farmers = () => {
 
   const handleAddFarmer = (e) => {
     e.preventDefault();
+    setPhoneError('');
     if (!farmerName || !phoneNumber || !numberOfTanks) return;
 
     createFarmerWithTanks(
@@ -65,6 +66,7 @@ const Farmers = () => {
     setTotalLandArea('');
     setWaterSource('');
     setNumberOfTanks('');
+    setPhoneError('');
     setIsModalOpen(false);
   };
 
@@ -155,7 +157,7 @@ const Farmers = () => {
                       </span>
                     </td>
                     <td style={{ padding: '16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                      <button 
+                      <button
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
                         onClick={() => setSelectedFarmer(farmer)}
                         title="View Details"
@@ -203,7 +205,10 @@ const Farmers = () => {
         }}>
           <div className="card" style={{ width: '100%', maxWidth: '500px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
             <button
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                setIsModalOpen(false);
+                setPhoneError('');
+              }}
               style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
             >
               <X size={20} />
@@ -302,7 +307,10 @@ const Farmers = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>
+                <button type="button" className="btn-secondary" onClick={() => {
+                  setIsModalOpen(false);
+                  setPhoneError('');
+                }}>
                   Cancel
                 </button>
                 <button type="submit" className="btn-primary">

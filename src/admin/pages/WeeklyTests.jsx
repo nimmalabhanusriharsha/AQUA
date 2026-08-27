@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { getRegions } from '../utils/adminMockData';
 import { Filter, Calendar, Map, CheckSquare } from 'lucide-react';
 
@@ -8,7 +8,7 @@ const WeeklyTests = () => {
 
   return (
     <>
-      <AdminHeader title="Organization-wide Weekly Tests" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Weekly Tests', active: true }]} />
+      <PageHeader title="Organization-wide Weekly Tests" breadcrumbs={[{ label: 'Monitoring' }, { label: 'Weekly Tests', active: true }]} />
       <div className="content-inner">
         
         {/* Filters */}

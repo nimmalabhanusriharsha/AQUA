@@ -9,10 +9,10 @@ const Reports = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const { db } = useMockData();
-  
+
   // Consolidation View Mode: 'DATE', 'MONTH'
   const [consolidationMode, setConsolidationMode] = useState('DATE');
-  
+
   // Filters
   const [selectedMonth, setSelectedMonth] = useState('2026-08');
   const [startDate, setStartDate] = useState('');
@@ -242,10 +242,10 @@ const Reports = () => {
             <div className="input-group">
               <label style={styles.label}>Select Month (Month-wise)</label>
               <div className="input-field">
-                <input 
-                  type="month" 
-                  value={selectedMonth} 
-                  onChange={e => setSelectedMonth(e.target.value)} 
+                <input
+                  type="month"
+                  value={selectedMonth}
+                  onChange={e => setSelectedMonth(e.target.value)}
                 />
               </div>
             </div>
@@ -270,8 +270,8 @@ const Reports = () => {
           <div className="input-group">
             <label style={styles.label}>Farmer ({agentLocality})</label>
             <div className="input-field">
-              <select 
-                value={selectedFarmer} 
+              <select
+                value={selectedFarmer}
                 onChange={e => {
                   setSelectedFarmer(e.target.value);
                   setSelectedTank('ALL');
@@ -304,7 +304,7 @@ const Reports = () => {
           <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #DCE4EE', display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
             <span style={{ fontSize: '12px', fontWeight: '700', color: '#17233C' }}>Individual Quick Export:</span>
             {selectedFarmerObj && (
-              <button 
+              <button
                 onClick={() => handleExportIndividualFarmer(selectedFarmerObj.id)}
                 style={styles.individualBtn}
               >
@@ -312,7 +312,7 @@ const Reports = () => {
               </button>
             )}
             {selectedTankObj && (
-              <button 
+              <button
                 onClick={() => handleExportIndividualTank(selectedTankObj.id)}
                 style={styles.individualTankBtn}
               >
@@ -415,7 +415,7 @@ const styles = {
   filterHeader: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' },
   filterTitle: { fontSize: '15px', fontWeight: '700', color: '#17233C', margin: 0 },
   label: { fontSize: '12px', fontWeight: '600', color: '#64748B', marginBottom: '4px', display: 'block' },
-  
+
   individualBtn: { padding: '6px 12px', borderRadius: '6px', backgroundColor: '#EAF3FF', color: '#2563D9', border: '1px solid #2563D9', fontSize: '12px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' },
   individualTankBtn: { padding: '6px 12px', borderRadius: '6px', backgroundColor: '#E6F8F8', color: '#0EA5A8', border: '1px solid #0EA5A8', fontSize: '12px', fontWeight: '700', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' },
 

@@ -22,8 +22,8 @@ const Reports = () => {
     .filter(f => selectedArea === 'ALL' || f.location.toLowerCase().includes(selectedArea.toLowerCase()))
     .map(f => {
       const tanks = getTanksByFarmerId(f.id);
-      return { 
-        ...f, 
+      return {
+        ...f,
         tanks: tanks.length,
         area: f.location.split(',')[0].trim(),
         tankList: tanks
@@ -51,7 +51,7 @@ const Reports = () => {
     <>
       <InchargeHeader title="Consolidated Reports" />
       <div className="content-inner">
-        
+
         {/* Mode Selector Tabs */}
         <div className="card" style={{ marginBottom: '20px' }}>
           <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--color-text-main)', marginBottom: '12px' }}>
@@ -139,9 +139,9 @@ const Reports = () => {
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ fontSize: '16px', fontWeight: 600 }}>Consolidated Report Results ({consolidationMode} Mode)</h3>
-              <button onClick={handleExportCSV} style={{ 
-                display: 'flex', alignItems: 'center', gap: '8px', 
-                padding: '8px 16px', backgroundColor: 'white', 
+              <button onClick={handleExportCSV} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '8px 16px', backgroundColor: 'white',
                 border: '1px solid var(--color-border)', borderRadius: '8px',
                 cursor: 'pointer', fontSize: '13px', fontWeight: 500
               }}>

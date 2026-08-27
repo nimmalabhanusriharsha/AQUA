@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from '../components/AdminHeader';
+import PageHeader from '../components/PageHeader';
 import { getAdminSession, logoutAdmin } from '../utils/adminAuth';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Mail, Phone, LogOut } from 'lucide-react';
@@ -10,12 +10,12 @@ const Settings = () => {
 
   const handleLogout = () => {
     logoutAdmin();
-    navigate('/login');
+    navigate('/admin-login');
   };
 
   return (
     <>
-      <AdminHeader title="Settings" breadcrumbs={[{ label: 'System' }, { label: 'Settings', active: true }]} />
+      <PageHeader title="System Settings" breadcrumbs={[{ label: 'System' }, { label: 'Settings', active: true }]} />
       <div className="content-inner">
         <div className="card" style={{ maxWidth: '600px' }}>
           <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid var(--color-border)' }}>

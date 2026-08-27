@@ -1,86 +1,63 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  LayoutDashboard, Map, Users, HardHat, Sprout, Database, 
-  CheckSquare, Calendar, LineChart, FileText, Download, 
-  Activity, Settings
+  LayoutGrid, Globe, Users, UserCheck, Tractor, 
+  ClipboardList, ShieldCheck, FileCheck, BarChart3, Download, 
+  History, Settings 
 } from 'lucide-react';
-import logo from '../../assets/splash-logo.png';
 
 const AdminSidebar = () => {
-  const menuSections = [
-    {
-      title: 'Dashboard',
-      items: [
-        { name: 'Overview', path: '/admin/dashboard', icon: <LayoutDashboard size={20} /> }
-      ]
-    },
-    {
-      title: 'Organization',
-      items: [
-        { name: 'Regions', path: '/admin/regions', icon: <Map size={20} /> },
-        { name: 'Incharges', path: '/admin/incharges', icon: <Users size={20} /> },
-        { name: 'Agents', path: '/admin/agents', icon: <HardHat size={20} /> },
-        { name: 'Farmers', path: '/admin/farmers', icon: <Sprout size={20} /> },
-        { name: 'Tanks', path: '/admin/tanks', icon: <Database size={20} /> }
-      ]
-    },
-    {
-      title: 'Monitoring',
-      items: [
-        { name: 'Verifications', path: '/admin/verifications', icon: <CheckSquare size={20} /> },
-        { name: 'Weekly Tests', path: '/admin/weekly-tests', icon: <Calendar size={20} /> },
-        { name: 'Analytics', path: '/admin/analytics', icon: <LineChart size={20} /> }
-      ]
-    },
-    {
-      title: 'Reports',
-      items: [
-        { name: 'Reports', path: '/admin/reports', icon: <FileText size={20} /> },
-        { name: 'Export Center', path: '/admin/export-center', icon: <Download size={20} /> }
-      ]
-    },
-    {
-      title: 'System',
-      items: [
-        { name: 'Activity Log', path: '/admin/activity-log', icon: <Activity size={20} /> },
-        { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> }
-      ]
-    }
+  const menuItems = [
+    { name: 'Dashboard', path: '/admin/dashboard', icon: <LayoutGrid size={18} /> },
+    { name: 'Regions & Localities', path: '/admin/regions', icon: <Globe size={18} /> },
+    { name: 'Incharges', path: '/admin/incharges', icon: <Users size={18} /> },
+    { name: 'Agents', path: '/admin/agents', icon: <UserCheck size={18} /> },
+    { name: 'Farmers', path: '/admin/farmers', icon: <Tractor size={18} /> },
+    { name: 'Field Data', path: '/admin/field-data', icon: <ClipboardList size={18} /> },
+    { name: 'Verification Queue', path: '/admin/verifications', icon: <ShieldCheck size={18} /> },
+    { name: 'Weekly Tests', path: '/admin/weekly-tests', icon: <FileCheck size={18} /> },
+    { name: 'Analytics Suite', path: '/admin/analytics', icon: <BarChart3 size={18} /> },
+    { name: 'Export Center', path: '/admin/export-center', icon: <Download size={18} /> },
+    { name: 'Audit Logs', path: '/admin/activity-log', icon: <History size={18} /> },
+    { name: 'System Settings', path: '/admin/settings', icon: <Settings size={18} /> }
   ];
 
   return (
-    <aside style={styles.sidebar}>
-      <div style={styles.logoSection}>
-        <img src={logo} alt="Aqua Feed" style={styles.logo} />
-        <div style={styles.roleBadge}>Admin Portal</div>
+    <aside style={styles.sidebarContainer}>
+      <div style={styles.portalTag}>
+        ENTERPRISE ADMIN PORTAL
       </div>
 
-      <nav style={styles.nav}>
-        {menuSections.map((section, idx) => (
-          <div key={idx} style={styles.section}>
-            <div style={styles.sectionTitle}>{section.title}</div>
-            <ul style={styles.menuList}>
-              {section.items.map((item, i) => (
-                <li key={i}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
-                    style={({ isActive }) => ({
-                      ...styles.link,
-                      ...(isActive ? styles.activeLink : {})
-                    })}
-                  >
-                    {React.cloneElement(item.icon, { 
-                      color: 'inherit',
-                      style: { opacity: 0.8 } 
-                    })}
-                    <span>{item.name}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <nav style={styles.navList}>
+        {menuItems.map((item, idx) => (
+          <NavLink
+            key={idx}
+            to={item.path}
+            style={({ isActive }) => ({
+              ...styles.link,
+              ...(isActive ? styles.activeLink : styles.inactiveLink)
+            })}
+          >
+            {({ isActive }) => (
+              <>
+                <span style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  color: isActive ? '#ffffff' : '#475569',
+                  transition: 'color 0.15s'
+                }}>
+                  {item.icon}
+                </span>
+                <span style={{ 
+                  fontSize: '13.5px', 
+                  fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#ffffff' : '#334155'
+                }}>
+                  {item.name}
+                </span>
+              </>
+            )}
+          </NavLink>
         ))}
       </nav>
     </aside>
@@ -88,77 +65,54 @@ const AdminSidebar = () => {
 };
 
 const styles = {
-  sidebar: {
-    width: '280px',
-    backgroundColor: 'var(--color-primary)', // Dark blue
-    color: 'white',
+  sidebarContainer: {
+    width: '235px',
+    backgroundColor: '#ffffff',
+    borderRadius: '16px',
+    border: '1px solid #e2e8f0',
+    padding: '16px 10px',
+    margin: '16px 0 16px 16px',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
-    position: 'sticky',
-    top: 0,
-    overflowY: 'auto'
+    height: 'calc(100vh - 100px)',
+    overflowY: 'auto',
+    flexShrink: 0,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
   },
-  logoSection: {
-    padding: '24px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    borderBottom: '1px solid rgba(255,255,255,0.1)'
-  },
-  logo: {
-    width: '120px',
-    height: 'auto',
-    marginBottom: '12px',
-    filter: 'brightness(0) invert(1)' // Make logo white if needed
-  },
-  roleBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    padding: '4px 12px',
-    borderRadius: '12px',
-    fontSize: '12px',
-    fontWeight: 600,
-    letterSpacing: '1px',
-    textTransform: 'uppercase'
-  },
-  nav: {
-    padding: '24px 16px',
-    flex: 1
-  },
-  section: {
-    marginBottom: '24px'
-  },
-  sectionTitle: {
+  portalTag: {
     fontSize: '11px',
     fontWeight: 700,
-    color: 'rgba(255,255,255,0.5)',
+    color: '#94a3b8',
+    letterSpacing: '0.6px',
+    padding: '6px 12px 14px 12px',
     textTransform: 'uppercase',
-    letterSpacing: '1.5px',
-    marginBottom: '12px',
-    paddingLeft: '12px'
+    borderBottom: '1px solid #f1f5f9',
+    marginBottom: '8px'
   },
-  menuList: {
-    listStyle: 'none',
-    padding: 0,
-    margin: 0
+  navList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '3px'
   },
   link: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    padding: '12px',
-    borderRadius: '8px',
-    color: 'rgba(255,255,255,0.7)',
+    padding: '10px 14px',
+    borderRadius: '10px',
     textDecoration: 'none',
-    fontSize: '15px',
-    fontWeight: 500,
-    transition: 'all 0.2s',
-    marginBottom: '4px'
+    transition: 'all 0.15s ease-in-out',
+    cursor: 'pointer'
   },
   activeLink: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    color: 'white',
-    fontWeight: 600
+    backgroundColor: '#1d4ed8', // Vibrant deep blue as seen in screenshot
+    boxShadow: '0 2px 6px rgba(29, 78, 216, 0.25)'
+  },
+  inactiveLink: {
+    backgroundColor: 'transparent',
+    '&:hover': {
+      backgroundColor: '#f8fafc'
+    }
   }
 };
 
