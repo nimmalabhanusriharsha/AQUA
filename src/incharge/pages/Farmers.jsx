@@ -18,6 +18,8 @@ const Farmers = () => {
   const [waterSource, setWaterSource] = useState('');
   const [numberOfTanks, setNumberOfTanks] = useState('');
 
+  const [selectedAgentId, setSelectedAgentId] = useState('agent001');
+
   const farmers = db.farmers.map(f => {
     const tanks = getTanksByFarmerId(f.id);
     const agent = getAgentById(f.agentId);
@@ -34,19 +36,16 @@ const Farmers = () => {
 
   const filteredFarmers = farmers.filter(farmer =>
     farmer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    farmer.locality.toLowerCase().includes(searchTerm.toLowerCase())
+    farmer.locality.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    farmer.phone.includes(searchTerm)
   );
 
   const handleAddFarmer = (e) => {
     e.preventDefault();
     if (!farmerName || !phoneNumber || !numberOfTanks) return;
 
-    // We assign it to INC001's first agent as a default, or an unassigned state if we had one
-    // For this mock, we'll assign to 'agent001' by default when created from incharge panel
-    const defaultAgentId = db.agents.length > 0 ? db.agents[0].id : 'agent001';
-
     createFarmerWithTanks(
-      defaultAgentId,
+      selectedAgentId || (db.agents.length > 0 ? db.agents[0].id : 'agent001'),
       {
         name: farmerName,
         phone: phoneNumber,
@@ -80,7 +79,7 @@ const Farmers = () => {
                 <Search size={18} color="var(--color-text-muted)" />
                 <input
                   type="text"
-                  placeholder="Search farmers..."
+                  placeholder="Search by farmer, mobile number, locality..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -96,7 +95,7 @@ const Farmers = () => {
               </button>
             </div>
             <button className="btn-primary" style={{ width: 'auto', padding: '10px 20px' }} onClick={() => setIsModalOpen(true)}>
-              + Add Farmer
+              + Add Farmer (Mobile Linkage)
             </button>
           </div>
 
@@ -105,7 +104,7 @@ const Farmers = () => {
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--color-border)', color: 'var(--color-text-muted)' }}>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Farmer Name</th>
-                  <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Phone</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Mobile (Linked)</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Locality</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Acres</th>
                   <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: '13px' }}>Tanks</th>
@@ -120,11 +119,30 @@ const Farmers = () => {
                 {filteredFarmers.map((farmer) => (
                   <tr key={farmer.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                     <td style={{ padding: '16px', fontWeight: 500 }}>{farmer.name}</td>
-                    <td style={{ padding: '16px', color: 'var(--color-text-muted)', fontSize: '14px' }}>{farmer.phone}</td>
+                    <td style={{ padding: '16px', color: 'var(--color-primary)', fontWeight: '600', fontSize: '14px' }}>📱 {farmer.phone}</td>
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.locality}</td>
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.acres}</td>
                     <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.tanks}</td>
-                    <td style={{ padding: '16px', fontSize: '14px' }}>{farmer.agent}</td>
+                    <td style={{ padding: '16px', fontSize: '14px' }}>
+                      <select
+                        value={farmer.agentId}
+                        onChange={(e) => assignFarmerToAgent(farmer.id, e.target.value)}
+                        style={{
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          border: '1px solid var(--color-border)',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          backgroundColor: '#f8fafc',
+                          color: 'var(--color-primary)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {db.agents.map(a => (
+                          <option key={a.id} value={a.id}>{a.name} ({a.locality})</option>
+                        ))}
+                      </select>
+                    </td>
                     <td style={{ padding: '16px', fontSize: '14px', color: 'var(--color-text-muted)' }}>{farmer.lastTest}</td>
                     <td style={{ padding: '16px', fontSize: '14px', color: 'var(--color-text-muted)' }}>{farmer.nextTest}</td>
                     <td style={{ padding: '16px' }}>
@@ -136,12 +154,31 @@ const Farmers = () => {
                         {farmer.status}
                       </span>
                     </td>
-                    <td style={{ padding: '16px', textAlign: 'right' }}>
+                    <td style={{ padding: '16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                       <button 
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
                         onClick={() => setSelectedFarmer(farmer)}
+                        title="View Details"
                       >
                         <Eye size={18} />
+                      </button>
+                      <button
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: 'var(--status-red)',
+                          fontSize: '13px',
+                          fontWeight: '600'
+                        }}
+                        onClick={() => {
+                          if (window.confirm(`Are you sure you want to remove Farmer "${farmer.name}"?`)) {
+                            deleteFarmer(farmer.id);
+                          }
+                        }}
+                        title="Remove Farmer"
+                      >
+                        🗑️
                       </button>
                     </td>
                   </tr>
@@ -157,7 +194,7 @@ const Farmers = () => {
         </div>
       </div>
 
-      {/* Add Farmer Modal */}
+      {/* Add Farmer Modal (Mobile Linkage) */}
       {isModalOpen && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
@@ -171,9 +208,32 @@ const Farmers = () => {
             >
               <X size={20} />
             </button>
-            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Add New Farmer</h2>
+            <div style={{ marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>Add / Link Farmer</h2>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                backgroundColor: '#eff6ff',
+                color: '#0284c7',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '600',
+                marginTop: '8px'
+              }}>
+                📱 Mobile Number Linkage Required
+              </div>
+            </div>
 
             <form onSubmit={handleAddFarmer}>
+              <div className="input-group">
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Farmer Mobile Number * (Linkage Key)</label>
+                <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                  <input type="tel" placeholder="e.g. +91 9876543210" required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+                </div>
+              </div>
+
               <div className="input-group">
                 <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Farmer Name *</label>
                 <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
@@ -182,10 +242,16 @@ const Farmers = () => {
               </div>
 
               <div className="input-group">
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Phone Number *</label>
-                <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
-                  <input type="tel" placeholder="e.g. +91 9876543210" required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
-                </div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Assign Field Agent *</label>
+                <select
+                  style={{ width: '100%', padding: '12px', border: '1px solid var(--color-border)', borderRadius: '8px', backgroundColor: '#f1f5f9', fontSize: '14px', outline: 'none' }}
+                  value={selectedAgentId}
+                  onChange={e => setSelectedAgentId(e.target.value)}
+                >
+                  {db.agents.map(a => (
+                    <option key={a.id} value={a.id}>{a.name} ({a.locality}) - Agent ID: {a.id}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="grid md:grid-cols-2" style={{ gap: '16px' }}>

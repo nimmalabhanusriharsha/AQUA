@@ -9,7 +9,7 @@ const TodaysWork = ({ tasks }) => {
     <div style={styles.container}>
       <div className="section-title">
         <span>Today's Work</span>
-        <span className="link">View All</span>
+        <span className="link" onClick={() => navigate('/tests')} style={{ cursor: 'pointer' }}>View All</span>
       </div>
       
       <div style={styles.list}>
@@ -73,15 +73,15 @@ const styles = {
   },
   tankName: {
     fontSize: '12px',
-    color: 'var(--color-primary)',
-    backgroundColor: '#eff6ff',
+    color: '#2563D9',
+    backgroundColor: '#EAF3FF',
     padding: '2px 6px',
     borderRadius: '4px',
     fontWeight: '500',
   },
   taskMeta: {
     fontSize: '13px',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
   },
   taskAction: {
     display: 'flex',

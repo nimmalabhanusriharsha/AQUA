@@ -1,30 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, User, Activity, UserCheck, Droplets, Database } from 'lucide-react';
 import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 import StatusBadge from '../components/StatusBadge';
+import TankModal from '../../components/TankModal';
 
 const FarmerDetails = () => {
   const { farmerId } = useParams();
   const navigate = useNavigate();
   const { getFarmerById, getTanksByFarmerId, db } = useMockData();
+  const [isTankModalOpen, setIsTankModalOpen] = useState(false);
+  const [selectedTank, setSelectedTank] = useState(null);
 
+  const session = getSession();
   const baseFarmer = getFarmerById(farmerId);
-  const farmer = baseFarmer ? { ...baseFarmer, tanks: getTanksByFarmerId(farmerId) } : null;
+  const isAssigned = baseFarmer && session && (baseFarmer.agentId === session.agentId || !baseFarmer.agentId);
+  const farmer = isAssigned ? { ...baseFarmer, tanks: getTanksByFarmerId(farmerId) } : null;
 
-  if (!farmer) return <div style={styles.loading}>Loading farmer details...</div>;
+  if (!farmer) return <div style={styles.loading}>Farmer not found or not assigned to your account.</div>;
 
   return (
     <div>
       <div style={styles.header}>
-        <button style={styles.backBtn} onClick={() => navigate('/farmers')}>
+        <button style={styles.backBtn} onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/farmers')}>
           <ArrowLeft size={20} />
-          <span>Back to Farmers</span>
+          <span>Back</span>
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Farmer Info Card */}
         <div className="card" style={{ marginBottom: '20px' }}>
           <div style={styles.cardHeader}>
@@ -54,12 +59,12 @@ const FarmerDetails = () => {
               <span style={styles.infoValue}>{farmer.assignedAgentId === 'agent001' ? 'Agent 1' : farmer.assignedAgentId === 'agent002' ? 'Agent 2' : farmer.assignedAgentId}</span>
             </div>
             <div style={styles.infoRow}>
-              <Droplets size={16} color="var(--color-text-muted)" />
+              <Droplets size={16} color="#0EA5A8" />
               <span style={styles.infoLabel}>Water Source:</span>
               <span style={styles.infoValue}>{farmer.waterSource || 'N/A'}</span>
             </div>
             <div style={styles.infoRow}>
-              <Database size={16} color="var(--color-text-muted)" />
+              <Database size={16} color="#64748B" />
               <span style={styles.infoLabel}>Total Tanks:</span>
               <span style={styles.infoValue}>{farmer.tanks?.length || 0}</span>
             </div>
@@ -68,30 +73,77 @@ const FarmerDetails = () => {
 
         {/* Assigned Tanks */}
         <div className="card">
-          <h3 style={styles.subtitle}>Assigned Tanks</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={styles.subtitle}>Assigned Tanks ({farmer.tanks.length})</h3>
+            <button
+              onClick={() => { setSelectedTank(null); setIsTankModalOpen(true); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 14px',
+                backgroundColor: '#2563D9',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              + Add Tank
+            </button>
+          </div>
+
           <div style={styles.tankList}>
             {farmer.tanks.map(tank => (
               <div 
                 key={tank.id} 
                 style={styles.tankItem}
-                onClick={() => navigate(`/tanks/${tank.id}`)}
               >
-                <div style={styles.tankInfo}>
-                  <span style={styles.tankName}>{tank.name}</span>
-                  <span style={styles.tankSubInfo}>Last Test: {tank.lastTest}</span>
+                <div style={styles.tankInfo} onClick={() => navigate(`/tanks/${tank.id}`)}>
+                  <span style={styles.tankName}>{tank.name} ({tank.acres || '3 Acres'})</span>
+                  <span style={styles.tankSubInfo}>Last Test: {tank.lastTest} | Salinity: {tank.salinity || '15 ppt'}</span>
                 </div>
                 <div style={styles.tankAction}>
                   <StatusBadge status={tank.testStatus} />
-                  <span className="link" style={{ marginLeft: '12px' }}>View →</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedTank(tank);
+                      setIsTankModalOpen(true);
+                    }}
+                    style={{
+                      marginLeft: '8px',
+                      padding: '4px 10px',
+                      backgroundColor: '#EAF3FF',
+                      color: '#2563D9',
+                      border: '1px solid #DCE4EE',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <span className="link" style={{ marginLeft: '12px', color: '#2563D9' }} onClick={() => navigate(`/tanks/${tank.id}`)}>View →</span>
                 </div>
               </div>
             ))}
             {farmer.tanks.length === 0 && (
-              <div style={styles.emptyState}>No tanks assigned to this farmer.</div>
+              <div style={styles.emptyState}>No tanks assigned to this farmer. Click "+ Add Tank" to create one.</div>
             )}
           </div>
         </div>
       </div>
+
+      <TankModal
+        isOpen={isTankModalOpen}
+        onClose={() => setIsTankModalOpen(false)}
+        tank={selectedTank}
+        farmerId={farmerId}
+      />
     </div>
   );
 };

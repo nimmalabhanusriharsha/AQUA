@@ -15,6 +15,7 @@ import AddTanks from './agent/pages/AddTanks';
 import Tests from './agent/pages/Tests';
 import Reports from './agent/pages/Reports';
 import Profile from './agent/pages/Profile';
+import Harvest from './agent/pages/Harvest';
 
 // Layout
 import Layout from './agent/components/Layout';
@@ -105,11 +106,12 @@ function App() {
           <Route path="/farmers/:farmerId" element={<ProtectedRoute><Layout><FarmerDetails /></Layout></ProtectedRoute>} />
           <Route path="/tanks/:tankId" element={<ProtectedRoute><Layout><TankDetails /></Layout></ProtectedRoute>} />
           <Route path="/visit/:tankId" element={<ProtectedRoute><Layout><SiteVisit /></Layout></ProtectedRoute>} />
-          <Route path="/add-farmer" element={<ProtectedRoute><Layout><AddFarmer /></Layout></ProtectedRoute>} />
+          <Route path="/add-farmer" element={<Navigate to="/farmers" replace />} />
           <Route path="/add-tanks" element={<ProtectedRoute><Layout><AddTanks /></Layout></ProtectedRoute>} />
           
           <Route path="/tests" element={<ProtectedRoute><Layout><Tests /></Layout></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><Layout><Reports /></Layout></ProtectedRoute>} />
+          <Route path="/harvest" element={<ProtectedRoute><Layout><Harvest /></Layout></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
           
           {/* Catch-all */}

@@ -1,23 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --color-primary: #173873;       /* Royal Blue */
-  --color-secondary: #0f2b5a;     /* Darker Blue */
-  --color-accent: #cda856;        /* Gold */
+  --color-primary: #2563D9;       /* Primary Royal Blue */
+  --color-secondary: #17233C;     /* Dark Navy */
+  --color-accent: #0EA5A8;        /* Aqua/Teal */
   
-  --color-bg-main: #f5f7fa;       /* Very light grey-blue */
-  --color-surface: #ffffff;
+  --color-bg-main: #F3F6FA;       /* Page Background */
+  --color-surface: #FFFFFF;       /* White */
   
-  --color-text-main: #1f2937;
-  --color-text-muted: #6b7280;
+  --color-text-main: #17233C;      /* Dark Navy */
+  --color-text-muted: #64748B;     /* Secondary Text */
   
-  --color-border: #e5e7eb;
+  --color-border: #DCE4EE;        /* Border */
+  --color-light-blue: #EAF3FF;    /* Light Blue */
   
-  --status-green: #10b981;
-  --status-yellow: #f59e0b;
-  --status-red: #ef4444;
-  --status-orange: #f97316;
-  --status-blue: #3b82f6;
+  --status-green: #22A65A;
+  --status-green-bg: #E8F8EE;
+  
+  --status-yellow: #E9A400;       /* Warning Amber */
+  --status-yellow-bg: #FFF5D6;
+  
+  --status-red: #DC3F3F;          /* Error Red */
+  --status-red-bg: #FDECEC;
+  
+  --status-orange: #E9A400;       /* Warning Amber */
+  --status-orange-bg: #FFF5D6;
+  
+  --status-blue: #2563D9;
+  --status-blue-bg: #EAF3FF;
 
   --nav-height: 70px;
   --sidebar-width: 250px;
@@ -92,7 +102,7 @@ body {
 .card {
   background: var(--color-surface);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(23, 35, 60, 0.04);
   padding: 16px;
   border: 1px solid var(--color-border);
 }
@@ -104,10 +114,16 @@ body {
 .input-field {
   display: flex;
   align-items: center;
-  background-color: #f1f5f9;
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 12px 16px;
   gap: 12px;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus-within {
+  border-color: var(--color-primary);
 }
 
 .input-field input, .input-field select {
@@ -120,12 +136,12 @@ body {
 }
 
 .input-field input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .btn-primary {
   background-color: var(--color-primary);
-  color: white;
+  color: #FFFFFF;
   border: none;
   border-radius: 8px;
   padding: 14px;
@@ -150,7 +166,7 @@ body {
 }
 
 .btn-secondary {
-  background-color: white;
+  background-color: #FFFFFF;
   color: var(--color-text-main);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -162,7 +178,7 @@ body {
   transition: background-color 0.2s;
 }
 .btn-secondary:hover {
-  background-color: #f8fafc;
+  background-color: var(--color-light-blue);
 }
 
 .section-title {

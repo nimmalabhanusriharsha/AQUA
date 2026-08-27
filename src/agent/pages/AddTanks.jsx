@@ -80,7 +80,7 @@ const AddTanks = () => {
         <div key={index} className="card" style={{ marginBottom: '16px' }}>
           <div style={styles.tankHeader}>
             <div style={styles.iconCircle}>
-              <Droplet size={20} color="var(--color-primary)" />
+              <Droplet size={20} color="#0EA5A8" />
             </div>
             <h3 style={styles.tankTitle}>Tank {index + 1}</h3>
           </div>
@@ -174,7 +174,7 @@ const AddTanks = () => {
       ))}
 
       <div style={{ marginTop: '24px', marginBottom: '40px' }}>
-        <button className="btn-primary" style={{ backgroundColor: 'var(--status-green)' }} onClick={handleSave}>
+        <button className="btn-primary" style={{ backgroundColor: '#22A65A' }} onClick={handleSave}>
           <Save size={18} /> Save Farmer & Tanks
         </button>
       </div>
@@ -185,14 +185,14 @@ const AddTanks = () => {
 
 const styles = {
   header: { display: 'flex', alignItems: 'center', marginBottom: '20px' },
-  backBtn: { display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--color-text-main)', fontWeight: '600', cursor: 'pointer', fontSize: '15px' },
+  backBtn: { display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: '#17233C', fontWeight: '600', cursor: 'pointer', fontSize: '15px' },
   summaryBox: { display: 'flex', gap: '40px', padding: '12px' },
-  summaryLabel: { fontSize: '12px', color: 'var(--color-text-muted)', textTransform: 'uppercase', fontWeight: '600', marginBottom: '4px' },
-  summaryValue: { fontSize: '18px', fontWeight: '700', color: 'var(--color-primary)' },
-  tankHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', borderBottom: '1px solid var(--color-border)', paddingBottom: '12px' },
-  iconCircle: { width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  tankTitle: { fontSize: '16px', fontWeight: '700', color: 'var(--color-text-main)' },
-  label: { fontSize: '13px', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '8px', display: 'block' },
+  summaryLabel: { fontSize: '12px', color: '#64748B', textTransform: 'uppercase', fontWeight: '600', marginBottom: '4px' },
+  summaryValue: { fontSize: '18px', fontWeight: '700', color: '#2563D9' },
+  tankHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', borderBottom: '1px solid #DCE4EE', paddingBottom: '12px' },
+  iconCircle: { width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#EAF3FF', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  tankTitle: { fontSize: '16px', fontWeight: '700', color: '#17233C' },
+  label: { fontSize: '13px', fontWeight: '600', color: '#17233C', marginBottom: '8px', display: 'block' },
 };
 
 export default AddTanks;

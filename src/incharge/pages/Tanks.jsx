@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import InchargeHeader from '../components/InchargeHeader';
 import { useMockData } from '../../context/MockDataContext';
 import { Search, Filter, Eye, X } from 'lucide-react';
+import TankModal from '../../components/TankModal';
 
 const Tanks = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTank, setSelectedTank] = useState(null);
+  const [isTankModalOpen, setIsTankModalOpen] = useState(false);
+  const [editingTank, setEditingTank] = useState(null);
   const { db, getFarmerById, getAgentById } = useMockData();
   
   const mockInchargeTanks = db.tanks.map(t => {
@@ -68,6 +71,15 @@ const Tanks = () => {
                 Filter
               </button>
             </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                className="btn-primary"
+                style={{ width: 'auto', padding: '8px 16px', fontSize: '14px' }}
+                onClick={() => { setEditingTank(null); setIsTankModalOpen(true); }}
+              >
+                + Add Tank
+              </button>
+            </div>
           </div>
 
           <div style={{ overflowX: 'auto' }}>
@@ -87,6 +99,7 @@ const Tanks = () => {
               <tbody>
                 {filteredTanks.map((tank) => {
                   const statusStyle = getStatusColor(tank.status);
+                  const rawTank = db.tanks.find(t => t.id === tank.id);
                   return (
                     <tr key={tank.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
                       <td style={{ padding: '16px', fontWeight: 500 }}>{tank.name}</td>
@@ -107,22 +120,46 @@ const Tanks = () => {
                           {tank.status}
                         </span>
                       </td>
-                      <td style={{ padding: '16px', textAlign: 'right' }}>
+                      <td style={{ padding: '16px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                         <button 
                           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}
                           onClick={() => setSelectedTank(tank)}
+                          title="View Details"
                         >
                           <Eye size={18} />
                         </button>
+                        <button 
+                          style={{
+                            padding: '4px 8px',
+                            backgroundColor: '#f1f5f9',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: '600'
+                          }}
+                          onClick={() => {
+                            setEditingTank(rawTank || { id: tank.id, name: tank.name });
+                            setIsTankModalOpen(true);
+                          }}
+                        >
+                          ✏️ Edit
+                        </button>
                       </td>
                     </tr>
-                  )
+                  );
                 })}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+
+      <TankModal
+        isOpen={isTankModalOpen}
+        onClose={() => setIsTankModalOpen(false)}
+        tank={editingTank}
+      />
 
       {/* Inspect Tank Modal */}
       {selectedTank && (

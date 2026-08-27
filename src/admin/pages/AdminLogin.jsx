@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, User } from 'lucide-react';
 import { loginAdmin } from '../utils/adminAuth';
 import logo from '../../assets/logo-trans2.png';
+import BackButton from '../../components/BackButton';
 
 const AdminLogin = () => {
   const [identifier, setIdentifier] = useState('');
@@ -28,7 +29,10 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10 }}>
+        <BackButton fallback="/login" />
+      </div>
       <div className="auth-box card">
         <div style={{ 
           display: 'flex',

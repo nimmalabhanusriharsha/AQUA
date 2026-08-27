@@ -36,7 +36,7 @@ const Splash = () => {
 
 const styles = {
   container: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F3F6FA',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -61,29 +61,29 @@ const styles = {
   title: {
     fontSize: '22px',
     fontWeight: '800',
-    color: 'var(--color-primary)',
+    color: '#2563D9',
     marginBottom: '8px',
     letterSpacing: '0.5px',
   },
   titleDark: {
-    color: 'var(--color-secondary)',
+    color: '#17233C',
   },
   subtitle: {
     fontSize: '28px',
     fontWeight: '800',
-    color: 'var(--color-primary)',
+    color: '#2563D9',
     marginBottom: '8px',
   },
   accentText: {
     fontSize: '14px',
     fontWeight: '700',
-    color: 'var(--color-accent)',
+    color: '#0EA5A8',
     letterSpacing: '1px',
     marginBottom: '24px',
   },
   description: {
     fontSize: '14px',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
     maxWidth: '250px',
     lineHeight: '1.5',
   },
@@ -97,7 +97,7 @@ const styles = {
   loaderBar: {
     width: '160px',
     height: '4px',
-    backgroundColor: '#e2e8f0',
+    backgroundColor: '#DCE4EE',
     borderRadius: '2px',
     overflow: 'hidden',
     marginBottom: '12px',
@@ -105,14 +105,14 @@ const styles = {
   loaderProgress: {
     width: '40%',
     height: '100%',
-    backgroundColor: 'var(--color-primary)',
+    backgroundColor: '#2563D9',
     borderRadius: '2px',
     animation: 'loading 2s infinite ease-in-out',
   },
   loadingText: {
     fontSize: '11px',
     fontWeight: '600',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
     letterSpacing: '1px',
   }
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ClipboardList, ArrowRight, Filter } from 'lucide-react';
 import { getSession } from '../utils/agentAuth';
 import { useMockData } from '../../context/MockDataContext';
@@ -7,8 +7,9 @@ import StatusBadge from '../components/StatusBadge';
 
 const Tests = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [session, setSession] = useState(null);
-  const [activeTab, setActiveTab] = useState('Due'); // 'Due', 'Overdue', 'Completed'
+  const [activeTab, setActiveTab] = useState(location.state?.initialTab || 'Due');
   const { getFarmersByAgentId, getTanksByFarmerId, db } = useMockData();
 
   useEffect(() => {
@@ -18,7 +19,10 @@ const Tests = () => {
       return;
     }
     setSession(s);
-  }, [navigate]);
+    if (location.state?.initialTab) {
+      setActiveTab(location.state.initialTab);
+    }
+  }, [navigate, location.state]);
 
   if (!session) return null;
 
@@ -35,14 +39,19 @@ const Tests = () => {
   );
 
   // Filter based on active tab
-  const filteredTests = allTests.filter(test => test.status === activeTab);
+  const filteredTests = allTests.filter(test => {
+    if (activeTab === 'Pending Verification' || activeTab === 'Pending') {
+      return test.status === 'Pending' || test.status === 'Pending Verification' || test.status === 'Due';
+    }
+    return test.status === activeTab;
+  });
 
   return (
     <div>
       <div style={styles.header}>
         <div style={styles.headerLeft}>
           <div style={styles.iconCircle}>
-            <ClipboardList size={24} color="var(--color-primary)" />
+            <ClipboardList size={24} color="#2563D9" />
           </div>
           <div>
             <h2 style={styles.title}>Weekly Tests</h2>
@@ -70,6 +79,12 @@ const Tests = () => {
             onClick={() => setActiveTab('Completed')}
           >
             Completed ({allTests.filter(t => t.status === 'Completed').length})
+          </div>
+          <div 
+            style={{...styles.tab, ...(activeTab === 'Pending Verification' || activeTab === 'Pending' ? styles.activeTab : {})}} 
+            onClick={() => setActiveTab('Pending Verification')}
+          >
+            Pending ({allTests.filter(t => t.status === 'Pending' || t.status === 'Pending Verification' || t.status === 'Due').length})
           </div>
         </div>
       </div>
@@ -124,7 +139,7 @@ const styles = {
     width: '48px',
     height: '48px',
     borderRadius: '50%',
-    backgroundColor: '#eff6ff',
+    backgroundColor: '#EAF3FF',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -132,12 +147,12 @@ const styles = {
   title: {
     fontSize: '20px',
     fontWeight: '700',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
     marginBottom: '4px',
   },
   subtitle: {
     fontSize: '13px',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
     fontWeight: '600',
   },
   tabsContainer: {
@@ -147,21 +162,21 @@ const styles = {
   tabs: {
     display: 'flex',
     gap: '12px',
-    borderBottom: '1px solid var(--color-border)',
+    borderBottom: '1px solid #DCE4EE',
   },
   tab: {
     padding: '12px 16px',
     fontSize: '14px',
     fontWeight: '600',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
     cursor: 'pointer',
     borderBottom: '2px solid transparent',
     whiteSpace: 'nowrap',
     transition: 'all 0.2s',
   },
   activeTab: {
-    color: 'var(--color-primary)',
-    borderBottom: '2px solid var(--color-primary)',
+    color: '#2563D9',
+    borderBottom: '2px solid #2563D9',
   },
   list: {
     display: 'flex',
@@ -188,20 +203,20 @@ const styles = {
   },
   farmerName: {
     fontWeight: '700',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
     fontSize: '15px',
   },
   tankName: {
     fontSize: '13px',
     fontWeight: '600',
-    color: 'var(--color-text-muted)',
-    backgroundColor: 'var(--color-background)',
+    color: '#2563D9',
+    backgroundColor: '#EAF3FF',
     padding: '2px 8px',
     borderRadius: '12px',
   },
   taskMeta: {
     fontSize: '12px',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
     fontWeight: '500',
   },
   taskAction: {
@@ -211,10 +226,10 @@ const styles = {
   emptyState: {
     padding: '40px',
     textAlign: 'center',
-    color: 'var(--color-text-muted)',
-    backgroundColor: '#fff',
+    color: '#64748B',
+    backgroundColor: '#FFFFFF',
     borderRadius: '12px',
-    border: '1px dashed var(--color-border)',
+    border: '1px dashed #DCE4EE',
     fontSize: '14px',
     fontWeight: '500',
   }

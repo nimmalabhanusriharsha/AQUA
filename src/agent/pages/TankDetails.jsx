@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, FlaskConical, ClipboardList, Clock } from 'lucide-react';
+import { ChevronLeft, FlaskConical, ClipboardList, Clock, Ship } from 'lucide-react';
 import { useMockData } from '../../context/MockDataContext';
 import StatusBadge from '../components/StatusBadge';
+import TankModal from '../../components/TankModal';
+
+import { getSession } from '../utils/agentAuth';
 
 const TankDetails = () => {
   const { tankId } = useParams();
   const navigate = useNavigate();
-  const { getTankById, getFarmerById } = useMockData();
+  const { getTankById, getFarmerById, deleteTank } = useMockData();
+  const [isTankModalOpen, setIsTankModalOpen] = useState(false);
 
+  const session = getSession();
   const tank = getTankById(tankId);
   const farmer = tank ? getFarmerById(tank.farmerId) : null;
+  const isAssigned = tank && farmer && session && (farmer.agentId === session.agentId || tank.agentId === session.agentId);
 
-  if (!tank || !farmer) return <div style={styles.loading}>Loading tank details...</div>;
+  if (!tank || !farmer || !isAssigned) return <div style={styles.loading}>Tank details not found or not assigned to your account.</div>;
 
   return (
     <div style={styles.pageContainer}>
       <div style={styles.header}>
-        <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
+        <button style={styles.backBtn} onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/dashboard')}>
           <ChevronLeft size={24} color="var(--color-text-main)" />
         </button>
         <h1 style={styles.headerTitle}>{tank.name} Overview</h1>
@@ -117,16 +123,64 @@ const TankDetails = () => {
             onClick={() => navigate(`/visit/${tank.id}`)}
           >
             <FlaskConical size={20} />
-            <span>START TEST</span>
+            <span>START SITE VISIT TEST</span>
           </button>
-          <button 
-            style={styles.secondaryBtn}
-          >
-            <ClipboardList size={20} />
-            <span>VIEW TEST HISTORY</span>
-          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <button 
+              style={{
+                flex: 1,
+                padding: '12px',
+                backgroundColor: '#EAF3FF',
+                color: '#2563D9',
+                border: '1px solid #DCE4EE',
+                borderRadius: '10px',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onClick={() => setIsTankModalOpen(true)}
+            >
+              ✏️ Edit Tank Options
+            </button>
+            <button 
+              style={{
+                flex: 1,
+                padding: '12px',
+                backgroundColor: '#FDECEC',
+                color: '#DC3F3F',
+                border: '1px solid #DC3F3F',
+                borderRadius: '10px',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onClick={() => {
+                if (window.confirm(`Remove Tank "${tank.name}"?`)) {
+                  deleteTank(tank.id);
+                  navigate(-1);
+                }
+              }}
+            >
+              🗑️ Delete Tank
+            </button>
+          </div>
         </div>
       </div>
+
+      <TankModal
+        isOpen={isTankModalOpen}
+        onClose={() => setIsTankModalOpen(false)}
+        tank={tank}
+        farmerId={tank.farmerId}
+      />
     </div>
   );
 };
@@ -155,7 +209,7 @@ const styles = {
   headerTitle: {
     fontSize: '18px',
     fontWeight: '700',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
   },
   content: {
     padding: '0 24px',
@@ -183,18 +237,18 @@ const styles = {
   sectionTitle: {
     fontSize: '16px',
     fontWeight: '700',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
     marginBottom: '12px',
   },
   divider: {
     height: '1px',
-    backgroundColor: 'var(--color-border)',
+    backgroundColor: '#DCE4EE',
     marginBottom: '16px',
     width: '100%',
   },
   dividerLight: {
     height: '1px',
-    backgroundColor: 'var(--color-border)',
+    backgroundColor: '#DCE4EE',
     opacity: 0.5,
     margin: '12px 0',
     width: '100%',
@@ -224,23 +278,23 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
-    borderLeft: '1px solid var(--color-border)',
+    borderLeft: '1px solid #DCE4EE',
     paddingLeft: '20px',
   },
   label: {
     fontSize: '13px',
     fontWeight: '600',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
   },
   value: {
     fontSize: '15px',
     fontWeight: '700',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
   },
   valueLarge: {
     fontSize: '18px',
     fontWeight: '800',
-    color: 'var(--color-text-main)',
+    color: '#17233C',
   },
   listContainer: {
     display: 'flex',
@@ -267,7 +321,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    backgroundColor: '#003399',
+    backgroundColor: '#2563D9',
     color: '#ffffff',
     border: 'none',
     padding: '16px',
@@ -283,8 +337,8 @@ const styles = {
     justifyContent: 'center',
     gap: '8px',
     backgroundColor: '#ffffff',
-    color: '#003399',
-    border: '1px solid #003399',
+    color: '#2563D9',
+    border: '1px solid #2563D9',
     padding: '16px',
     borderRadius: '8px',
     fontSize: '15px',

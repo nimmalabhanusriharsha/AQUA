@@ -2,6 +2,7 @@ import React from 'react';
 import { getAdminSession } from '../utils/adminAuth';
 import { Bell, ChevronDown, User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../../components/BackButton';
 
 const AdminHeader = ({ title, breadcrumbs }) => {
   const session = getAdminSession();
@@ -15,7 +16,10 @@ const AdminHeader = ({ title, breadcrumbs }) => {
   return (
     <header style={styles.header}>
       <div style={styles.left}>
-        <h1 style={styles.title}>{title}</h1>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <BackButton fallback="/admin/dashboard" />
+          <h1 style={styles.title}>{title}</h1>
+        </div>
         {breadcrumbs && (
           <div style={styles.breadcrumbs}>
             {breadcrumbs.map((crumb, idx) => (

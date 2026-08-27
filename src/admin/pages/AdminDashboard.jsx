@@ -63,29 +63,26 @@ const AdminDashboard = () => {
           
           {/* Weekly Test Compliance */}
           <div className="card">
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '20px' }}>Organization-wide Weekly Compliance</h3>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: '50%', height: '220px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={pieData} innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
-                      {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                    </Pie>
-                    <RechartsTooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ width: '50%', paddingLeft: '24px' }}>
-                {pieData.map(item => (
-                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '12px', height: '12px', borderRadius: '4px', backgroundColor: item.color }}></div>
-                      <span style={{ fontSize: '14px', color: 'var(--color-text-muted)', fontWeight: 500 }}>{item.name}</span>
-                    </div>
-                    <span style={{ fontSize: '16px', fontWeight: 700 }}>{item.value}%</span>
-                  </div>
-                ))}
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Organization-wide Weekly Compliance</h3>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', backgroundColor: '#f1f5f9', padding: '4px 10px', borderRadius: '12px' }}>
+                📊 Bar Graph View
+              </span>
+            </div>
+            <div style={{ height: '220px', width: '100%' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={pieData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} dy={5} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#64748b' }} unit="%" />
+                  <RechartsTooltip formatter={(val) => [`${val}%`, 'Compliance']} />
+                  <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={40}>
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
 

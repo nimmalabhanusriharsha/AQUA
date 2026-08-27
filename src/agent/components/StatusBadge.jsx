@@ -1,28 +1,26 @@
 import React from 'react';
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status = '' }) => {
   let bgColor, textColor, borderColor;
 
-  switch (status.toLowerCase()) {
-    case 'completed':
-      bgColor = '#ecfdf5';
-      textColor = 'var(--status-green)';
-      borderColor = 'var(--status-green)';
-      break;
-    case 'due':
-      bgColor = '#fef3c7';
-      textColor = '#d97706'; // darker yellow for contrast
-      borderColor = 'var(--status-yellow)';
-      break;
-    case 'overdue':
-      bgColor = '#fef2f2';
-      textColor = 'var(--status-red)';
-      borderColor = 'var(--status-red)';
-      break;
-    default:
-      bgColor = '#f3f4f6';
-      textColor = 'var(--color-text-muted)';
-      borderColor = 'var(--color-border)';
+  const s = (status || '').toLowerCase();
+
+  if (['completed', 'verified', 'approved', 'active', 'success', 'pass'].includes(s)) {
+    bgColor = '#E8F8EE';
+    textColor = '#22A65A';
+    borderColor = '#22A65A';
+  } else if (['due', 'pending', 'pending verification', 'pending verify', 'warning'].includes(s)) {
+    bgColor = '#FFF5D6';
+    textColor = '#E9A400';
+    borderColor = '#E9A400';
+  } else if (['overdue', 'rejected', 'error', 'failed', 'inactive'].includes(s)) {
+    bgColor = '#FDECEC';
+    textColor = '#DC3F3F';
+    borderColor = '#DC3F3F';
+  } else {
+    bgColor = '#EAF3FF';
+    textColor = '#2563D9';
+    borderColor = '#DCE4EE';
   }
 
   return (

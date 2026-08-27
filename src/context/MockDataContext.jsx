@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getSession } from '../agent/utils/agentAuth';
 
 // --- Initial Data Seed ---
 
@@ -13,46 +14,211 @@ const initialIncharges = [
 
 const initialAgents = [
   { id: 'agent001', name: 'Agent A', phone: '9000000001', inchargeId: 'INC001', status: 'ACTIVE', locality: 'Chinnamiram' },
-  { id: 'agent002', name: 'Agent B', phone: '9000000002', inchargeId: 'INC001', status: 'ACTIVE', locality: 'Undi' },
+  { id: 'agent002', name: 'Agent B', phone: '9000000002', inchargeId: 'INC001', status: 'ACTIVE', locality: 'Bhimavaram' },
   { id: 'agent003', name: 'Agent C', phone: '9000000003', inchargeId: 'INC001', status: 'ACTIVE', locality: 'Akuruvu' }
 ];
 
 const initialFarmers = [
-  { id: 'F001', name: 'Ashok', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543210', location: 'Bhimavaram', waterSource: 'Borewell', acres: 25 },
+  { id: 'F001', name: 'Ashok', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543210', location: 'Bhimavaram', waterSource: 'Borewell', acres: 25 },
   { id: 'F002', name: 'Ravi', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543211', location: 'Chinnamiram', waterSource: 'Canal', acres: 20 },
-  { id: 'F003', name: 'Kumar', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543212', location: 'Kalla', waterSource: 'Borewell', acres: 18 },
+  { id: 'F003', name: 'Kumar', status: 'ACTIVE', agentId: 'agent006', phone: '+91 9876543212', location: 'Kalla', waterSource: 'Borewell', acres: 18 },
   { id: 'F004', name: 'Ramesh', status: 'ACTIVE', agentId: 'agent003', phone: '+91 9876543213', location: 'Akuruvu', waterSource: 'Borewell', acres: 30 },
-  { id: 'F005', name: 'Ganesh', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543214', location: 'Narasapuram', waterSource: 'Canal', acres: 15 },
+  { id: 'F005', name: 'Ganesh', status: 'ACTIVE', agentId: 'agent004', phone: '+91 9876543214', location: 'Narasapuram', waterSource: 'Canal', acres: 15 },
   { id: 'F006', name: 'Siva', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543215', location: 'Chinnamiram', waterSource: 'Borewell', acres: 22 },
-  { id: 'F007', name: 'Nagesh', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543216', location: 'Undi', waterSource: 'Canal', acres: 12 },
-  { id: 'F008', name: 'Srinu', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543217', location: 'Bhimavaram', waterSource: 'Borewell', acres: 40 },
-  { id: 'F009', name: 'Venkatesh', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543218', location: 'Narasapuram', waterSource: 'Borewell', acres: 18 },
-  { id: 'F010', name: 'Krishna', status: 'ACTIVE', agentId: 'agent003', phone: '+91 9876543219', location: 'Akuruvu', waterSource: 'Canal', acres: 28 }
+  { id: 'F007', name: 'Nagesh', status: 'ACTIVE', agentId: 'agent005', phone: '+91 9876543216', location: 'Undi', waterSource: 'Canal', acres: 12 },
+  { id: 'F008', name: 'Srinu', status: 'ACTIVE', agentId: 'agent002', phone: '+91 9876543217', location: 'Bhimavaram', waterSource: 'Borewell', acres: 40 },
+  { id: 'F009', name: 'Venkatesh', status: 'ACTIVE', agentId: 'agent004', phone: '+91 9876543218', location: 'Narasapuram', waterSource: 'Borewell', acres: 18 },
+  { id: 'F010', name: 'Krishna', status: 'ACTIVE', agentId: 'agent003', phone: '+91 9876543219', location: 'Akuruvu', waterSource: 'Canal', acres: 28 },
+  { id: 'F011', name: 'Ramu', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543220', location: 'Chinnamiram', waterSource: 'Canal', acres: 16 },
+  { id: 'F012', name: 'Subba Rao', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543221', location: 'Chinnamiram', waterSource: 'Borewell', acres: 24 },
+  { id: 'F013', name: 'Prasad', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543222', location: 'Chinnamiram', waterSource: 'Canal', acres: 18 },
+  { id: 'F014', name: 'Venkateswara Rao', status: 'ACTIVE', agentId: 'agent001', phone: '+91 9876543223', location: 'Chinnamiram', waterSource: 'River', acres: 32 }
 ];
 
 const initialTanks = [
-  { id: 'T001', name: 'Tank 1', farmerId: 'F001', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Overdue', abw: '12g', biomass: '800kg', fcr: '1.2', lastTest: '10 Aug 2026', nextTest: '17 Aug 2026' },
-  { id: 'T002', name: 'Tank 2', farmerId: 'F001', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '14g', biomass: '950kg', fcr: '1.1', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
+  { id: 'T001', name: 'Tank 1', farmerId: 'F001', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Overdue', abw: '12g', biomass: '800kg', fcr: '1.2', lastTest: '10 Aug 2026', nextTest: '17 Aug 2026' },
+  { id: 'T002', name: 'Tank 2', farmerId: 'F001', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Due', abw: '14g', biomass: '950kg', fcr: '1.1', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
   { id: 'T003', name: 'Tank 3', farmerId: 'F002', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Completed', abw: '10g', biomass: '600kg', fcr: '1.3', lastTest: '21 Aug 2026', nextTest: '28 Aug 2026' },
   { id: 'T004', name: 'Tank 4', farmerId: 'F004', agentId: 'agent003', status: 'ACTIVE', testStatus: 'Due', abw: '20g', biomass: '1500kg', fcr: '1.0', lastTest: '22 Aug 2026', nextTest: '29 Aug 2026' },
-  { id: 'T007', name: 'Tank 7', farmerId: 'F005', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Completed', abw: '11g', biomass: '700kg', fcr: '1.25', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
+  { id: 'T007', name: 'Tank 7', farmerId: 'F005', agentId: 'agent004', status: 'ACTIVE', testStatus: 'Completed', abw: '11g', biomass: '700kg', fcr: '1.25', lastTest: '15 Aug 2026', nextTest: '22 Aug 2026' },
   { id: 'T008', name: 'Tank 8', farmerId: 'F006', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '18g', biomass: '1200kg', fcr: '1.15', lastTest: '20 Aug 2026', nextTest: '27 Aug 2026' },
-  { id: 'T009', name: 'Tank 9', farmerId: 'F007', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Overdue', abw: '9g', biomass: '400kg', fcr: '1.4', lastTest: '08 Aug 2026', nextTest: '15 Aug 2026' },
-  { id: 'T010', name: 'Tank 10', farmerId: 'F008', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '16g', biomass: '2000kg', fcr: '1.2', lastTest: '19 Aug 2026', nextTest: '26 Aug 2026' },
-  { id: 'T011', name: 'Tank 11', farmerId: 'F009', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Due', abw: '13g', biomass: '900kg', fcr: '1.1', lastTest: '21 Aug 2026', nextTest: '28 Aug 2026' },
-  { id: 'T012', name: 'Tank 12', farmerId: 'F010', agentId: 'agent003', status: 'ACTIVE', testStatus: 'Overdue', abw: '21g', biomass: '1600kg', fcr: '1.35', lastTest: '11 Aug 2026', nextTest: '18 Aug 2026' }
+  { id: 'T009', name: 'Tank 9', farmerId: 'F007', agentId: 'agent005', status: 'ACTIVE', testStatus: 'Overdue', abw: '9g', biomass: '400kg', fcr: '1.4', lastTest: '08 Aug 2026', nextTest: '15 Aug 2026' },
+  { id: 'T010', name: 'Tank 10', farmerId: 'F008', agentId: 'agent002', status: 'ACTIVE', testStatus: 'Due', abw: '16g', biomass: '2000kg', fcr: '1.2', lastTest: '19 Aug 2026', nextTest: '26 Aug 2026' },
+  { id: 'T011', name: 'Tank 11', farmerId: 'F009', agentId: 'agent004', status: 'ACTIVE', testStatus: 'Due', abw: '13g', biomass: '900kg', fcr: '1.1', lastTest: '21 Aug 2026', nextTest: '28 Aug 2026' },
+  { id: 'T012', name: 'Tank 12', farmerId: 'F010', agentId: 'agent003', status: 'ACTIVE', testStatus: 'Overdue', abw: '21g', biomass: '1600kg', fcr: '1.35', lastTest: '11 Aug 2026', nextTest: '18 Aug 2026' },
+  { id: 'T013', name: 'Tank 13', farmerId: 'F011', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Completed', abw: '15g', biomass: '1100kg', fcr: '1.12', lastTest: '24 Aug 2026', nextTest: '31 Aug 2026' },
+  { id: 'T014', name: 'Tank 14', farmerId: 'F012', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Due', abw: '17g', biomass: '1350kg', fcr: '1.18', lastTest: '20 Aug 2026', nextTest: '27 Aug 2026' },
+  { id: 'T015', name: 'Tank 15', farmerId: 'F013', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Overdue', abw: '11g', biomass: '750kg', fcr: '1.22', lastTest: '12 Aug 2026', nextTest: '19 Aug 2026' },
+  { id: 'T016', name: 'Tank 16', farmerId: 'F014', agentId: 'agent001', status: 'ACTIVE', testStatus: 'Completed', abw: '22g', biomass: '1800kg', fcr: '1.08', lastTest: '25 Aug 2026', nextTest: '01 Sep 2026' }
 ];
 
 const initialSubmissions = [
+  // August 2026 Submissions (Chinnamiram - Agent A)
   {
     id: 'SUB001',
     agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Water Analysis',
+    date: '2026-08-26',
+    status: 'COMPLETED',
+    submittedAgo: '1 hour ago',
+    data: {
+      waterQuality: { salinity: '16', ph: '7.9', do: '5.4', waterColor: 'Light Green' },
+      biomass: '850kg',
+      fcr: '1.15'
+    }
+  },
+  {
+    id: 'SUB002',
+    agentId: 'agent001',
+    farmerId: 'F006', // Siva (Chinnamiram)
+    tankId: 'T008',
+    testType: 'Feed Test',
+    date: '2026-08-25',
+    status: 'PENDING_VERIFICATION',
+    submittedAgo: '1 day ago',
+    data: {
+      waterQuality: { salinity: '18', ph: '8.0', do: '4.9', waterColor: 'Brown' },
+      biomass: '1250kg',
+      fcr: '1.20'
+    }
+  },
+  {
+    id: 'SUB003',
+    agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Medication',
+    date: '2026-08-22',
+    status: 'COMPLETED',
+    submittedAgo: '4 days ago',
+    data: {
+      waterQuality: { salinity: '15', ph: '7.8', do: '5.2', waterColor: 'Light Green' },
+      biomass: '800kg',
+      fcr: '1.18'
+    }
+  },
+  {
+    id: 'SUB004',
+    agentId: 'agent001',
+    farmerId: 'F006', // Siva (Chinnamiram)
+    tankId: 'T008',
+    testType: 'Disease Observation',
+    date: '2026-08-18',
+    status: 'COMPLETED',
+    submittedAgo: '8 days ago',
+    data: {
+      waterQuality: { salinity: '17', ph: '7.9', do: '5.0', waterColor: 'Greenish' },
+      biomass: '1200kg',
+      fcr: '1.22'
+    }
+  },
+  {
+    id: 'SUB005',
+    agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Water Analysis',
+    date: '2026-08-15',
+    status: 'COMPLETED',
+    submittedAgo: '11 days ago',
+    data: {
+      waterQuality: { salinity: '15', ph: '7.8', do: '5.1', waterColor: 'Light Green' },
+      biomass: '750kg',
+      fcr: '1.15'
+    }
+  },
+
+  // July 2026 Submissions (Chinnamiram - Agent A)
+  {
+    id: 'SUB006',
+    agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Water Analysis',
+    date: '2026-07-28',
+    status: 'COMPLETED',
+    submittedAgo: '1 month ago',
+    data: {
+      waterQuality: { salinity: '16', ph: '7.9', do: '5.3', waterColor: 'Light Green' },
+      biomass: '650kg',
+      fcr: '1.25'
+    }
+  },
+  {
+    id: 'SUB007',
+    agentId: 'agent001',
+    farmerId: 'F006', // Siva (Chinnamiram)
+    tankId: 'T008',
+    testType: 'Feed Test',
+    date: '2026-07-20',
+    status: 'COMPLETED',
+    submittedAgo: '1 month ago',
+    data: {
+      waterQuality: { salinity: '18', ph: '8.1', do: '4.7', waterColor: 'Brown' },
+      biomass: '1000kg',
+      fcr: '1.30'
+    }
+  },
+  {
+    id: 'SUB008',
+    agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Water Analysis',
+    date: '2026-07-12',
+    status: 'COMPLETED',
+    submittedAgo: '1 month ago',
+    data: {
+      waterQuality: { salinity: '15', ph: '7.8', do: '5.2', waterColor: 'Greenish' },
+      biomass: '550kg',
+      fcr: '1.28'
+    }
+  },
+
+  // June 2026 Submissions (Chinnamiram - Agent A)
+  {
+    id: 'SUB009',
+    agentId: 'agent001',
+    farmerId: 'F002', // Ravi (Chinnamiram)
+    tankId: 'T003',
+    testType: 'Water Analysis',
+    date: '2026-06-25',
+    status: 'COMPLETED',
+    submittedAgo: '2 months ago',
+    data: {
+      waterQuality: { salinity: '14', ph: '7.7', do: '5.5', waterColor: 'Light Green' },
+      biomass: '450kg',
+      fcr: '1.20'
+    }
+  },
+  {
+    id: 'SUB010',
+    agentId: 'agent001',
+    farmerId: 'F006', // Siva (Chinnamiram)
+    tankId: 'T008',
+    testType: 'Feed Test',
+    date: '2026-06-18',
+    status: 'COMPLETED',
+    submittedAgo: '2 months ago',
+    data: {
+      waterQuality: { salinity: '17', ph: '8.0', do: '4.9', waterColor: 'Brown' },
+      biomass: '800kg',
+      fcr: '1.25'
+    }
+  },
+
+  // Submissions for other locations (Bhimavaram, Narasapuram, Akuruvu, Undi)
+  {
+    id: 'SUB011',
+    agentId: 'agent002',
     farmerId: 'F001',
     tankId: 'T001',
     testType: 'Water Analysis',
     date: '2026-08-22',
-    status: 'PENDING_VERIFICATION',
-    submittedAgo: '10 mins ago',
+    status: 'COMPLETED',
+    submittedAgo: '4 days ago',
     data: {
       waterQuality: { salinity: '15', ph: '7.8', do: '5.2', waterColor: 'Light Green' },
       biomass: '1200kg',
@@ -60,18 +226,33 @@ const initialSubmissions = [
     }
   },
   {
-    id: 'SUB002',
-    agentId: 'agent002',
+    id: 'SUB012',
+    agentId: 'agent004',
     farmerId: 'F005',
     tankId: 'T007',
     testType: 'Feed Test',
     date: '2026-08-21',
     status: 'COMPLETED',
-    submittedAgo: '1 day ago',
+    submittedAgo: '5 days ago',
     data: {
       waterQuality: { salinity: '20', ph: '8.1', do: '4.8', waterColor: 'Brown' },
       biomass: '800kg',
       fcr: '1.4'
+    }
+  },
+  {
+    id: 'SUB013',
+    agentId: 'agent003',
+    farmerId: 'F004',
+    tankId: 'T004',
+    testType: 'Water Analysis',
+    date: '2026-08-24',
+    status: 'COMPLETED',
+    submittedAgo: '2 days ago',
+    data: {
+      waterQuality: { salinity: '12', ph: '7.6', do: '5.6', waterColor: 'Greenish' },
+      biomass: '1500kg',
+      fcr: '1.05'
     }
   }
 ];
@@ -86,7 +267,7 @@ export const MockDataProvider = ({ children }) => {
 
   // Load from LocalStorage or Initialize
   useEffect(() => {
-    const savedData = localStorage.getItem('aqua_feed_mock_database_v2');
+    const savedData = localStorage.getItem('aqua_feed_mock_database_v6');
     if (savedData) {
       setDb(JSON.parse(savedData));
     } else {
@@ -101,21 +282,48 @@ export const MockDataProvider = ({ children }) => {
         drafts: [],
         notifications: [],
         activities: [
-          { id: 1, time: '2026-08-22 10:00 AM', action: 'Approved Test', detail: 'Approved water test for Tank 1' },
-          { id: 2, time: '2026-08-22 11:30 AM', action: 'Added Agent', detail: 'Added new agent Agent D' }
+          { id: 1, time: '2026-08-26 10:00 AM', action: 'Completed Water Test', detail: 'Completed water test for Tank 3 (Ravi)' },
+          { id: 2, time: '2026-08-25 04:30 PM', action: 'Feed Test Submitted', detail: 'Feed test submitted for Tank 8 (Siva)' }
         ]
       };
       setDb(initialDb);
-      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(initialDb));
+      localStorage.setItem('aqua_feed_mock_database_v6', JSON.stringify(initialDb));
     }
   }, []);
 
   // Save to LocalStorage whenever DB changes
   useEffect(() => {
     if (db) {
-      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(db));
+      localStorage.setItem('aqua_feed_mock_database_v6', JSON.stringify(db));
     }
   }, [db]);
+
+  // Sync profile changes to MockDataContext state
+  useEffect(() => {
+    const handleProfileUpdate = () => {
+      const session = getSession();
+      if (!session) return;
+      setDb(prev => {
+        if (!prev || !prev.agents) return prev;
+        const updatedAgents = prev.agents.map(a => {
+          if (a.id === session.agentId) {
+            return {
+              ...a,
+              name: session.name || a.name,
+              locality: session.locality || a.locality,
+              phone: session.phone || a.phone,
+              region: session.region || a.region
+            };
+          }
+          return a;
+        });
+        return { ...prev, agents: updatedAgents };
+      });
+    };
+
+    window.addEventListener('agentProfileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('agentProfileUpdated', handleProfileUpdate);
+  }, []);
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -135,9 +343,26 @@ export const MockDataProvider = ({ children }) => {
 
   // --- Selectors ---
 
-  const getAgentById = (id) => db.agents.find(a => a.id === id);
+  const getAgentById = (id) => (db?.agents || []).find(a => a.id === id);
   
-  const getFarmersByAgentId = (agentId) => db.farmers.filter(f => f.agentId === agentId);
+  const getFarmersByAgentId = (agentId) => {
+    if (!db || !db.farmers) return [];
+    const session = getSession();
+    const agent = (db.agents || []).find(a => a.id === agentId);
+    
+    // Agent area/locality from active session profile OR agent record
+    const agentArea = (session && session.agentId === agentId && session.locality)
+      ? session.locality
+      : (agent && agent.locality ? agent.locality : '');
+
+    return db.farmers.filter(f => {
+      // If agent has an assigned area (e.g., 'Chinnamiram'), show ONLY farmers in that area
+      if (agentArea) {
+        return f.location.toLowerCase() === agentArea.toLowerCase();
+      }
+      return f.agentId === agentId;
+    });
+  };
   
   const getFarmerById = (id) => db.farmers.find(f => f.id === id);
   
@@ -175,6 +400,7 @@ export const MockDataProvider = ({ children }) => {
     });
 
     const pendingVerify = getSubmissionsByAgentId(agentId).filter(s => s.status === 'PENDING_VERIFICATION').length;
+    const harvest = getSubmissionsByAgentId(agentId).filter(s => s.type === 'Harvest' || s.testType === 'Harvest').length;
 
     return {
       kpi: {
@@ -183,6 +409,7 @@ export const MockDataProvider = ({ children }) => {
         testsCompleted,
         testsDue,
         overdue,
+        harvest: harvest || 0,
         pendingVerify
       },
       todaysWork
@@ -345,6 +572,104 @@ export const MockDataProvider = ({ children }) => {
     });
   };
 
+  const addTank = (tankData) => {
+    setDb(prev => {
+      const nextTankNum = prev.tanks.length > 0 
+        ? Math.max(...prev.tanks.map(t => parseInt(t.id.replace('T', '')) || 0)) + 1 
+        : 1;
+      const newTankId = `T${nextTankNum.toString().padStart(3, '0')}`;
+      const farmer = prev.farmers.find(f => f.id === tankData.farmerId);
+      const newTank = {
+        id: newTankId,
+        name: tankData.name || `Tank ${nextTankNum}`,
+        farmerId: tankData.farmerId,
+        agentId: tankData.agentId || farmer?.agentId || 'agent001',
+        status: 'ACTIVE',
+        testStatus: 'Due',
+        abw: tankData.abw || '10g',
+        biomass: tankData.biomass || '500kg',
+        fcr: tankData.fcr || '1.2',
+        lastTest: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        nextTest: 'TBD',
+        acres: tankData.acres || '3 Acres',
+        salinity: tankData.salinity || '15 ppt',
+        waterSource: tankData.waterSource || 'Borewell'
+      };
+      showToast(`Tank ${newTank.name} (${newTankId}) added successfully!`);
+      return {
+        ...prev,
+        tanks: [...prev.tanks, newTank]
+      };
+    });
+  };
+
+  const editTank = (tankId, updatedData) => {
+    setDb(prev => ({
+      ...prev,
+      tanks: prev.tanks.map(t => t.id === tankId ? { ...t, ...updatedData } : t)
+    }));
+    showToast(`Tank ${tankId} updated successfully!`);
+  };
+
+  const deleteTank = (tankId) => {
+    setDb(prev => ({
+      ...prev,
+      tanks: prev.tanks.filter(t => t.id !== tankId)
+    }));
+    showToast(`Tank ${tankId} deleted successfully!`);
+  };
+
+  const createFarmerByMobile = (farmerData) => {
+    setDb(prev => {
+      const cleanPhone = (farmerData.phone || '').replace(/[^0-9]/g, '');
+      const existing = prev.farmers.find(f => (f.phone || '').replace(/[^0-9]/g, '') === cleanPhone);
+      if (existing && cleanPhone.length > 5) {
+        showToast(`Mobile ${farmerData.phone} linked to existing farmer ${existing.name} (${existing.id})!`);
+        if (farmerData.agentId) {
+          return {
+            ...prev,
+            farmers: prev.farmers.map(f => f.id === existing.id ? { ...f, agentId: farmerData.agentId } : f)
+          };
+        }
+        return prev;
+      }
+
+      const nextFarmerNum = prev.farmers.length > 0 
+        ? Math.max(...prev.farmers.map(f => parseInt(f.id.replace('F', '')) || 0)) + 1 
+        : 1;
+      const newFarmerId = `F${nextFarmerNum.toString().padStart(3, '0')}`;
+
+      const newFarmer = {
+        id: newFarmerId,
+        name: farmerData.name,
+        status: 'ACTIVE',
+        agentId: farmerData.agentId || 'agent001',
+        phone: farmerData.phone,
+        location: farmerData.location || farmerData.village || 'Bhimavaram',
+        acres: farmerData.acres || 10,
+        waterSource: farmerData.waterSource || 'Borewell',
+        mobileVerified: true,
+        linkedAt: new Date().toLocaleDateString()
+      };
+
+      showToast(`Farmer ${farmerData.name} registered & linked via mobile ${farmerData.phone}!`);
+
+      return {
+        ...prev,
+        farmers: [...prev.farmers, newFarmer]
+      };
+    });
+  };
+
+  const deleteFarmer = (farmerId) => {
+    setDb(prev => ({
+      ...prev,
+      farmers: prev.farmers.filter(f => f.id !== farmerId),
+      tanks: prev.tanks.filter(t => t.farmerId !== farmerId)
+    }));
+    showToast(`Farmer ${farmerId} and associated tanks removed.`);
+  };
+
   const saveDraft = (draft) => {
     setDb(prev => {
       const existingIndex = prev.drafts.findIndex(d => d.tankId === draft.tankId);
@@ -393,6 +718,11 @@ export const MockDataProvider = ({ children }) => {
       updateSubmissionStatus,
       assignFarmerToAgent,
       createFarmerWithTanks,
+      addTank,
+      editTank,
+      deleteTank,
+      createFarmerByMobile,
+      deleteFarmer,
       saveDraft,
       getDraft,
       addAgent,

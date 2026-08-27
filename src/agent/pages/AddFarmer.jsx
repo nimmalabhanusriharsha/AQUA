@@ -32,9 +32,9 @@ const AddFarmer = () => {
   return (
     <div>
       <div style={styles.header}>
-        <button style={styles.backBtn} onClick={() => navigate('/dashboard')}>
+        <button style={styles.backBtn} onClick={() => window.history.length > 1 ? navigate(-1) : navigate('/dashboard')}>
           <ArrowLeft size={20} />
-          <span>Back to Dashboard</span>
+          <span>Back</span>
         </button>
       </div>
 

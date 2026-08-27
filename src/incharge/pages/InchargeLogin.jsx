@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, User } from 'lucide-react';
 import { loginIncharge } from '../utils/inchargeAuth';
 import logo from '../../assets/logo-trans2.png';
+import BackButton from '../../components/BackButton';
 
 const InchargeLogin = () => {
   const [identifier, setIdentifier] = useState('');
@@ -28,7 +29,10 @@ const InchargeLogin = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="auth-container" style={{ position: 'relative' }}>
+      <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 10 }}>
+        <BackButton fallback="/login" />
+      </div>
       <div className="auth-box card">
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <img src={logo} alt="Aqua Feed Logo" style={{ width: '140px', height: 'auto', marginBottom: '16px' }} />

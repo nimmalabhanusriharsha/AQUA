@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Save, Send, MapPin, AlertTriangle, Droplet, Fish, Pill, Bug, Ship, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Save, Send, MapPin, AlertTriangle, Droplet, Fish, Pill, Bug, ChevronRight, Check, Edit3 } from 'lucide-react';
 import { useMockData } from '../../context/MockDataContext';
 import { getSession } from '../utils/agentAuth';
 
@@ -10,8 +10,7 @@ const STEPS = [
   'Feed',
   'Medication',
   'Disease',
-  'Harvest',
-  'Review'
+  'Submit Tests'
 ];
 
 const DISEASE_OPTIONS = [
@@ -27,6 +26,7 @@ const SiteVisit = () => {
   const [tank, setTank] = useState(null);
   const [session, setSession] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
+  const [returnToSubmit, setReturnToSubmit] = useState(false);
   const { getTankById, getDraft, saveDraft, submitRecord } = useMockData();
   
   // GPS State
@@ -75,28 +75,33 @@ const SiteVisit = () => {
   const handleNext = () => {
     if (currentStep === 0) {
       setCurrentStep('MENU');
-    } else if (typeof currentStep === 'number' && currentStep >= 1 && currentStep <= 5) {
-      setCurrentStep('MENU');
+    } else if (typeof currentStep === 'number' && currentStep >= 1 && currentStep <= 4) {
+      if (returnToSubmit) {
+        setCurrentStep(5);
+        setReturnToSubmit(false);
+      } else {
+        setCurrentStep('MENU');
+      }
     } else if (currentStep === 'MENU') {
-      setCurrentStep(6);
+      setCurrentStep(5);
     }
   };
 
   const handleBack = () => {
     if (currentStep === 'MENU') {
       navigate(`/tanks/${tankId}`);
-    } else if (typeof currentStep === 'number' && currentStep >= 1 && currentStep <= 6) {
+    } else if (typeof currentStep === 'number' && currentStep >= 1 && currentStep <= 4) {
+      if (returnToSubmit) {
+        setCurrentStep(5);
+        setReturnToSubmit(false);
+      } else {
+        setCurrentStep('MENU');
+      }
+    } else if (currentStep === 5) {
       setCurrentStep('MENU');
     } else {
       navigate(`/tanks/${tankId}`);
     }
-  };
-
-  const verifyGPS = () => {
-    setGpsStatus('loading');
-    setTimeout(() => {
-      setGpsStatus('success'); // Mock success
-    }, 1500);
   };
 
   const updateFormData = (section, field, value) => {
@@ -120,19 +125,7 @@ const SiteVisit = () => {
   };
 
   const checkWaterWarning = (field, value) => {
-    if (!value || value === '') return null;
-    const num = parseFloat(value);
-    if (isNaN(num)) return null;
-
-    switch (field) {
-      case 'salinity': return (num < 0 || num > 30) ? 'Salinity outside prototype range (0-30 ppt)' : null;
-      case 'ph': return (num < 7.5 || num > 8.5) ? 'pH outside prototype range (7.5-8.5)' : null;
-      case 'alkalinity': return (num < 100 || num > 300) ? 'Alkalinity outside prototype range (100-300 ppm)' : null;
-      case 'do': return (num < 4) ? 'DO is below 4. Flagging as low.' : null;
-      case 'h2s': return (num < 0 || num > 0.02) ? 'H2S outside prototype range (0-0.02)' : null;
-      case 'iron': return (num < 0 || num > 0.02) ? 'Iron outside prototype range (0-0.02)' : null;
-      default: return null;
-    }
+    return null;
   };
 
   const renderInput = (section, field, label, type="text", placeholder="") => {
@@ -205,7 +198,7 @@ const SiteVisit = () => {
             </div>
 
             <div style={styles.menuList}>
-              <div style={styles.menuCard} onClick={() => setCurrentStep(1)}>
+              <div style={styles.menuCard} onClick={() => { setCurrentStep(1); setReturnToSubmit(false); }}>
                 <div style={styles.menuCardIconWrapper}>
                   <div style={styles.menuCardNumber}>01</div>
                   <Droplet size={24} color="#003399" />
@@ -218,7 +211,7 @@ const SiteVisit = () => {
                 <div style={styles.menuCardAction}>ENTER TEST <ChevronRight size={16} /></div>
               </div>
 
-              <div style={styles.menuCard} onClick={() => setCurrentStep(2)}>
+              <div style={styles.menuCard} onClick={() => { setCurrentStep(2); setReturnToSubmit(false); }}>
                 <div style={styles.menuCardIconWrapper}>
                   <div style={styles.menuCardNumber}>02</div>
                   <Fish size={24} color="#003399" />
@@ -231,7 +224,7 @@ const SiteVisit = () => {
                 <div style={styles.menuCardAction}>ENTER TEST <ChevronRight size={16} /></div>
               </div>
 
-              <div style={styles.menuCard} onClick={() => setCurrentStep(3)}>
+              <div style={styles.menuCard} onClick={() => { setCurrentStep(3); setReturnToSubmit(false); }}>
                 <div style={styles.menuCardIconWrapper}>
                   <div style={styles.menuCardNumber}>03</div>
                   <Pill size={24} color="#15803d" />
@@ -243,7 +236,7 @@ const SiteVisit = () => {
                 <div style={styles.menuCardAction}>ADD RECORD <ChevronRight size={16} /></div>
               </div>
 
-              <div style={styles.menuCard} onClick={() => setCurrentStep(4)}>
+              <div style={styles.menuCard} onClick={() => { setCurrentStep(4); setReturnToSubmit(false); }}>
                 <div style={styles.menuCardIconWrapper}>
                   <div style={styles.menuCardNumber}>04</div>
                   <Bug size={24} color="#b45309" />
@@ -253,18 +246,6 @@ const SiteVisit = () => {
                   <div style={styles.menuCardSubtitle}>Last Record: 18 Aug 2026</div>
                 </div>
                 <div style={styles.menuCardAction}>ADD OBSERVATION <ChevronRight size={16} /></div>
-              </div>
-
-              <div style={styles.menuCard} onClick={() => setCurrentStep(5)}>
-                <div style={styles.menuCardIconWrapper}>
-                  <div style={styles.menuCardNumber}>05</div>
-                  <Ship size={24} color="#6b21a8" />
-                </div>
-                <div style={styles.menuCardContent}>
-                  <div style={styles.menuCardTitle}>Harvest</div>
-                  <div style={styles.menuCardSubtitle}>Last Record: 10 Aug 2026</div>
-                </div>
-                <div style={styles.menuCardAction}>ADD HARVEST <ChevronRight size={16} /></div>
               </div>
             </div>
             
@@ -281,21 +262,81 @@ const SiteVisit = () => {
         return (
           <div style={styles.stepContainer}>
             <div style={styles.gpsBox}>
-              <MapPin size={48} color={gpsStatus === 'success' ? 'var(--status-green)' : 'var(--color-primary)'} />
-              <h3 style={{ margin: '16px 0', fontSize: '18px' }}>Location Verification</h3>
-              {gpsStatus === 'pending' && <p>Please verify your physical location at the tank.</p>}
-              {gpsStatus === 'loading' && <p>Acquiring GPS coordinates...</p>}
+              {/* GPS Signal Beacon */}
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 18px',
+                borderRadius: '30px',
+                backgroundColor: gpsStatus === 'success' ? '#dcfce7' : gpsStatus === 'error' ? '#fef2f2' : '#eff6ff',
+                border: gpsStatus === 'success' ? '2px solid #22c55e' : gpsStatus === 'error' ? '2px solid #ef4444' : '2px solid #3b82f6',
+                marginBottom: '16px'
+              }}>
+                <span style={{
+                  width: '14px',
+                  height: '14px',
+                  borderRadius: '50%',
+                  backgroundColor: gpsStatus === 'success' ? '#22c55e' : gpsStatus === 'error' ? '#ef4444' : '#3b82f6',
+                  boxShadow: gpsStatus === 'success' ? '0 0 10px #22c55e' : gpsStatus === 'error' ? '0 0 10px #ef4444' : 'none'
+                }}></span>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: gpsStatus === 'success' ? '#15803d' : gpsStatus === 'error' ? '#b91c1c' : '#1d4ed8'
+                }}>
+                  {gpsStatus === 'success' ? '🟢 GPS SIGNAL: VERIFIED (GREEN)' : gpsStatus === 'error' ? '🔴 GPS SIGNAL: OUT OF RANGE (RED)' : '🔵 GPS SIGNAL: SEARCHING...'}
+                </span>
+              </div>
+
+              <h3 style={{ margin: '8px 0 16px 0', fontSize: '18px', fontWeight: '700' }}>GPS Location Signal Verification</h3>
+              
               {gpsStatus === 'success' && (
-                <div style={{ color: 'var(--status-green)', fontWeight: 'bold' }}>
-                  <CheckCircle size={24} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '8px' }}/>
-                  Location Verified ✓ (Distance: 12m)
+                <div style={{ backgroundColor: '#f0fdf4', padding: '16px', borderRadius: '12px', border: '1px solid #bbf7d0', marginBottom: '20px' }}>
+                  <div style={{ color: '#166534', fontWeight: 'bold', fontSize: '15px', marginBottom: '4px' }}>
+                    <CheckCircle size={20} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '6px' }}/>
+                    GPS Signal Active & Verified (In Range)
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#15803d' }}>
+                    Latitude: 16.5449° N | Longitude: 81.5212° E (Accuracy: ±3m, Distance from Tank: 12m)
+                  </div>
                 </div>
               )}
-              {gpsStatus !== 'success' && (
-                <button className="btn-primary" style={{ marginTop: '24px' }} onClick={verifyGPS} disabled={gpsStatus === 'loading'}>
-                  {gpsStatus === 'loading' ? 'Verifying...' : 'Verify Location'}
-                </button>
+
+              {gpsStatus === 'error' && (
+                <div style={{ backgroundColor: '#fef2f2', padding: '16px', borderRadius: '12px', border: '1px solid #fecaca', marginBottom: '20px' }}>
+                  <div style={{ color: '#991b1b', fontWeight: 'bold', fontSize: '15px', marginBottom: '4px' }}>
+                    ⚠️ GPS Signal Out of Range (Red Light Signal)
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#b91c1c' }}>
+                    Device location is 1.4km away from registered tank coordinates. Please stand closer to the pond bank.
+                  </div>
+                </div>
               )}
+
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '16px', flexWrap: 'wrap' }}>
+                <button 
+                  className="btn-primary" 
+                  style={{ width: 'auto', padding: '10px 20px', backgroundColor: '#16a34a' }} 
+                  onClick={() => setGpsStatus('success')}
+                >
+                  🟢 Verify GPS (Green Signal)
+                </button>
+                <button 
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setGpsStatus('error')}
+                >
+                  🔴 Out Of Range (Red Signal)
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -305,17 +346,17 @@ const SiteVisit = () => {
           <div style={styles.stepContainer}>
             <div className="grid grid-cols-1 md:grid-cols-2">
               {renderInput('water', 'doc', 'DOC / Date', 'date')}
-              {renderInput('water', 'salinity', 'Salinity (0-30 ppt)', 'number')}
-              {renderInput('water', 'ph', 'pH (7.5-8.5)', 'number')}
-              {renderInput('water', 'alkalinity', 'Alkalinity (100-300 ppm)', 'number')}
+              {renderInput('water', 'salinity', 'Salinity (ppt)', 'number')}
+              {renderInput('water', 'ph', 'pH', 'number')}
+              {renderInput('water', 'alkalinity', 'Alkalinity (ppm)', 'number')}
               {renderInput('water', 'hardness', 'Hardness', 'number')}
               {renderInput('water', 'ammonia', 'Ammonia', 'number')}
               {renderInput('water', 'nitrite', 'Nitrite', 'number')}
               {renderInput('water', 'k', 'Potassium (K)', 'number')}
               {renderInput('water', 'do', 'DO (mg/L)', 'number')}
-              {renderInput('water', 'h2s', 'H2S (0-0.02)', 'number')}
+              {renderInput('water', 'h2s', 'H2S', 'number')}
               {renderInput('water', 'chlorine', 'Chlorine', 'number')}
-              {renderInput('water', 'iron', 'Iron (0-0.02)', 'number')}
+              {renderInput('water', 'iron', 'Iron', 'number')}
               {renderInput('water', 'waterColour', 'Water Colour', 'text', 'e.g. Greenish')}
             </div>
           </div>
@@ -362,8 +403,12 @@ const SiteVisit = () => {
       case 4:
         return (
           <div style={styles.stepContainer}>
-            <label style={styles.label}>Observed Diseases</label>
-            <div className="grid grid-cols-2" style={{ gap: '12px', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <label style={{ ...styles.label, margin: 0 }}>Observed Shrimp Diseases</label>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600' }}>📷 Shrimp Photo Compilation</span>
+            </div>
+            
+            <div className="grid grid-cols-2" style={{ gap: '12px', marginBottom: '20px' }}>
               {DISEASE_OPTIONS.map(disease => (
                 <label key={disease} style={styles.checkboxLabel}>
                   <input 
@@ -375,70 +420,131 @@ const SiteVisit = () => {
                 </label>
               ))}
             </div>
-            {renderInput('disease', 'remarks', 'Remarks', 'text', 'Additional observations')}
+
+            {/* Shrimp Disease Photo Compilation Section */}
+            <div style={{
+              backgroundColor: '#f8fafc',
+              border: '1px solid var(--color-border)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '20px'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h4 style={{ margin: 0, fontSize: '14px', fontWeight: '700', color: 'var(--color-text-main)' }}>
+                  🦐 Shrimp Disease Photo Compilation
+                </h4>
+                <label style={{
+                  padding: '6px 12px',
+                  backgroundColor: '#0284c7',
+                  color: 'white',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}>
+                  📷 Upload Shrimp Photo
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    style={{ display: 'none' }}
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        alert(`Uploaded photo: ${e.target.files[0].name} attached to Disease Compilation!`);
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+
+              <p style={{ fontSize: '12px', color: 'var(--color-text-muted)', marginBottom: '12px' }}>
+                Select visual symptom reference photos to compile with this test record:
+              </p>
+
+              {/* Sample Reference Photo Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '10px' }}>
+                {[
+                  { name: 'White Gut', color: '#fef3c7', border: '#f59e0b', desc: 'White intestinal tract' },
+                  { name: 'WSSV Spot', color: '#fee2e2', border: '#ef4444', desc: 'White spots on carapace' },
+                  { name: 'EHP Micro', color: '#f3e8ff', border: '#a855f7', desc: 'Hepatopancreas atrophy' },
+                  { name: 'Black Gill', color: '#f1f5f9', border: '#475569', desc: 'Black gill necrosis' },
+                  { name: 'Loose Shell', color: '#e0f2fe', border: '#0284c7', desc: 'Soft muscle flaccidity' }
+                ].map((item, idx) => (
+                  <div 
+                    key={idx}
+                    style={{
+                      border: `2px solid ${item.border}`,
+                      backgroundColor: item.color,
+                      borderRadius: '8px',
+                      padding: '10px',
+                      textAlign: 'center',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      if (!formData.disease.observations.includes(item.name)) {
+                        toggleDisease(item.name);
+                      }
+                      alert(`Selected ${item.name} shrimp photo reference for disease compilation.`);
+                    }}
+                  >
+                    <div style={{ fontSize: '24px', marginBottom: '4px' }}>🦐</div>
+                    <div style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a' }}>{item.name}</div>
+                    <div style={{ fontSize: '10px', color: '#475569', marginTop: '2px' }}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {renderInput('disease', 'remarks', 'Remarks', 'text', 'Additional observations or photo details')}
           </div>
         );
 
       case 5:
         return (
           <div style={styles.stepContainer}>
-            <div className="input-group">
-              <label style={styles.label}>Harvest Type</label>
-              <div className="input-field">
-                <select value={formData.harvest.type} onChange={e => updateFormData('harvest', 'type', e.target.value)}>
-                  <option value="None">None / Not Planned</option>
-                  <option value="Partial">Partial Harvest</option>
-                  <option value="Final">Final Harvest</option>
-                </select>
-              </div>
-            </div>
-            {formData.harvest.type !== 'None' && (
-              <div className="grid grid-cols-1 md:grid-cols-2">
-                {renderInput('harvest', 'date', 'Harvest Date / DOC', 'text')}
-                {renderInput('harvest', 'abw', 'ABW', 'number')}
-                {renderInput('harvest', 'harvestedNumber', 'Harvested Number', 'number')}
-                {renderInput('harvest', 'harvestedBiomass', 'Harvested Biomass (kg)', 'number')}
-                {renderInput('harvest', 'finalDoc', 'Final DOC', 'number')}
-                {renderInput('harvest', 'finalAbw', 'Final ABW', 'number')}
-                {renderInput('harvest', 'finalBiomass', 'Final Biomass (kg)', 'number')}
-                {renderInput('harvest', 'totalBiomass', 'Total Biomass (kg)', 'number')}
-                {renderInput('harvest', 'totalFeed', 'Total Feed (kg)', 'number')}
-                {renderInput('harvest', 'remarks', 'Remarks', 'text')}
-              </div>
-            )}
-          </div>
-        );
-
-      case 6:
-        return (
-          <div style={styles.stepContainer}>
             <div style={styles.reviewBox}>
-              <h4 style={styles.reviewTitle}>1. Water Quality</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3" style={styles.reviewGrid}>
-                {Object.entries(formData.water).map(([key, val]) => val && <div key={key}><strong>{key}:</strong> {val}</div>)}
+              {/* 1. Water Quality */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '12px 0', paddingBottom: '12px', borderBottom: '1px solid #E2E8F0' }}>
+                <h4 style={{ ...styles.reviewTitle, margin: 0, border: 'none', padding: 0 }}>1. WATER QUALITY</h4>
+                <button 
+                  style={styles.editSectionBtn}
+                  onClick={() => { setCurrentStep(1); setReturnToSubmit(true); }}
+                >
+                  <Edit3 size={14} /> Edit
+                </button>
               </div>
               
-              <h4 style={styles.reviewTitle}>2. Feed</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3" style={styles.reviewGrid}>
-                {Object.entries(formData.feed).map(([key, val]) => val && <div key={key}><strong>{key}:</strong> {val}</div>)}
-              </div>
-              
-              <h4 style={styles.reviewTitle}>3. Medication</h4>
-              <div className="grid grid-cols-2" style={styles.reviewGrid}>
-                {Object.entries(formData.medication).map(([key, val]) => val && <div key={key}><strong>{key}:</strong> {val}</div>)}
+              {/* 2. Feed */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '12px 0', paddingBottom: '12px', borderBottom: '1px solid #E2E8F0' }}>
+                <h4 style={{ ...styles.reviewTitle, margin: 0, border: 'none', padding: 0 }}>2. FEED</h4>
+                <button 
+                  style={styles.editSectionBtn}
+                  onClick={() => { setCurrentStep(2); setReturnToSubmit(true); }}
+                >
+                  <Edit3 size={14} /> Edit
+                </button>
               </div>
 
-              <h4 style={styles.reviewTitle}>4. Disease</h4>
-              <p><strong>Observations:</strong> {formData.disease.observations.length > 0 ? formData.disease.observations.join(', ') : 'None'}</p>
-              <p><strong>Remarks:</strong> {formData.disease.remarks || '-'}</p>
+              {/* 3. Medication */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '12px 0', paddingBottom: '12px', borderBottom: '1px solid #E2E8F0' }}>
+                <h4 style={{ ...styles.reviewTitle, margin: 0, border: 'none', padding: 0 }}>3. MEDICATION</h4>
+                <button 
+                  style={styles.editSectionBtn}
+                  onClick={() => { setCurrentStep(3); setReturnToSubmit(true); }}
+                >
+                  <Edit3 size={14} /> Edit
+                </button>
+              </div>
 
-              <h4 style={styles.reviewTitle}>5. Harvest</h4>
-              <p><strong>Type:</strong> {formData.harvest.type}</p>
-              {formData.harvest.type !== 'None' && (
-                <div className="grid grid-cols-2" style={styles.reviewGrid}>
-                  {Object.entries(formData.harvest).map(([key, val]) => key !== 'type' && val && <div key={key}><strong>{key}:</strong> {val}</div>)}
-                </div>
-              )}
+              {/* 4. Disease */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '12px 0', paddingBottom: '4px' }}>
+                <h4 style={{ ...styles.reviewTitle, margin: 0, border: 'none', padding: 0 }}>4. DISEASE</h4>
+                <button 
+                  style={styles.editSectionBtn}
+                  onClick={() => { setCurrentStep(4); setReturnToSubmit(true); }}
+                >
+                  <Edit3 size={14} /> Edit
+                </button>
+              </div>
             </div>
           </div>
         );
@@ -455,7 +561,7 @@ const SiteVisit = () => {
           <ArrowLeft size={20} />
           <span>{currentStep === 0 ? 'Cancel Visit' : 'Back'}</span>
         </button>
-        {currentStep > 0 && currentStep < 6 && (
+        {currentStep > 0 && currentStep < 5 && (
           <button style={styles.draftBtn} onClick={handleSaveDraft}>
             <Save size={16} /> Save Draft
           </button>
@@ -497,16 +603,38 @@ const SiteVisit = () => {
               onClick={handleNext}
               style={{ width: '100%', padding: '16px', fontSize: '15px' }}
             >
-              REVIEW & SUBMIT TESTS
+              EDIT & SUBMIT
             </button>
-          ) : currentStep === 6 ? (
-            <button 
-              className="btn-primary"
-              style={{ backgroundColor: 'var(--status-green)', width: '100%', padding: '16px', fontSize: '15px' }}
-              onClick={handleSubmit}
-            >
-              <Send size={18} /> Submit Data
-            </button>
+          ) : currentStep === 5 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+              <button 
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  backgroundColor: '#EAF3FF',
+                  color: '#2563D9',
+                  border: '1px solid #2563D9',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+                onClick={() => { setCurrentStep(1); setReturnToSubmit(true); }}
+              >
+                <Edit3 size={16} /> Edit Test Data
+              </button>
+              <button 
+                className="btn-primary"
+                style={{ backgroundColor: '#22A65A', width: '100%', padding: '16px', fontSize: '15px' }}
+                onClick={handleSubmit}
+              >
+                <Send size={18} /> SUBMIT TESTS
+              </button>
+            </div>
           ) : (
             <button 
               className="btn-primary"
@@ -524,41 +652,70 @@ const SiteVisit = () => {
 
 const styles = {
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-  backBtn: { display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: 'var(--color-text-main)', fontWeight: '600', cursor: 'pointer', fontSize: '15px' },
-  draftBtn: { display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9', border: '1px solid var(--color-border)', padding: '6px 12px', borderRadius: '6px', color: 'var(--color-text-muted)', fontWeight: '600', cursor: 'pointer', fontSize: '13px' },
+  backBtn: { display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', color: '#17233C', fontWeight: '600', cursor: 'pointer', fontSize: '15px' },
+  draftBtn: { display: 'flex', alignItems: 'center', gap: '6px', background: '#EAF3FF', border: '1px solid #DCE4EE', padding: '6px 12px', borderRadius: '6px', color: '#2563D9', fontWeight: '600', cursor: 'pointer', fontSize: '13px' },
   cardHeader: { marginBottom: '16px' },
-  title: { fontSize: '20px', fontWeight: '700', color: 'var(--color-text-main)', marginBottom: '4px' },
-  subtitle: { fontSize: '13px', color: 'var(--color-text-muted)' },
-  progressContainer: { height: '6px', backgroundColor: '#f1f5f9', borderRadius: '3px', overflow: 'hidden', marginBottom: '24px' },
-  progressBar: { height: '100%', backgroundColor: 'var(--color-primary)', transition: 'width 0.3s ease' },
+  title: { fontSize: '20px', fontWeight: '700', color: '#17233C', marginBottom: '4px' },
+  subtitle: { fontSize: '13px', color: '#64748B' },
+  progressContainer: { height: '6px', backgroundColor: '#DCE4EE', borderRadius: '3px', overflow: 'hidden', marginBottom: '24px' },
+  progressBar: { height: '100%', backgroundColor: '#2563D9', transition: 'width 0.3s ease' },
   stepContainer: { minHeight: '250px' },
-  gpsBox: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px dashed var(--color-border)' },
-  label: { fontSize: '13px', fontWeight: '600', color: 'var(--color-text-main)', marginBottom: '8px', display: 'block' },
-  warningText: { color: 'var(--status-orange)', fontSize: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '500' },
-  checkboxLabel: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', backgroundColor: '#f1f5f9', padding: '10px 12px', borderRadius: '6px' },
-  footer: { marginTop: '24px', borderTop: '1px solid var(--color-border)', paddingTop: '20px' },
-  reviewBox: { backgroundColor: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid var(--color-border)', fontSize: '14px' },
-  reviewTitle: { fontSize: '13px', fontWeight: '700', color: 'var(--color-primary)', marginTop: '20px', marginBottom: '8px', textTransform: 'uppercase', borderBottom: '1px solid var(--color-border)', paddingBottom: '4px' },
-  reviewGrid: { gap: '8px', fontSize: '13px', color: 'var(--color-text-muted)' },
-  loading: { padding: '40px', textAlign: 'center', color: 'var(--color-text-muted)' },
+  gpsBox: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px dashed #DCE4EE' },
+  label: { fontSize: '13px', fontWeight: '600', color: '#17233C', marginBottom: '8px', display: 'block' },
+  warningText: { color: '#E9A400', fontSize: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '500' },
+  checkboxLabel: { display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', backgroundColor: '#EAF3FF', padding: '10px 12px', borderRadius: '6px' },
+  footer: { marginTop: '24px', borderTop: '1px solid #DCE4EE', paddingTop: '20px' },
+  reviewBox: { backgroundColor: '#FFFFFF', padding: '16px', borderRadius: '8px', border: '1px solid #DCE4EE', fontSize: '14px' },
+  reviewTitle: { fontSize: '13px', fontWeight: '700', color: '#2563D9', marginTop: '20px', marginBottom: '8px', textTransform: 'uppercase', borderBottom: '1px solid #DCE4EE', paddingBottom: '4px' },
+  reviewGrid: { gap: '8px', fontSize: '13px', color: '#64748B' },
+  loading: { padding: '40px', textAlign: 'center', color: '#64748B' },
   
-  // New Menu Styles
+  editDataBtn: {
+    width: '100%',
+    padding: '12px',
+    backgroundColor: '#EAF3FF',
+    color: '#2563D9',
+    border: '1px solid #2563D9',
+    borderRadius: '8px',
+    fontSize: '14px',
+    fontWeight: '700',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px'
+  },
+  editSectionBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    padding: '4px 10px',
+    backgroundColor: '#EAF3FF',
+    color: '#2563D9',
+    border: '1px solid #DCE4EE',
+    borderRadius: '6px',
+    fontSize: '12px',
+    fontWeight: '600',
+    cursor: 'pointer'
+  },
+
+  // Menu Styles
   menuContainer: { display: 'flex', flexDirection: 'column', gap: '16px' },
   menuHeaderRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  menuLabel: { fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: '600', marginBottom: '2px' },
-  menuValue: { fontSize: '15px', color: 'var(--color-text-main)', fontWeight: '700' },
-  menuStatusVerified: { display: 'flex', alignItems: 'center', color: 'var(--status-green)', fontSize: '14px', fontWeight: '600' },
+  menuLabel: { fontSize: '12px', color: '#64748B', fontWeight: '600', marginBottom: '2px' },
+  menuValue: { fontSize: '15px', color: '#17233C', fontWeight: '700' },
+  menuStatusVerified: { display: 'flex', alignItems: 'center', color: '#22A65A', fontSize: '14px', fontWeight: '600' },
   menuList: { display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' },
-  menuCard: { display: 'flex', alignItems: 'center', padding: '16px', backgroundColor: '#ffffff', border: '1px solid var(--color-border)', borderRadius: '12px', cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' },
-  menuCardIconWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f1f5f9', borderRadius: '8px', padding: '8px 12px', marginRight: '16px', minWidth: '60px' },
-  menuCardNumber: { fontSize: '12px', fontWeight: '700', color: 'var(--color-primary)', marginBottom: '4px' },
+  menuCard: { display: 'flex', alignItems: 'center', padding: '16px', backgroundColor: '#FFFFFF', border: '1px solid #DCE4EE', borderRadius: '12px', cursor: 'pointer', boxShadow: '0 2px 8px rgba(23, 35, 60, 0.04)' },
+  menuCardIconWrapper: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#EAF3FF', borderRadius: '8px', padding: '8px 12px', marginRight: '16px', minWidth: '60px' },
+  menuCardNumber: { fontSize: '12px', fontWeight: '700', color: '#2563D9', marginBottom: '4px' },
   menuCardContent: { flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' },
-  menuCardTitle: { fontSize: '15px', fontWeight: '700', color: 'var(--color-text-main)' },
-  menuCardSubtitle: { fontSize: '13px', color: 'var(--color-text-muted)' },
-  menuCardStatusDue: { fontSize: '12px', fontWeight: '600', color: 'var(--status-red)' },
-  menuCardAction: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '700', color: 'var(--color-primary)' },
-  siteVerifiedBox: { display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', backgroundColor: '#f0fdf4', border: '1px dashed var(--status-green)', borderRadius: '8px', marginTop: '16px' },
-  siteVerifiedTitle: { fontSize: '14px', fontWeight: '700', color: 'var(--status-green)' },
+  menuCardTitle: { fontSize: '15px', fontWeight: '700', color: '#17233C' },
+  menuCardSubtitle: { fontSize: '13px', color: '#64748B' },
+  menuCardStatusDue: { fontSize: '12px', fontWeight: '600', color: '#DC3F3F' },
+  menuCardAction: { display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: '700', color: '#2563D9' },
+  siteVerifiedBox: { display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', backgroundColor: '#E8F8EE', border: '1px dashed #22A65A', borderRadius: '8px', marginTop: '16px' },
+  siteVerifiedTitle: { fontSize: '14px', fontWeight: '700', color: '#22A65A' },
   siteVerifiedText: { fontSize: '13px', color: '#166534', marginTop: '2px' },
 };
 

@@ -27,12 +27,12 @@ const BottomNavigation = () => {
           >
             <Icon 
               size={24} 
-              color={isActive ? 'var(--color-primary)' : 'var(--color-text-muted)'} 
+              color={isActive ? '#2563D9' : '#64748B'} 
               strokeWidth={isActive ? 2.5 : 2}
             />
             <span style={{ 
               ...styles.label, 
-              color: isActive ? 'var(--color-primary)' : 'var(--color-text-muted)',
+              color: isActive ? '#2563D9' : '#64748B',
               fontWeight: isActive ? 600 : 400
             }}>
               {item.label}
@@ -48,16 +48,18 @@ const styles = {
   container: {
     position: 'fixed',
     bottom: 0,
+    left: '50%',
+    transform: 'translateX(-50%)',
     width: '100%',
     maxWidth: '480px',
-    height: '70px',
+    height: '65px',
     backgroundColor: '#ffffff',
     borderTop: '1px solid var(--color-border)',
     display: 'flex',
     justifyContent: 'space-around',
     alignItems: 'center',
     paddingBottom: 'env(safe-area-inset-bottom)',
-    boxShadow: '0 -2px 10px rgba(0,0,0,0.03)',
+    boxShadow: '0 -2px 10px rgba(0,0,0,0.05)',
     zIndex: 1000,
   },
   navItem: {

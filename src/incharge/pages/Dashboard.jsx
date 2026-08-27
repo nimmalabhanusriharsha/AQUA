@@ -127,26 +127,25 @@ const Dashboard = () => {
         {/* Charts Section */}
         <div className="grid lg:grid-cols-2" style={{ gap: '24px', marginBottom: '24px' }}>
           <div className="card">
-            <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Weekly Test Compliance</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, margin: 0 }}>Weekly Test Compliance</h3>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '600', backgroundColor: '#f1f5f9', padding: '4px 10px', borderRadius: '12px' }}>
+                📊 Bar Graph View
+              </span>
+            </div>
             <div style={{ height: '300px', width: '100%' }}>
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={mockComplianceData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={70}
-                    outerRadius={100}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
+                <BarChart data={mockComplianceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={5} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} unit="%" />
+                  <RechartsTooltip formatter={(val) => [`${val}%`, 'Compliance']} />
+                  <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={45}>
                     {mockComplianceData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                  </Pie>
-                  <RechartsTooltip />
-                  <Legend verticalAlign="bottom" height={36} />
-                </PieChart>
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
