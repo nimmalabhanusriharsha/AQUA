@@ -7,6 +7,8 @@ const Farmers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { db, createFarmerWithTanks, getTanksByFarmerId, getAgentById } = useMockData();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTankModalOpen, setIsTankModalOpen] = useState(false);
+  const [tanksData, setTanksData] = useState([]);
   const [selectedFarmer, setSelectedFarmer] = useState(null);
 
   // Form State
@@ -49,8 +51,24 @@ const Farmers = () => {
       return;
     }
 
-    // We assign it to INC001's first agent as a default, or an unassigned state if we had one
-    // For this mock, we'll assign to 'agent001' by default when created from incharge panel
+    // Instead of saving directly, we open the tank details modal
+    const numTanks = parseInt(numberOfTanks) || 1;
+    const initialTanksArray = Array.from({ length: numTanks }, () => ({
+      size: '',
+      salinity: '',
+      soilType: '',
+      broodname: '',
+      seedDate: new Date().toISOString().split('T')[0],
+      seedStocking: '',
+      feedType: '',
+      registeredLocation: ''
+    }));
+    setTanksData(initialTanksArray);
+    setIsModalOpen(false);
+    setIsTankModalOpen(true);
+  };
+
+  const handleSaveTanks = () => {
     const defaultAgentId = db.agents.length > 0 ? db.agents[0].id : 'agent001';
 
     createFarmerWithTanks(
@@ -63,7 +81,7 @@ const Farmers = () => {
         acres: totalLandArea || 0,
         waterSource: waterSource
       },
-      Array(parseInt(numberOfTanks) || 1).fill({})
+      tanksData
     );
 
     // Reset and close
@@ -75,7 +93,14 @@ const Farmers = () => {
     setWaterSource('');
     setNumberOfTanks('');
     setPhoneError('');
-    setIsModalOpen(false);
+    setTanksData([]);
+    setIsTankModalOpen(false);
+  };
+
+  const handleTankChange = (index, field, value) => {
+    const newTanks = [...tanksData];
+    newTanks[index][field] = value;
+    setTanksData(newTanks);
   };
 
   return (
@@ -263,6 +288,94 @@ const Farmers = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Tank Details Modal */}
+      {isTankModalOpen && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 50,
+          display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px'
+        }}>
+          <div className="card" style={{ width: '100%', maxWidth: '800px', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}>
+            <button
+              onClick={() => {
+                setIsTankModalOpen(false);
+              }}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-muted)' }}
+            >
+              <X size={20} />
+            </button>
+            <h2 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '24px' }}>Tank Information</h2>
+
+            {tanksData.map((tank, index) => (
+              <div key={index} style={{ marginBottom: '24px', paddingBottom: '24px', borderBottom: '1px solid var(--color-border)' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'var(--color-primary)' }}>Tank {index + 1}</h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-4" style={{ gap: '16px' }}>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Tank Size (Acres)</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="number" placeholder="e.g. 1.5" value={tank.size} onChange={e => handleTankChange(index, 'size', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Salinity (ppt)</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="number" placeholder="e.g. 15" value={tank.salinity} onChange={e => handleTankChange(index, 'salinity', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Soil Type</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="text" placeholder="e.g. Clay" value={tank.soilType} onChange={e => handleTankChange(index, 'soilType', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Brood Name</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="text" placeholder="e.g. SPF Vannamei" value={tank.broodname} onChange={e => handleTankChange(index, 'broodname', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Seed Date</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="date" value={tank.seedDate} onChange={e => handleTankChange(index, 'seedDate', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Seed Stocking</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="text" placeholder="e.g. 100000" value={tank.seedStocking} onChange={e => handleTankChange(index, 'seedStocking', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Feed Type</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="text" placeholder="e.g. Starter Feed" value={tank.feedType} onChange={e => handleTankChange(index, 'feedType', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="input-group">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>Registered Location</label>
+                    <div className="input-field" style={{ backgroundColor: '#f1f5f9' }}>
+                      <input type="text" placeholder="e.g. Bhimavaram" value={tank.registeredLocation} onChange={e => handleTankChange(index, 'registeredLocation', e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '16px' }}>
+              <button type="button" className="btn-secondary" onClick={() => {
+                setIsTankModalOpen(false);
+              }}>
+                Cancel
+              </button>
+              <button type="button" className="btn-primary" onClick={handleSaveTanks}>
+                Save Tanks & Complete
+              </button>
+            </div>
           </div>
         </div>
       )}
