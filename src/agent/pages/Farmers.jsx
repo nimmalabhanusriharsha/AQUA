@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, MapPin, Phone } from 'lucide-react';
+import { Search, MapPin, Phone, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from '../components/StatusBadge';
 import { useMockData } from '../../context/MockDataContext';
@@ -18,6 +18,44 @@ const Farmers = () => {
   })) : [];
 
   const filters = ['ALL', 'ACTIVE', 'TEST DUE', 'OVERDUE'];
+
+  const handleExportFarmerReport = (farmer) => {
+    const farmerSubs = (db?.submissions || []).filter(s => s.farmerId === farmer.id);
+    const headers = ['Farmer ID', 'Farmer Name', 'Locality', 'Phone', 'Land Acres', 'Water Source', 'Date', 'Pond (Tank)', 'Test Type', 'Salinity', 'pH', 'DO', 'Biomass', 'FCR', 'Status'];
+    
+    const rows = farmerSubs.length > 0 ? farmerSubs.map(sub => {
+      const tank = (farmer.tanks || []).find(t => t.id === sub.tankId);
+      return [
+        farmer.id,
+        farmer.name,
+        farmer.location,
+        farmer.phone,
+        farmer.acres || '20',
+        farmer.waterSource || 'Canal',
+        sub.date,
+        tank ? tank.name : sub.tankId,
+        sub.testType || 'Water Analysis',
+        sub.data?.waterQuality?.salinity || '15',
+        sub.data?.waterQuality?.ph || '7.8',
+        sub.data?.waterQuality?.do || '5.2',
+        sub.data?.biomass || '800kg',
+        sub.data?.fcr || '1.2',
+        sub.status
+      ];
+    }) : [
+      [farmer.id, farmer.name, farmer.location, farmer.phone, farmer.acres, farmer.waterSource, 'N/A', 'N/A', 'No Submissions', '-', '-', '-', '-', '-', farmer.status]
+    ];
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `individual_farmer_${farmer.name.toLowerCase().replace(/\s+/g, '_')}_report_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // Filter logic
   const filteredFarmers = farmers.filter(farmer => {
@@ -54,7 +92,7 @@ const Farmers = () => {
       
       {/* Search Bar */}
       <div style={styles.searchContainer}>
-        <Search size={18} color="#94a3b8" />
+        <Search size={18} color="#64748B" />
         <input 
           type="text" 
           placeholder="Search farmers or tanks..." 
@@ -81,7 +119,7 @@ const Farmers = () => {
       </div>
 
       {/* Farmer Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1" style={{ gap: '16px' }}>
         {filteredFarmers.length > 0 ? (
           filteredFarmers.map(farmer => (
             <div 
@@ -117,8 +155,29 @@ const Farmers = () => {
                 )}
               </div>
               
-              <div style={styles.cardFooter}>
+              <div style={{ ...styles.cardFooter, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span className="link">View Farmer →</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleExportFarmerReport(farmer);
+                  }}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    backgroundColor: '#EAF3FF',
+                    color: '#2563D9',
+                    border: '1px solid #2563D9',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Download size={13} /> Export Report
+                </button>
               </div>
             </div>
           ))
@@ -134,7 +193,8 @@ const styles = {
   searchContainer: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#f1f5f9',
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #DCE4EE',
     borderRadius: '8px',
     padding: '12px 16px',
     gap: '12px',
@@ -205,8 +265,10 @@ const styles = {
   },
   contactInfo: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '4px',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '16px',
+    flexWrap: 'wrap',
     fontSize: '12px',
     color: 'var(--color-text-muted)',
   },

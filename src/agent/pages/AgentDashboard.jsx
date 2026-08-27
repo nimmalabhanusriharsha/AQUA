@@ -41,15 +41,13 @@ const AgentDashboard = () => {
 
   return (
     <div>
-      {/* Header */}
+      {/* Dashboard Banner */}
       <div style={styles.header}>
         <div style={styles.headerLeft}>
-          <h2 style={styles.greeting}>Good Morning, {session.name}</h2>
-          <div style={styles.locationContainer}>
-            <MapPin size={14} color="var(--color-text-muted)" />
-            <span style={styles.locationBadge}>Region: {session.region}</span>
-            <span style={styles.locationBadge}>Locality: {session.locality}</span>
-          </div>
+          <h2 style={styles.greeting}>Dashboard</h2>
+          <span style={{ fontSize: '12px', color: 'var(--color-text-muted)', fontWeight: '500' }}>
+            Aqua Field Operations Tracker
+          </span>
         </div>
         <div style={styles.headerRight}>
           <div style={{ position: 'relative' }}>
@@ -77,7 +75,7 @@ const AgentDashboard = () => {
                         key={notification.id}
                         style={{
                           ...styles.notificationItem,
-                          backgroundColor: notification.read ? 'transparent' : '#f0f9ff'
+                          backgroundColor: notification.read ? 'transparent' : '#EAF3FF'
                         }}
                         onClick={() => {
                           if (!notification.read) {
@@ -87,7 +85,7 @@ const AgentDashboard = () => {
                       >
                         <p style={{
                           ...styles.notificationMessage,
-                          color: notification.type === 'error' ? 'var(--status-red)' : notification.type === 'warning' ? 'var(--status-orange)' : 'var(--status-green)'
+                          color: notification.type === 'error' ? '#DC3F3F' : notification.type === 'warning' ? '#E9A400' : '#22A65A'
                         }}>
                           {notification.message}
                         </p>
@@ -105,15 +103,45 @@ const AgentDashboard = () => {
       <div style={{ marginTop: '20px' }}>
         {/* KPI Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3">
-          <KPIcard value={kpi.assignedFarmers} label="Assigned Farmers" colorClass="blue" />
-          <KPIcard value={kpi.totalTanks} label="Total Tanks" colorClass="blue" />
-          <KPIcard value={kpi.testsCompleted} label="Tests Completed" colorClass="green" />
-          <KPIcard value={kpi.testsDue} label="Tests Due" colorClass="yellow" />
-          <KPIcard value={kpi.overdue} label="Overdue" colorClass="red" />
-          <KPIcard value={kpi.pendingVerify} label="Pending Verify" colorClass="orange" />
+          <KPIcard
+            value={kpi.assignedFarmers}
+            label="Assigned Farmers"
+            colorClass="blue"
+            onClick={() => navigate('/farmers')}
+          />
+          <KPIcard
+            value={kpi.totalTanks}
+            label="Total Tanks"
+            colorClass="blue"
+            onClick={() => navigate('/farmers')}
+          />
+          <KPIcard
+            value={kpi.testsCompleted}
+            label="Tests Completed"
+            colorClass="green"
+            onClick={() => navigate('/tests', { state: { initialTab: 'Completed' } })}
+          />
+          <KPIcard
+            value={kpi.testsDue}
+            label="Tests Due"
+            colorClass="yellow"
+            onClick={() => navigate('/tests', { state: { initialTab: 'Due' } })}
+          />
+          <KPIcard
+            value={kpi.overdue}
+            label="Overdue"
+            colorClass="red"
+            onClick={() => navigate('/tests', { state: { initialTab: 'Overdue' } })}
+          />
+          <KPIcard
+            value={kpi.harvest || 0}
+            label="Harvest"
+            colorClass="teal"
+            onClick={() => navigate('/harvest')}
+          />
         </div>
 
-        <div className="grid md:grid-cols-2" style={{ marginTop: '24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '24px' }}>
           {/* Today's Work */}
           <div>
             <TodaysWork tasks={todaysWork} />
@@ -124,21 +152,21 @@ const AgentDashboard = () => {
             <div className="card" style={styles.testStatusCard}>
               <h3 style={styles.cardTitle}>Weekly Test Status</h3>
               <div style={styles.progressBarContainer}>
-                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-green)', width: `${progress.completed}%` }}></div>
-                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-yellow)', width: `${progress.due}%` }}></div>
-                <div style={{ ...styles.progressSegment, backgroundColor: 'var(--status-red)', width: `${progress.overdue}%` }}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: '#22A65A', width: `${progress.completed}%` }}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: '#E9A400', width: `${progress.due}%` }}></div>
+                <div style={{ ...styles.progressSegment, backgroundColor: '#DC3F3F', width: `${progress.overdue}%` }}></div>
               </div>
               <div style={styles.progressLabels}>
-                <div style={styles.legendItem}>
-                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-green)' }}></div>
+                <div style={{ ...styles.legendItem, cursor: 'pointer' }} onClick={() => navigate('/tests', { state: { initialTab: 'Completed' } })}>
+                  <div style={{ ...styles.legendDot, backgroundColor: '#22A65A' }}></div>
                   <span>Completed: {kpi.testsCompleted}</span>
                 </div>
-                <div style={styles.legendItem}>
-                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-yellow)' }}></div>
+                <div style={{ ...styles.legendItem, cursor: 'pointer' }} onClick={() => navigate('/tests', { state: { initialTab: 'Due' } })}>
+                  <div style={{ ...styles.legendDot, backgroundColor: '#E9A400' }}></div>
                   <span>Due: {kpi.testsDue}</span>
                 </div>
-                <div style={styles.legendItem}>
-                  <div style={{ ...styles.legendDot, backgroundColor: 'var(--status-red)' }}></div>
+                <div style={{ ...styles.legendItem, cursor: 'pointer' }} onClick={() => navigate('/tests', { state: { initialTab: 'Overdue' } })}>
+                  <div style={{ ...styles.legendDot, backgroundColor: '#DC3F3F' }}></div>
                   <span>Overdue: {kpi.overdue}</span>
                 </div>
               </div>

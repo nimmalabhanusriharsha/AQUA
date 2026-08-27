@@ -2,25 +2,27 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Tractor, Box, TrendingUp, Activity, ShieldCheck,
-  AlertCircle, FileSpreadsheet, ArrowUpRight, CheckCircle2,
-  AlertTriangle, Flame
+  AlertCircle, FileSpreadsheet, ArrowUpRight, MapPin
 } from 'lucide-react';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import { useMockData } from '../../context/MockDataContext';
+import { getRegions } from '../utils/adminMockData';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const mockData = useMockData();
   const db = mockData?.db;
+  const regions = getRegions();
 
   // Real or fallback statistics aligned with the dashboard design
   const totalFarmers = db?.farmers?.length || 8;
   const activeTanks = 11;
-  const pendingVerifications = db?.submissions?.filter(s => s.status === 'PENDING_VERIFICATION')?.length || 1;
+  const totalRegionsCount = regions.length || 3;
+  const totalLocalitiesCount = regions.reduce((acc, r) => acc + (r.localities?.length || 0), 0) || 72;
   const overdueTests = 3;
 
   // 1. Donut chart distribution data
@@ -101,7 +103,7 @@ const AdminDashboard = () => {
             Real-time feed performance, FCR analytics, crop health, and multi-region operations.
           </p>
         </div>
-        <button 
+        <button
           style={styles.exportBtn}
           onClick={() => navigate('/admin/export-center')}
         >
@@ -121,8 +123,8 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div style={styles.kpiValue}>{totalFarmers}</div>
-          <div 
-            style={styles.kpiLink} 
+          <div
+            style={styles.kpiLink}
             onClick={() => navigate('/admin/farmers')}
           >
             <span>View All Farmers</span>
@@ -139,9 +141,9 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div style={styles.kpiValue}>{activeTanks}</div>
-          <div 
-            style={styles.kpiLink} 
-            onClick={() => navigate('/admin/regions')}
+          <div
+            style={styles.kpiLink}
+            onClick={() => navigate('/admin/tanks')}
           >
             <span>View All Tanks</span>
             <ArrowUpRight size={14} />
@@ -172,20 +174,21 @@ const AdminDashboard = () => {
           <div style={styles.kpiSubtext}>Mean Body Weight</div>
         </div>
 
-        {/* Card 5: Pending Verification */}
+        {/* Card 5: Regions & Localities */}
         <div style={styles.kpiCard}>
           <div style={styles.kpiHeader}>
-            <span style={styles.kpiLabel}>PENDING VERIF.</span>
-            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#fffbeb', color: '#d97706' }}>
-              <ShieldCheck size={18} />
+            <span style={styles.kpiLabel}>REGIONS &amp; LOCALITIES</span>
+            <div style={{ ...styles.kpiIconWrapper, backgroundColor: '#eff6ff', color: '#2563eb' }}>
+              <MapPin size={18} />
             </div>
           </div>
-          <div style={styles.kpiValue}>{pendingVerifications}</div>
-          <div 
-            style={{ ...styles.kpiLink, color: '#d97706' }} 
-            onClick={() => navigate('/admin/verifications')}
+          <div style={styles.kpiValue}>{totalRegionsCount} Regions</div>
+          <div
+            style={{ ...styles.kpiLink, color: '#2563eb' }}
+            onClick={() => navigate('/admin/regions')}
+            title="Explore all 3 Regions and 72 Localities in Andhra Pradesh"
           >
-            <span>Review Queue</span>
+            <span>View Regions &amp; Localities</span>
             <ArrowUpRight size={14} />
           </div>
         </div>
@@ -199,8 +202,8 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div style={{ ...styles.kpiValue, color: '#dc2626' }}>{overdueTests}</div>
-          <div 
-            style={{ ...styles.kpiLink, color: '#dc2626' }} 
+          <div
+            style={{ ...styles.kpiLink, color: '#dc2626' }}
             onClick={() => navigate('/admin/weekly-tests')}
           >
             <span>Take Action</span>
@@ -259,7 +262,7 @@ const AdminDashboard = () => {
         <div style={styles.recommendationsCard}>
           <div style={styles.recHeaderRow}>
             <div style={styles.recTitleGroup}>
-              <AlertCircle size={18} color="#f59e0b" />
+              <AlertCircle size={18} color="#2563eb" />
               <span style={styles.recTitle}>DATA-DRIVEN OPERATIONAL RECOMMENDATIONS</span>
             </div>
             <div style={styles.recEngineTag}>
@@ -269,11 +272,11 @@ const AdminDashboard = () => {
 
           <div style={styles.recList}>
             {recommendations.map(rec => (
-              <div 
-                key={rec.id} 
-                style={{ 
-                  ...styles.recItem, 
-                  borderLeft: `4px solid ${rec.borderLeft}` 
+              <div
+                key={rec.id}
+                style={{
+                  ...styles.recItem,
+                  borderLeft: `4px solid ${rec.borderLeft}`
                 }}
               >
                 <div style={styles.recItemTop}>

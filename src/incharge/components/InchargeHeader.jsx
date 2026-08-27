@@ -1,6 +1,7 @@
 import React from 'react';
 import { Bell, User } from 'lucide-react';
 import { getInchargeSession } from '../utils/inchargeAuth';
+import BackButton from '../../components/BackButton';
 
 const InchargeHeader = ({ title = "Dashboard" }) => {
   const session = getInchargeSession();
@@ -18,13 +19,16 @@ const InchargeHeader = ({ title = "Dashboard" }) => {
       top: 0,
       zIndex: 10
     }}>
-      <div>
-        <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-main)', margin: 0 }}>{title}</h1>
-        {session && title === 'Dashboard' && (
-          <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
-            Welcome back, Incharge {session.name}
-          </p>
-        )}
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <BackButton fallback="/incharge/dashboard" />
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-text-main)', margin: 0 }}>{title}</h1>
+          {session && title === 'Dashboard' && (
+            <p style={{ fontSize: '13px', color: 'var(--color-text-muted)', margin: '4px 0 0 0' }}>
+              Welcome back, Incharge {session.name}
+            </p>
+          )}
+        </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>

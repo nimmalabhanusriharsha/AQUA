@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Home, Users, FileCheck2, BarChart2, User, LogOut } from 'lucide-react';
 import { getSession, logout } from '../utils/agentAuth';
 import logo from '../../assets/logo.png';
 
 const Sidebar = () => {
-  const session = getSession();
+  const [session, setSession] = useState(getSession());
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const syncSession = () => {
+      setSession(getSession());
+    };
+
+    window.addEventListener('agentProfileUpdated', syncSession);
+    window.addEventListener('storage', syncSession);
+
+    return () => {
+      window.removeEventListener('agentProfileUpdated', syncSession);
+      window.removeEventListener('storage', syncSession);
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -29,7 +43,13 @@ const Sidebar = () => {
 
       {session && (
         <div style={styles.agentProfile}>
-          <div style={styles.avatar}>{session.name ? session.name.charAt(0) : 'A'}</div>
+          <div style={styles.avatar}>
+            {session.photo ? (
+              <img src={session.photo} alt={session.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            ) : (
+              session.name ? session.name.charAt(0) : 'A'
+            )}
+          </div>
           <div>
             <div style={styles.agentName}>{session.name}</div>
             <div style={styles.agentRegion}>{session.region}</div>
@@ -44,9 +64,9 @@ const Sidebar = () => {
             to={item.path}
             style={({ isActive }) => ({
               ...styles.navLink,
-              backgroundColor: isActive ? '#eff6ff' : 'transparent',
-              color: isActive ? 'var(--color-primary)' : 'var(--color-text-main)',
-              borderRight: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
+              backgroundColor: isActive ? '#EAF3FF' : 'transparent',
+              color: isActive ? '#2563D9' : '#17233C',
+              borderRight: isActive ? '3px solid #2563D9' : '3px solid transparent',
             })}
           >
             <item.icon size={20} />
@@ -70,14 +90,14 @@ const styles = {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'var(--color-surface)',
+    backgroundColor: '#FFFFFF',
   },
   brand: {
     padding: '24px 20px',
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    borderBottom: '1px solid var(--color-border)',
+    borderBottom: '1px solid #DCE4EE',
   },
   logoImage: {
     width: '100%',
@@ -89,13 +109,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    borderBottom: '1px solid var(--color-border)',
+    borderBottom: '1px solid #DCE4EE',
   },
   avatar: {
     width: '40px',
     height: '40px',
     borderRadius: '50%',
-    backgroundColor: 'var(--color-primary)',
+    backgroundColor: '#2563D9',
     color: 'white',
     display: 'flex',
     alignItems: 'center',
@@ -106,10 +126,11 @@ const styles = {
   agentName: {
     fontWeight: '700',
     fontSize: '14px',
+    color: '#17233C',
   },
   agentRegion: {
     fontSize: '12px',
-    color: 'var(--color-text-muted)',
+    color: '#64748B',
   },
   navMenu: {
     padding: '16px 0',
@@ -125,7 +146,7 @@ const styles = {
   },
   footer: {
     padding: '20px',
-    borderTop: '1px solid var(--color-border)',
+    borderTop: '1px solid #DCE4EE',
   },
   logoutBtn: {
     display: 'flex',
@@ -135,7 +156,7 @@ const styles = {
     padding: '12px',
     border: 'none',
     background: 'transparent',
-    color: 'var(--status-red)',
+    color: '#DC3F3F',
     fontWeight: '600',
     cursor: 'pointer',
     borderRadius: '8px',

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Users, LayoutTemplate, ArrowRight, Shield, HardHat, Waves } from 'lucide-react';
 import logo from '../assets/logo-trans2.png';
 import background from '../assets/login_background.jpg';
+import BackButton from '../components/BackButton';
 
 const PortalSelector = () => {
   const navigate = useNavigate();
@@ -49,14 +50,11 @@ const PortalSelector = () => {
           }
           .portal-card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08), inset 0 0 0 1px rgba(255,255,255,1);
-            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15), 0 0 0 2px rgba(14, 165, 233, 0.3);
+            background: rgba(255, 255, 255, 0.9);
           }
-          .portal-icon-wrapper {
-            transition: transform 0.4s ease;
-          }
-          .portal-card:hover .portal-icon-wrapper {
-            transform: scale(1.1) rotate(5deg);
+          .portal-card:hover .portal-icon {
+            transform: scale(1.1) rotate(-4deg);
           }
           .portal-arrow {
             transition: transform 0.3s ease;
@@ -68,17 +66,23 @@ const PortalSelector = () => {
       </style>
 
       <div className="portal-container">
+        <div style={{ position: 'absolute', top: '24px', left: '24px', zIndex: 30 }}>
+          <BackButton fallback="/" variant="light" />
+        </div>
+        <div className="blob-1"></div>
+        <div className="blob-2"></div>
+
         <div style={{ width: '100%', maxWidth: '1400px', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10 }}>
           {/* Header Section */}
           <div style={{ textAlign: 'center', marginBottom: '64px', animation: 'float 6s ease-in-out infinite' }}>
             <div style={{ margin: '0 auto 24px' }}>
               <img src={logo} alt="Aqua Feed" style={{ width: '160px', height: 'auto', filter: 'drop-shadow(0px 10px 20px rgba(0,0,0,0.15)) contrast(1.1) brightness(1.2)' }} />
             </div>
-            <h1 style={{ fontSize: '42px', fontWeight: '800', marginBottom: '8px', letterSpacing: '-1.5px', color: 'var(--color-primary)' }}>
-              Aqua Feed
+            <h1 style={{ fontSize: '38px', fontWeight: '800', marginBottom: '8px', letterSpacing: '-1px', color: 'var(--color-primary)' }}>
+              Royals Marine Food Private Limited
             </h1>
             <p style={{ fontSize: '18px', color: '#4b5563', marginBottom: '24px', fontWeight: 500 }}>
-              Intelligent Performance Management System
+              Aqua Feed Management System
             </p>
 
           </div>
