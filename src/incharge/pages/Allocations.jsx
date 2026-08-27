@@ -19,7 +19,7 @@ const Allocations = () => {
   const [selectedFarmers, setSelectedFarmers] = useState([]);
   const [success, setSuccess] = useState(false);
 
-  const { db, getFarmersByAgentId, getTanksByFarmerId, assignFarmerToAgent } = useMockData();
+  const { db, getFarmersByAgentId, getTanksByFarmerId, assignFarmerToAgent, getAgentById } = useMockData();
 
   const availableAgents = db.agents.map(a => {
     const farmers = getFarmersByAgentId(a.id);
@@ -32,7 +32,10 @@ const Allocations = () => {
     };
   });
 
-  const availableFarmers = db.farmers.filter(f => f.agentId !== selectedAgent?.id).map(f => {
+  const availableFarmers = db.farmers.filter(f => {
+    const assignedAgent = getAgentById(f.agentId);
+    return !assignedAgent;
+  }).map(f => {
     const tanks = getTanksByFarmerId(f.id);
     return {
       id: f.id,

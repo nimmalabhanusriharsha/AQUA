@@ -69,7 +69,7 @@ const Farmers = () => {
   };
 
   const handleSaveTanks = () => {
-    const defaultAgentId = db.agents.length > 0 ? db.agents[0].id : 'agent001';
+    const defaultAgentId = null;
 
     createFarmerWithTanks(
       defaultAgentId,
