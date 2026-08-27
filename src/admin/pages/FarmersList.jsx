@@ -4,7 +4,7 @@ import { getFarmers, getRegions, getAgents, getIncharges } from '../utils/adminM
 import PageHeader from '../components/PageHeader';
 import { 
   Search, Filter, Eye, Plus, Trash2, Check, X, 
-  MapPin, Phone, User, ShieldAlert, Tractor, Layers 
+  MapPin, Phone, User, ShieldAlert, Tractor, Layers, Edit, SortAsc 
 } from 'lucide-react';
 
 const FarmersList = () => {
@@ -38,20 +38,39 @@ const FarmersList = () => {
 
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedFarmer, setSelectedFarmer] = useState(null);
+
+  const defaultRegion = regions[1] || regions[0] || { id: 'REG-COASTAL', name: 'Coastal Andhra' };
+  const defaultLocs = defaultRegion.localities || [];
+  const defaultLocName = defaultLocs[0]?.name || 'Nellore';
 
   // New Farmer Form State
   const [newFarmer, setNewFarmer] = useState({
     name: '',
     phone: '+91 ',
-    regionId: 'REG-SOUTH',
-    locality: 'Nellore Coastal Belt',
+    regionId: defaultRegion.id,
+    locality: defaultLocName,
     village: '',
-    agentId: 'EMP-AGT-01',
+    agentId: allAgents[0]?.id || 'EMP-AGT-01',
     waterSource: 'Creek / Estuary', // Source of Water
     tankCount: 1,
     tankSizes: [4.5] // array of numbers representing acres of each tank
+  });
+
+  // Edit Farmer Form State
+  const [editFarmer, setEditFarmer] = useState({
+    id: '',
+    name: '',
+    phone: '',
+    regionId: defaultRegion.id,
+    locality: defaultLocName,
+    village: '',
+    agentId: allAgents[0]?.id || 'EMP-AGT-01',
+    waterSource: 'Creek / Estuary',
+    totalAcres: 4.5,
+    status: 'Active'
   });
 
   const showToast = (msg) => {
@@ -149,17 +168,70 @@ const FarmersList = () => {
     setNewFarmer({
       name: '',
       phone: '+91 ',
-      regionId: 'REG-SOUTH',
-      locality: 'Nellore Coastal Belt',
+      regionId: defaultRegion.id,
+      locality: defaultLocName,
       village: '',
-      agentId: 'EMP-AGT-01',
+      agentId: allAgents[0]?.id || 'EMP-AGT-01',
       waterSource: 'Creek / Estuary',
       tankCount: 1,
       tankSizes: [4.5]
     });
   };
 
-  // 2. Delete / Remove Farmer
+  // 2. Open Edit Farmer Modal
+  const openEditModal = (farmer) => {
+    setSelectedFarmer(farmer);
+    const regObj = regions.find(r => r.name === farmer.region || r.id === farmer.regionId) || defaultRegion;
+    const agtObj = allAgents.find(a => a.name === farmer.agent || a.id === farmer.agentId) || allAgents[0];
+
+    setEditFarmer({
+      id: farmer.id,
+      name: farmer.name,
+      phone: farmer.phone,
+      regionId: regObj.id,
+      locality: farmer.locality || defaultLocName,
+      village: farmer.village || '',
+      agentId: agtObj?.id || allAgents[0]?.id,
+      waterSource: farmer.waterSource || 'Creek / Estuary',
+      totalAcres: farmer.totalAcres || parseFloat(farmer.acres) || 4.5,
+      status: farmer.status || 'Active'
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle Edit Farmer Submit
+  const handleEditFarmerSubmit = (e) => {
+    e.preventDefault();
+    if (!editFarmer.name.trim() || !selectedFarmer) return;
+
+    const selectedRegionObj = regions.find(r => r.id === editFarmer.regionId) || defaultRegion;
+    const selectedAgentObj = allAgents.find(a => a.id === editFarmer.agentId) || allAgents[0];
+    const acresNum = parseFloat(editFarmer.totalAcres) || 4.5;
+
+    const updatedFarmer = {
+      ...selectedFarmer,
+      name: editFarmer.name.trim(),
+      phone: editFarmer.phone.trim(),
+      region: selectedRegionObj.name,
+      regionId: selectedRegionObj.id,
+      locality: editFarmer.locality,
+      village: editFarmer.village.trim() || `${editFarmer.locality} Village`,
+      agentId: selectedAgentObj.id,
+      agent: selectedAgentObj.name,
+      incharge: selectedAgentObj.incharge,
+      waterSource: editFarmer.waterSource,
+      totalAcres: acresNum,
+      acres: `${acresNum.toFixed(1)} Acres`,
+      status: editFarmer.status
+    };
+
+    setFarmers(prev => prev.map(f => f.id === selectedFarmer.id ? updatedFarmer : f));
+    showToast(`Farmer ${updatedFarmer.name} (${updatedFarmer.id}) details updated!`);
+    setShowEditModal(false);
+    setSelectedFarmer(null);
+  };
+
+  // 3. Delete / Remove Farmer
   const openDeleteModal = (farmer) => {
     setSelectedFarmer(farmer);
     setShowDeleteModal(true);
@@ -174,7 +246,7 @@ const FarmersList = () => {
     setSelectedFarmer(null);
   };
 
-  // Filter farmers
+  // Filter and sort farmers alphabetically
   const filtered = farmers.filter(f => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = 
@@ -187,14 +259,14 @@ const FarmersList = () => {
       f.phone?.includes(term) ||
       (f.locality && f.locality.toLowerCase().includes(term));
 
-    const matchesRegion = regionFilter === 'ALL' || f.region?.includes(regionFilter);
+    const matchesRegion = regionFilter === 'ALL' || f.region === regionFilter || f.region?.includes(regionFilter);
     const matchesTank = 
       tankFilter === 'ALL' || 
       (tankFilter === '1' && f.tanks === 1) || 
       (tankFilter === 'MULTI' && f.tanks > 1);
 
     return matchesSearch && matchesRegion && matchesTank;
-  });
+  }).sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
   // Calculate totals
   const totalFarmersCount = farmers.length;
@@ -256,14 +328,20 @@ const FarmersList = () => {
           </div>
 
           <div style={styles.filterGroup}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', backgroundColor: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '7px 12px', fontSize: '12px', fontWeight: 700 }}>
+              <SortAsc size={14} color="#16a34a" />
+              <span>Alphabetical (A-Z)</span>
+            </div>
+
             <select 
               value={regionFilter} 
               onChange={(e) => setRegionFilter(e.target.value)}
               style={styles.selectFilter}
             >
               <option value="ALL">All Regions</option>
-              <option value="South Andhra">South Andhra</option>
-              <option value="Central Andhra">Central Andhra</option>
+              {regions.map(r => (
+                <option key={r.id} value={r.name}>{r.name}</option>
+              ))}
             </select>
 
             <select 
@@ -323,8 +401,24 @@ const FarmersList = () => {
                       {/* Agent & Incharge */}
                       <td style={styles.td}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                          <span style={styles.agentText}>{item.agent}</span>
-                          <span style={styles.inchargeText}>Incharge: {item.incharge}</span>
+                          <span 
+                            style={{ ...styles.agentText, cursor: 'pointer', color: '#0369a1', textDecoration: 'underline', textDecorationColor: '#bae6fd' }}
+                            onClick={() => {
+                              const ag = allAgents.find(a => a.name === item.agent || a.id === item.agentId);
+                              if (ag) navigate(`/admin/agents/${ag.id}`);
+                              else navigate('/admin/agents');
+                            }}
+                            title="Click to view full Agent Profile"
+                          >
+                            {item.agent}
+                          </span>
+                          <span 
+                            style={{ ...styles.inchargeText, cursor: 'pointer', color: '#2563eb', textDecoration: 'underline', textDecorationColor: '#bfdbfe' }}
+                            onClick={() => navigate('/admin/incharges')}
+                            title="Click to view Incharges & Teams"
+                          >
+                            Incharge: {item.incharge}
+                          </span>
                         </div>
                       </td>
 
@@ -389,6 +483,15 @@ const FarmersList = () => {
                           >
                             <Eye size={13} />
                             <span>View Growth</span>
+                          </button>
+
+                          <button 
+                            style={styles.editFarmerBtn}
+                            onClick={() => openEditModal(item)}
+                            title="Edit Farmer Details"
+                          >
+                            <Edit size={13} />
+                            <span>Edit</span>
                           </button>
 
                           <button 
@@ -595,6 +698,175 @@ const FarmersList = () => {
                   style={styles.submitBtn}
                 >
                   Create Farmer Record
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Edit Farmer Details */}
+      {showEditModal && selectedFarmer && (
+        <div style={styles.modalOverlay}>
+          <div style={{ ...styles.modalBox, width: '560px' }}>
+            <div style={styles.modalHeader}>
+              <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit size={18} color="#2563eb" />
+                Edit Farmer: {selectedFarmer.name}
+              </h3>
+              <button onClick={() => setShowEditModal(false)} style={styles.modalCloseBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditFarmerSubmit}>
+              <div style={styles.modalBody}>
+                {/* Farmer Name & Phone */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Farmer Full Name *</label>
+                    <input 
+                      type="text" 
+                      value={editFarmer.name}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, name: e.target.value })}
+                      style={styles.modalInput}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label style={styles.modalLabel}>Phone Number *</label>
+                    <input 
+                      type="text" 
+                      value={editFarmer.phone}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, phone: e.target.value })}
+                      style={styles.modalInput}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Region & Locality */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Assigned Region *</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFarmer.regionId}
+                      onChange={(e) => {
+                        const rId = e.target.value;
+                        const rLocs = getLocalitiesForRegion(rId);
+                        const rAgents = getAgentsForRegion(rId);
+                        setEditFarmer({
+                          ...editFarmer,
+                          regionId: rId,
+                          locality: rLocs[0]?.name || '',
+                          agentId: rAgents[0]?.id || ''
+                        });
+                      }}
+                    >
+                      {regions.map(r => (
+                        <option key={r.id} value={r.id}>{r.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={styles.modalLabel}>Locality *</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFarmer.locality}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, locality: e.target.value })}
+                    >
+                      {getLocalitiesForRegion(editFarmer.regionId).map(loc => (
+                        <option key={loc.id} value={loc.name}>{loc.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Village & Assigned Field Agent */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Village Name *</label>
+                    <input 
+                      type="text" 
+                      value={editFarmer.village}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, village: e.target.value })}
+                      style={styles.modalInput}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label style={styles.modalLabel}>Assigned Field Agent</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFarmer.agentId}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, agentId: e.target.value })}
+                    >
+                      {allAgents.map(ag => (
+                        <option key={ag.id} value={ag.id}>
+                          {ag.name} ({ag.locality})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Source of Water, Total Acres & Status */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                  <div>
+                    <label style={styles.modalLabel}>Source of Water</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFarmer.waterSource}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, waterSource: e.target.value })}
+                    >
+                      <option value="Creek / Estuary">Creek / Estuary</option>
+                      <option value="Sea / Coastal Canal">Sea / Coastal Canal</option>
+                      <option value="Borewell / Ground Water">Borewell / Ground Water</option>
+                      <option value="River / Freshwater Canal">River / Freshwater Canal</option>
+                      <option value="Reservoir / Agricultural Canal">Reservoir / Agricultural Canal</option>
+                      <option value="Other">Other Source</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={styles.modalLabel}>Total Acres *</label>
+                    <input 
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={editFarmer.totalAcres}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, totalAcres: e.target.value })}
+                      style={styles.modalInput}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label style={styles.modalLabel}>Status</label>
+                    <select 
+                      style={styles.modalSelect}
+                      value={editFarmer.status}
+                      onChange={(e) => setEditFarmer({ ...editFarmer, status: e.target.value })}
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.modalFooter}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowEditModal(false)}
+                  style={styles.cancelBtn}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  style={styles.submitBtn}
+                >
+                  Save Farmer Changes
                 </button>
               </div>
             </form>
@@ -892,6 +1164,20 @@ const styles = {
     backgroundColor: '#eff6ff',
     color: '#2563eb',
     border: '1px solid #bfdbfe',
+    borderRadius: '6px',
+    padding: '5px 12px',
+    fontSize: '12px',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.15s'
+  },
+  editFarmerBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '5px',
+    backgroundColor: '#f8fafc',
+    color: '#334155',
+    border: '1px solid #cbd5e1',
     borderRadius: '6px',
     padding: '5px 12px',
     fontSize: '12px',

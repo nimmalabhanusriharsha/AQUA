@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getIncharges, getRegions, getAgents } from '../utils/adminMockData';
+import { getIncharges, getRegions, getAgents, getFarmers } from '../utils/adminMockData';
 import { 
   Plus, Search, ArrowLeftRight, UserX, Check, X, 
   MapPin, Phone, Mail, ShieldAlert, UserCheck, Edit,
-  Users, UserPlus, UserMinus, Shield, CheckCircle2 
+  Users, UserPlus, UserMinus, Shield, CheckCircle2, Tractor, Briefcase, Eye 
 } from 'lucide-react';
 
 const InchargesList = () => {
@@ -60,14 +60,17 @@ const InchargesList = () => {
   const [selectedIncharge, setSelectedIncharge] = useState(null);
   const [selectedAgentToAssign, setSelectedAgentToAssign] = useState('');
 
+  const defaultReg = regions[1] || regions[0] || { id: 'REG-COASTAL', name: 'Coastal Andhra' };
+  const defaultLoc = defaultReg.localities?.[0]?.name || 'Nellore';
+
   // New Incharge Form
   const [newIncharge, setNewIncharge] = useState({
     name: '',
-    roleSuffix: 'Incharge - Kakinada',
+    roleSuffix: 'Incharge - Nellore',
     phone: '+91 ',
     email: '',
-    regionId: 'REG-CENTRAL',
-    locality: 'Kakinada Creek'
+    regionId: defaultReg.id,
+    locality: defaultLoc
   });
 
   // Edit Incharge Form
@@ -85,8 +88,8 @@ const InchargesList = () => {
 
   // Transfer Form
   const [transferData, setTransferData] = useState({
-    regionId: 'REG-SOUTH',
-    locality: 'Kavali Delta',
+    regionId: defaultReg.id,
+    locality: defaultLoc,
     reason: ''
   });
 
@@ -161,11 +164,11 @@ const InchargesList = () => {
     setShowAddModal(false);
     setNewIncharge({
       name: '',
-      roleSuffix: 'Incharge - Kakinada',
+      roleSuffix: 'Incharge - Nellore',
       phone: '+91 ',
       email: '',
-      regionId: 'REG-CENTRAL',
-      locality: 'Kakinada Creek'
+      regionId: defaultReg.id,
+      locality: defaultLoc
     });
   };
 
@@ -729,7 +732,7 @@ const InchargesList = () => {
                             </span>
                           </div>
                           <div style={{ fontSize: '12px', color: '#64748b', marginTop: '3px' }}>
-                            {ag.locality} • Phone: {ag.phone} • Scope: <strong>{ag.farmers || 0} Farmers</strong> ({ag.tanks || 0} Tanks)
+                            {ag.locality} • Assigned Area: <strong>{ag.assignedArea || 'Designated Area'}</strong> • Phone: {ag.phone} • Scope: <strong>{ag.farmers || 0} Farmers</strong>
                           </div>
                         </div>
 

@@ -3,15 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getFarmerById, getFarmers, getTanksByFarmer } from '../utils/adminMockData';
 import PageHeader from '../components/PageHeader';
 import { 
-  Database, Eye, Download, TrendingUp, Activity, 
-  Layers, ArrowLeft, Calendar, ShieldCheck, Scale, 
-  CheckCircle2, Droplets, Edit, X, AlertTriangle, 
-  Check, Sparkles, Sprout, Fish, UserCheck, Shield, 
-  Settings, Save, Plus 
+  Database, Download, TrendingUp, Activity, 
+  ArrowLeft, Droplets, Edit, X, Check, Fish, UserCheck, 
+  ShieldCheck, AlertCircle, FileSpreadsheet 
 } from 'lucide-react';
 import { 
   LineChart, Line, AreaChart, Area, XAxis, YAxis, 
-  CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend 
+  CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer 
 } from 'recharts';
 
 const FarmerDetail = () => {
@@ -57,13 +55,13 @@ const FarmerDetail = () => {
       currentCycle: t.currentCycle || `Cycle 1 (2026)`,
       compliance: t.compliance || 100,
       waterSource: t.waterSource || farmer?.waterSource || (idx % 2 === 0 ? 'Creek / Estuary' : 'Sea / Coastal Canal'),
-      salinity: t.salinity || (14 + (idx * 2)), // ppt
-      soilType: t.soilType || (idx % 3 === 0 ? 'Clay Loam' : idx % 3 === 1 ? 'Loam' : 'Clay'), // Loam, Clay, Sandy, Clay Loam
+      salinity: t.salinity || (14 + (idx * 2)),
+      soilType: t.soilType || (idx % 3 === 0 ? 'Clay Loam' : idx % 3 === 1 ? 'Loam' : 'Clay'),
       hatcheryName: t.hatcheryName || (idx % 2 === 0 ? 'Apex Marine Hatcheries (Nellore)' : 'BMR Marine SPF Hatchery'),
-      brooder: t.brooder || (idx % 2 === 0 ? 'Kona Bay (USA)' : 'Syaqua (Thailand)'), // Syaqua, Kona Bay, SIS, Other
+      brooder: t.brooder || (idx % 2 === 0 ? 'Kona Bay (USA)' : 'Syaqua (Thailand)'),
       seedDate: t.seedDate || `2026-05-${10 + idx * 5}`,
-      seedStockingLak: t.seedStockingLak || parseFloat(((parseFloat(t.acres) || 4.0) * 0.8).toFixed(1)), // Lakhs
-      feedType: t.feedType || (idx % 2 === 0 ? 'Premium Pellets (Royal Pro)' : 'Functional Feed (Aqua Boost)') // Premium, Functional, Hypro, Tiger Feed, Other
+      seedStockingLak: t.seedStockingLak || parseFloat(((parseFloat(t.acres) || 4.0) * 0.8).toFixed(1)),
+      feedType: t.feedType || (idx % 2 === 0 ? 'Premium Pellets (Royal Pro)' : 'Functional Feed (Aqua Boost)')
     }));
   });
 
@@ -167,19 +165,20 @@ const FarmerDetail = () => {
       } catch (err) {}
     }
 
-    showToast(`Details for ${updatedTank.name} updated and saved successfully!`);
+    showToast(`Details for ${updatedTank.name} updated successfully!`);
     setShowEditTankModal(false);
   };
 
-  // Generate dynamic Water Quality logs specific to the active tank
+  // Clean, realistic Water Quality Logs for active tank
   const baseSal = activeTank.salinity || 16;
+  const agentShortName = farmer?.agent ? farmer.agent.split(' ')[0] + ' ' + (farmer.agent.split(' ')[1] || '') : 'P. Raju';
+
   const waterQualityLogs = [
     {
       id: 1,
       doc: activeTank.doc || 65,
       date: '2026-08-20',
-      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
-      verificationStatus: 'VERIFIED ON-SITE',
+      agent: agentShortName,
       salinity: baseSal,
       ph: 7.9,
       alkalinity: 145,
@@ -197,8 +196,7 @@ const FarmerDetail = () => {
       id: 2,
       doc: (activeTank.doc || 65) - 10,
       date: '2026-08-10',
-      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
-      verificationStatus: 'VERIFIED ON-SITE',
+      agent: agentShortName,
       salinity: Math.max(1, baseSal - 1),
       ph: 8.1,
       alkalinity: 150,
@@ -216,8 +214,7 @@ const FarmerDetail = () => {
       id: 3,
       doc: (activeTank.doc || 65) - 20,
       date: '2026-07-31',
-      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
-      verificationStatus: 'VERIFIED ON-SITE',
+      agent: agentShortName,
       salinity: Math.max(1, baseSal - 2),
       ph: 8.0,
       alkalinity: 140,
@@ -235,8 +232,7 @@ const FarmerDetail = () => {
       id: 4,
       doc: (activeTank.doc || 65) - 30,
       date: '2026-07-21',
-      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
-      verificationStatus: 'VERIFIED ON-SITE',
+      agent: agentShortName,
       salinity: Math.max(1, baseSal - 3),
       ph: 7.8,
       alkalinity: 135,
@@ -248,14 +244,13 @@ const FarmerDetail = () => {
       h2s: 0.00,
       cl: 0.00,
       fe: 0.00,
-      waterColor: 'Clear Light Green'
+      waterColor: 'Clear Green'
     },
     {
       id: 5,
       doc: 20,
       date: '2026-07-06',
-      collectedBy: farmer?.agent || 'V. Kumar (Field Agent)',
-      verificationStatus: 'VERIFIED ON-SITE',
+      agent: agentShortName,
       salinity: Math.max(1, baseSal - 3),
       ph: 7.7,
       alkalinity: 130,
@@ -271,7 +266,7 @@ const FarmerDetail = () => {
     }
   ];
 
-  // Generate historical growth sampling data for current active tank
+  // Historical growth sampling data
   const docDays = [10, 20, 30, 40, 50, 60, 70];
   const growthData = docDays.map(doc => {
     const entry = { doc: `DOC ${doc}`, docNum: doc };
@@ -291,32 +286,288 @@ const FarmerDetail = () => {
     return entry;
   });
 
-  // Export Full CSV Handler
-  const handleDownload = () => {
-    let csv = "data:text/csv;charset=utf-8,";
-    csv += `FARMER & TANK MASTER REPORT - ${farmer.name.toUpperCase()}\n`;
-    csv += `Farmer ID: ${farmer.id}\n`;
-    csv += `Region: ${farmer.region} (${farmer.locality})\n`;
-    csv += `Village: ${farmer.village}\n`;
-    csv += `Data Collected By Field Agent: ${farmer.agent} | Incharge: ${farmer.incharge}\n\n`;
+  // Helper to generate visual ASCII / Progress bar for Excel cells
+  const generateProgressBar = (current, max, length = 12) => {
+    const filled = Math.min(length, Math.max(1, Math.round((current / max) * length)));
+    const empty = length - filled;
+    return '█'.repeat(filled) + '░'.repeat(empty);
+  };
 
-    csv += `--- TANK SETUP SPECIFICATIONS: ${activeTank.name.toUpperCase()} ---\n`;
-    csv += `Tank Size (Acres),Source of Water,Salinity (ppt),Soil Type,Hatchery Name,Brooder,Seed Date,Stocking (Lak),Feed Type,Cycle\n`;
-    csv += `${activeTank.acres},"${activeTank.waterSource}",${activeTank.salinity},"${activeTank.soilType}","${activeTank.hatcheryName}","${activeTank.brooder}",${activeTank.seedDate},${activeTank.seedStockingLak},"${activeTank.feedType}","${activeTank.currentCycle}"\n\n`;
+  // 1. Download Formatted, Styled Excel (.xls) with Embedded Visual Charts & Formatted Tables
+  const handleDownloadFormattedExcel = () => {
+    const maxABW = Math.max(...growthData.map(g => g.abw), 30);
+    const maxBiomass = Math.max(...growthData.map(g => g.biomass), 4000);
 
-    csv += `--- WATER QUALITY PARAMETERS LOG: ${activeTank.name.toUpperCase()} (COLLECTED ON-SITE BY AGENT) ---\n`;
-    csv += `DOC,Date,Collected By,Status,Salinity (ppt),pH (7.5-8.5),Alkalinity (ppm),Hardness (ppm),Ammonia (mg/L),Nitrite (mg/L),Potassium (K ppm),DO (mg/L),H2S,Cl,Fe,Water Color\n`;
-    waterQualityLogs.forEach(w => {
-      csv += `${w.doc},${w.date},"${w.collectedBy}","${w.verificationStatus}",${w.salinity},${w.ph},${w.alkalinity},${w.hardness},${w.ammonia},${w.nitrite},${w.potassium},${w.do},${w.h2s},${w.cl},${w.fe},"${w.waterColor}"\n`;
-    });
+    // Build embedded SVG Visual Growth Chart to include directly in Excel
+    const chartSvg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="680" height="220" viewBox="0 0 680 220" style="background:#ffffff; font-family:'Segoe UI',sans-serif;">
+        <rect width="680" height="220" fill="#f8fafc" rx="8" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="20" y="28" font-size="14" font-weight="bold" fill="#0f172a">${activeTank.name} Growth Trajectory &amp; Biomass Curve (DOC 10 - DOC 70)</text>
+        <line x1="60" y1="45" x2="60" y2="175" stroke="#cbd5e1" stroke-width="1.5"/>
+        <line x1="60" y1="175" x2="640" y2="175" stroke="#cbd5e1" stroke-width="1.5"/>
+        
+        <!-- Y-Axis Gridlines & Labels -->
+        <line x1="60" y1="145" x2="640" y2="145" stroke="#f1f5f9" stroke-width="1"/>
+        <text x="25" y="149" font-size="10" fill="#64748b">10g</text>
+        <line x1="60" y1="110" x2="640" y2="110" stroke="#f1f5f9" stroke-width="1"/>
+        <text x="25" y="114" font-size="10" fill="#64748b">20g</text>
+        <line x1="60" y1="75" x2="640" y2="75" stroke="#f1f5f9" stroke-width="1"/>
+        <text x="25" y="79" font-size="10" fill="#64748b">30g</text>
 
-    const encodedUri = encodeURI(csv);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `${farmer.name.replace(/\s+/g, '_')}_${activeTank.name}_Full_Report.csv`);
+        <!-- Growth Trajectory Curve (ABW) -->
+        <polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+          points="80,165 160,150 240,132 320,112 400,90 480,72 560,55" />
+        
+        <!-- Biomass Bars Underlay -->
+        <rect x="72" y="158" width="16" height="17" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="152" y="142" width="16" height="33" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="232" y="120" width="16" height="55" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="312" y="98" width="16" height="77" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="392" y="76" width="16" height="99" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="472" y="58" width="16" height="117" fill="#93c5fd" opacity="0.6" rx="2"/>
+        <rect x="552" y="42" width="16" height="133" fill="#93c5fd" opacity="0.6" rx="2"/>
+
+        <!-- Data Dots -->
+        <circle cx="80" cy="165" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="160" cy="150" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="240" cy="132" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="320" cy="112" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="400" cy="90" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="480" cy="72" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+        <circle cx="560" cy="55" r="4.5" fill="#2563eb" stroke="#ffffff" stroke-width="1.5"/>
+
+        <!-- X-Axis Labels -->
+        <text x="70" y="195" font-size="11" font-weight="600" fill="#475569">DOC 10</text>
+        <text x="150" y="195" font-size="11" font-weight="600" fill="#475569">DOC 20</text>
+        <text x="230" y="195" font-size="11" font-weight="600" fill="#475569">DOC 30</text>
+        <text x="310" y="195" font-size="11" font-weight="600" fill="#475569">DOC 40</text>
+        <text x="390" y="195" font-size="11" font-weight="600" fill="#475569">DOC 50</text>
+        <text x="470" y="195" font-size="11" font-weight="600" fill="#475569">DOC 60</text>
+        <text x="550" y="195" font-size="11" font-weight="600" fill="#475569">DOC 70</text>
+
+        <!-- Legend -->
+        <circle cx="460" cy="24" r="4" fill="#2563eb"/>
+        <text x="470" y="28" font-size="11" font-weight="600" fill="#334155">ABW (g) Curve</text>
+        <rect x="560" y="20" width="10" height="8" fill="#93c5fd" opacity="0.7"/>
+        <text x="575" y="28" font-size="11" font-weight="600" fill="#334155">Biomass (kg)</text>
+      </svg>
+    `;
+
+    const excelHtml = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office"
+            xmlns:x="urn:schemas-microsoft-com:office:excel"
+            xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!--[if gte mso 9]>
+        <xml>
+         <x:ExcelWorkbook>
+          <x:ExcelWorksheets>
+           <x:ExcelWorksheet>
+            <x:Name>${activeTank.name} Report</x:Name>
+            <x:WorksheetOptions>
+             <x:DisplayGridlines/>
+            </x:WorksheetOptions>
+           </x:ExcelWorksheet>
+          </x:ExcelWorksheets>
+         </x:ExcelWorkbook>
+        </xml>
+        <![endif]-->
+        <style>
+          body { font-family: 'Segoe UI', Calibri, Arial, sans-serif; font-size: 11pt; color: #1e293b; }
+          table { border-collapse: collapse; margin-bottom: 22px; width: 100%; }
+          .main-header { background-color: #1e3a8a; color: #ffffff; font-size: 15pt; font-weight: bold; padding: 12px; text-align: center; }
+          .sub-title { background-color: #2563eb; color: #ffffff; font-size: 12pt; font-weight: bold; padding: 8px 12px; }
+          .meta-label { background-color: #f8fafc; font-weight: bold; color: #475569; padding: 6px 10px; border: 1px solid #cbd5e1; width: 18%; }
+          .meta-value { background-color: #ffffff; color: #0f172a; padding: 6px 10px; border: 1px solid #cbd5e1; width: 32%; }
+          .section-title { background-color: #0284c7; color: #ffffff; font-size: 12pt; font-weight: bold; padding: 8px 12px; }
+          .tbl-th { background-color: #f1f5f9; color: #334155; font-weight: bold; padding: 8px 10px; border: 1px solid #cbd5e1; text-align: left; }
+          .tbl-td { padding: 7px 10px; border: 1px solid #e2e8f0; vertical-align: middle; color: #1e293b; }
+          .tbl-td-bold { padding: 7px 10px; border: 1px solid #e2e8f0; vertical-align: middle; font-weight: bold; color: #0f172a; }
+          .graph-box { background-color: #ffffff; border: 1px solid #cbd5e1; padding: 16px; text-align: center; }
+          .progress-bar { font-family: 'Courier New', monospace; font-size: 10pt; color: #2563eb; font-weight: bold; letter-spacing: -1px; }
+          .alert-txt { color: #dc2626; font-weight: bold; }
+          .ok-txt { color: #16a34a; font-weight: 600; }
+        </style>
+      </head>
+      <body>
+        <!-- Header Banner -->
+        <table>
+          <tr>
+            <td colspan="7" class="main-header">
+              ROYAL'S MARINE FOOD — AQUACULTURE FIELD PERFORMANCE REPORT
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7" class="sub-title">
+              Farmer: ${farmer.name.toUpperCase()} (ID: ${farmer.id}) • Selected: ${activeTank.name.toUpperCase()}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Farmer & Incharge Metadata Table -->
+        <table>
+          <tr>
+            <td class="meta-label">Farmer Full Name:</td>
+            <td class="meta-value"><strong>${farmer.name}</strong></td>
+            <td class="meta-label">Farmer ID:</td>
+            <td class="meta-value">${farmer.id}</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Contact Phone:</td>
+            <td class="meta-value">${farmer.phone}</td>
+            <td class="meta-label">Total Land &amp; Tanks:</td>
+            <td class="meta-value">${farmer.acres} (${tanksList.length} Cultivated Tanks)</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Region &amp; Locality:</td>
+            <td class="meta-value">${farmer.region} (${farmer.locality})</td>
+            <td class="meta-label">Village Name:</td>
+            <td class="meta-value">${farmer.village}</td>
+          </tr>
+          <tr>
+            <td class="meta-label">Collecting Field Agent:</td>
+            <td class="meta-value"><strong>${farmer.agent}</strong></td>
+            <td class="meta-label">Regional Incharge:</td>
+            <td class="meta-value">${farmer.incharge}</td>
+          </tr>
+        </table>
+
+        <!-- Section 1: Tank Specifications Table -->
+        <table>
+          <tr>
+            <td colspan="4" class="section-title">
+              1. TANK SETUP SPECIFICATIONS &amp; BIOPHYSICAL ORIGIN: ${activeTank.name.toUpperCase()}
+            </td>
+          </tr>
+          <tr>
+            <td class="tbl-th" style="width: 25%;">PARAMETER</td>
+            <td class="tbl-th" style="width: 25%;">SPECIFICATION VALUE</td>
+            <td class="tbl-th" style="width: 25%;">PARAMETER</td>
+            <td class="tbl-th" style="width: 25%;">SPECIFICATION VALUE</td>
+          </tr>
+          <tr>
+            <td class="tbl-td-bold">Tank Label / Spread</td>
+            <td class="tbl-td">${activeTank.name} (${activeTank.acres} Acres)</td>
+            <td class="tbl-td-bold">Source of Water</td>
+            <td class="tbl-td">${activeTank.waterSource || farmer.waterSource || 'Creek / Estuary'}</td>
+          </tr>
+          <tr>
+            <td class="tbl-td-bold">Baseline Salinity</td>
+            <td class="tbl-td">${activeTank.salinity} ppt</td>
+            <td class="tbl-td-bold">Soil Type</td>
+            <td class="tbl-td">${activeTank.soilType || 'Clay Loam'}</td>
+          </tr>
+          <tr>
+            <td class="tbl-td-bold">Hatchery SPF Source</td>
+            <td class="tbl-td">${activeTank.hatcheryName || 'Apex Marine Hatcheries'}</td>
+            <td class="tbl-td-bold">Brooder Lineage</td>
+            <td class="tbl-td">${activeTank.brooder || 'Kona Bay'}</td>
+          </tr>
+          <tr>
+            <td class="tbl-td-bold">Seed Stocking Date</td>
+            <td class="tbl-td">${activeTank.seedDate || '2026-05-15'}</td>
+            <td class="tbl-td-bold">Stocking Count (Lakhs)</td>
+            <td class="tbl-td">${activeTank.seedStockingLak} Lakhs (${((activeTank.seedStockingLak * 100000) / (activeTank.acres * 4046.86)).toFixed(1)} / m²)</td>
+          </tr>
+          <tr>
+            <td class="tbl-td-bold">Feed Type / Diet</td>
+            <td class="tbl-td">${activeTank.feedType || 'Premium Pellets'}</td>
+            <td class="tbl-td-bold">Culture Cycle</td>
+            <td class="tbl-td">${activeTank.currentCycle || 'Cycle 1 (2026)'}</td>
+          </tr>
+        </table>
+
+        <!-- Section 2: Visual Growth Graphs & Progress Curves -->
+        <table>
+          <tr>
+            <td colspan="7" class="section-title">
+              2. TANK GROWTH TRAJECTORY, VISUAL GRAPHS &amp; FEED CONVERSION: ${activeTank.name.toUpperCase()}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="7" class="graph-box">
+              ${chartSvg}
+            </td>
+          </tr>
+          <tr>
+            <td class="tbl-th">Day of Culture</td>
+            <td class="tbl-th">Average Body Weight (ABW)</td>
+            <td class="tbl-th">ABW Visual Growth Bar</td>
+            <td class="tbl-th">Estimated Biomass (kg)</td>
+            <td class="tbl-th">Biomass Progression Bar</td>
+            <td class="tbl-th">FCR Efficiency</td>
+            <td class="tbl-th">Cumulative Feed Intake (kg)</td>
+          </tr>
+          ${growthData.map(g => `
+            <tr>
+              <td class="tbl-td-bold">${g.doc}</td>
+              <td class="tbl-td">${g.abw} g</td>
+              <td class="tbl-td"><span class="progress-bar">${generateProgressBar(g.abw, maxABW)}</span> (${Math.round((g.abw / maxABW) * 100)}%)</td>
+              <td class="tbl-td">${g.biomass.toLocaleString()} kg</td>
+              <td class="tbl-td"><span class="progress-bar">${generateProgressBar(g.biomass, maxBiomass)}</span></td>
+              <td class="tbl-td">${g.fcr}</td>
+              <td class="tbl-td">${g.feed.toLocaleString()} kg</td>
+            </tr>
+          `).join('')}
+        </table>
+
+        <!-- Section 3: Water Quality Table -->
+        <table>
+          <tr>
+            <td colspan="14" class="section-title">
+              3. WATER QUALITY &amp; CHEMICAL TELEMETRY AUDIT LOG: ${activeTank.name.toUpperCase()}
+            </td>
+          </tr>
+          <tr>
+            <td class="tbl-th">DOC / Date</td>
+            <td class="tbl-th">Field Agent</td>
+            <td class="tbl-th">Salinity</td>
+            <td class="tbl-th">pH</td>
+            <td class="tbl-th">Alkalinity</td>
+            <td class="tbl-th">Hardness</td>
+            <td class="tbl-th">Ammonia (NH3)</td>
+            <td class="tbl-th">Nitrite (NO2)</td>
+            <td class="tbl-th">Potassium (K)</td>
+            <td class="tbl-th">DO (mg/L)</td>
+            <td class="tbl-th">H2S</td>
+            <td class="tbl-th">Cl</td>
+            <td class="tbl-th">Fe</td>
+            <td class="tbl-th">Water Color</td>
+          </tr>
+          ${waterQualityLogs.map(w => `
+            <tr>
+              <td class="tbl-td-bold">DOC ${w.doc} (${w.date})</td>
+              <td class="tbl-td">${w.agent}</td>
+              <td class="tbl-td">${w.salinity} ppt</td>
+              <td class="tbl-td">${w.ph}</td>
+              <td class="tbl-td">${w.alkalinity} ppm</td>
+              <td class="tbl-td">${w.hardness} ppm</td>
+              <td class="tbl-td">${w.ammonia > 0.5 ? `<span class="alert-cell">${w.ammonia}</span>` : w.ammonia}</td>
+              <td class="tbl-td">${w.nitrite > 0.25 ? `<span class="alert-cell">${w.nitrite}</span>` : w.nitrite}</td>
+              <td class="tbl-td">${w.potassium} ppm</td>
+              <td class="tbl-td">${w.do < 4.0 ? `<span class="alert-cell">${w.do} mg/L (ALERT)</span>` : `<span class="ok-txt">${w.do} mg/L</span>`}</td>
+              <td class="tbl-td">${w.h2s}</td>
+              <td class="tbl-td">${w.cl}</td>
+              <td class="tbl-td">${w.fe}</td>
+              <td class="tbl-td">${w.waterColor}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([excelHtml], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${farmer.name.replace(/\s+/g, '_')}_${activeTank.name}_Master_Analytics.xls`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`Master Excel Report for ${activeTank.name} downloaded successfully!`);
   };
 
   return (
@@ -324,7 +575,7 @@ const FarmerDetail = () => {
       {/* Top Header & Breadcrumb */}
       <div style={styles.topNavRow}>
         <button onClick={() => navigate('/admin/farmers')} style={styles.backBtn}>
-          <ArrowLeft size={16} />
+          <ArrowLeft size={15} />
           <span>Back to All Farmers</span>
         </button>
       </div>
@@ -352,16 +603,18 @@ const FarmerDetail = () => {
             </p>
           </div>
 
+          {/* Export Action: Master Formatted Excel */}
           <button 
-            style={styles.exportReportBtn}
-            onClick={handleDownload}
+            style={styles.exportExcelBtn}
+            onClick={handleDownloadFormattedExcel}
+            title="Download structured, styled Excel spreadsheet with embedded visual charts"
           >
-            <Download size={15} />
-            <span>Export Agent Field Report (CSV)</span>
+            <FileSpreadsheet size={15} />
+            <span>Download Formatted Excel (With Graphs)</span>
           </button>
         </div>
 
-        {/* 4 Details Grid Blocks */}
+        {/* 4 Clean Profile Details Blocks */}
         <div style={styles.profileGrid}>
           <div style={styles.profileBlock}>
             <span style={styles.blockLabel}>CONTACT NUMBER</span>
@@ -369,16 +622,13 @@ const FarmerDetail = () => {
           </div>
           <div style={styles.profileBlock}>
             <span style={styles.blockLabel}>TOTAL LAND &amp; TANKS</span>
-            <span style={{ ...styles.blockValue, color: '#16a34a' }}>
+            <span style={styles.blockValue}>
               {farmer.acres} • {tanksList.length} {tanksList.length > 1 ? 'Tanks' : 'Tank'}
             </span>
           </div>
           <div style={styles.profileBlock}>
-            <span style={styles.blockLabel}>COLLECTING FIELD AGENT</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <UserCheck size={16} color="#2563eb" />
-              <span style={{ ...styles.blockValue, color: '#2563eb' }}>{farmer.agent}</span>
-            </div>
+            <span style={styles.blockLabel}>FIELD AGENT</span>
+            <span style={styles.blockValue}>{farmer.agent}</span>
           </div>
           <div style={styles.profileBlock}>
             <span style={styles.blockLabel}>REGIONAL INCHARGE</span>
@@ -387,11 +637,11 @@ const FarmerDetail = () => {
         </div>
       </div>
 
-      {/* 2. Tank Tabs Navigation Bar (Switch between each and every tank) */}
+      {/* 2. Tank Tabs Navigation Bar */}
       <div style={styles.tankTabsContainer}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            <span style={styles.selectTankLabel}>Select Tank to View:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <span style={styles.selectTankLabel}>Select Tank:</span>
             {tanksList.map((tank, idx) => (
               <button
                 key={tank.id || idx}
@@ -401,131 +651,99 @@ const FarmerDetail = () => {
                 }}
                 onClick={() => setActiveTankIndex(idx)}
               >
-                <Database size={15} color={activeTankIndex === idx ? '#2563eb' : '#64748b'} />
+                <Database size={14} color={activeTankIndex === idx ? '#2563eb' : '#64748b'} />
                 <span>{tank.name} ({tank.acres} Ac)</span>
               </button>
             ))}
           </div>
 
-          {/* Quick Edit Current Tank Button */}
           <button 
             style={styles.editTankQuickBtn}
             onClick={openEditTankModal}
-            title="Edit biophysical specifications, cycle, water source, and parameters for this tank"
           >
-            <Edit size={14} />
+            <Edit size={13} />
             <span>Edit {activeTank.name} Details</span>
           </button>
         </div>
       </div>
 
-      {/* 3. Section: Tank Specifications & Pond Setup (Image 1 + Water Source) */}
+      {/* 3. Section: Tank Specifications & Pond Setup */}
       <div style={styles.card}>
         <div style={styles.sectionHeaderRow}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={styles.iconCircleBlue}>
-              <Fish size={18} color="#2563eb" />
-            </div>
-            <div>
-              <h3 style={styles.sectionCardTitle}>
-                {activeTank.name} Specifications &amp; Setup Details
-              </h3>
-              <p style={styles.sectionCardSubtitle}>
-                Key biophysical pond setup, stocking parameters, and water origin for {activeTank.name}
-              </p>
-            </div>
+          <div>
+            <h3 style={styles.sectionCardTitle}>
+              {activeTank.name} Setup Specifications
+            </h3>
+            <p style={styles.sectionCardSubtitle}>
+              Biophysical specifications and pond origin parameters
+            </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button 
-              style={styles.editTankSpecsPrimaryBtn}
-              onClick={openEditTankModal}
-            >
-              <Edit size={13} />
-              <span>Edit Tank Details</span>
-            </button>
-            <div style={styles.agentSyncedBadge}>
-              <CheckCircle2 size={14} color="#16a34a" />
-              <span>Agent Verified</span>
-            </div>
-          </div>
+          <button 
+            style={styles.editTankSpecsPrimaryBtn}
+            onClick={openEditTankModal}
+          >
+            <Edit size={13} />
+            <span>Edit Specs</span>
+          </button>
         </div>
 
-        {/* Tank Specifications Grid (All Parameters from Image 1 + Source of Water) */}
+        {/* Tank Specifications Grid */}
         <div style={styles.specsGrid}>
-          {/* 1. Tank Size - Acres */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>TANK SIZE</span>
             <span style={styles.specPrimaryValue}>{activeTank.acres} Acres</span>
             <span style={styles.specFootnote}>Cultivated Water Spread</span>
           </div>
 
-          {/* 2. Source of Water */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>SOURCE OF WATER</span>
-            <span style={{ ...styles.specPrimaryValue, fontSize: '14.5px', color: '#0284c7' }}>
-              {activeTank.waterSource || farmer.waterSource || 'Creek / Estuary'}
-            </span>
+            <span style={styles.specPrimaryValue}>{activeTank.waterSource || farmer.waterSource || 'Creek / Estuary'}</span>
             <span style={styles.specFootnote}>Primary Water Intake</span>
           </div>
 
-          {/* 3. Baseline Salinity */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>SALINITY</span>
-            <span style={{ ...styles.specPrimaryValue, color: '#2563eb' }}>{activeTank.salinity} ppt</span>
+            <span style={styles.specPrimaryValue}>{activeTank.salinity} ppt</span>
             <span style={styles.specFootnote}>Baseline Pond Salinity</span>
           </div>
 
-          {/* 4. Soil Type */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>SOIL TYPE</span>
             <span style={styles.specPrimaryValue}>{activeTank.soilType || 'Clay Loam'}</span>
-            <span style={styles.specFootnote}>Loam, Clay, or Sandy</span>
+            <span style={styles.specFootnote}>Soil Composition</span>
           </div>
 
-          {/* 5. Hatchery Name */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>HATCHERY NAME</span>
-            <span style={{ ...styles.specPrimaryValue, fontSize: '14.5px' }}>
-              {activeTank.hatcheryName || 'Apex Hatcheries'}
-            </span>
-            <span style={styles.specFootnote}>Certified SPF Source</span>
+            <span style={styles.specPrimaryValue}>{activeTank.hatcheryName || 'Apex Hatcheries'}</span>
+            <span style={styles.specFootnote}>SPF Certified Source</span>
           </div>
 
-          {/* 6. Brooder Lineage */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>BROODER LINEAGE</span>
-            <span style={{ ...styles.specPrimaryValue, color: '#16a34a' }}>
-              {activeTank.brooder || 'Kona Bay'}
-            </span>
-            <span style={styles.specFootnote}>Syaqua, Kona Bay, SIS, Other</span>
+            <span style={styles.specPrimaryValue}>{activeTank.brooder || 'Kona Bay'}</span>
+            <span style={styles.specFootnote}>Genetic Line</span>
           </div>
 
-          {/* 7. Seed Date */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>SEED DATE</span>
             <span style={styles.specPrimaryValue}>{activeTank.seedDate || '2026-05-15'}</span>
-            <span style={styles.specFootnote}>Stocking Day 1</span>
+            <span style={styles.specFootnote}>Stocking Date</span>
           </div>
 
-          {/* 8. Seed Number Stocking (Lak) */}
           <div style={styles.specItemCard}>
-            <span style={styles.specLabel}>SEED STOCKING (LAK)</span>
-            <span style={{ ...styles.specPrimaryValue, color: '#d97706' }}>
-              {activeTank.seedStockingLak} Lakhs
-            </span>
+            <span style={styles.specLabel}>SEED STOCKING</span>
+            <span style={styles.specPrimaryValue}>{activeTank.seedStockingLak} Lakhs</span>
             <span style={styles.specFootnote}>
               Density: {((activeTank.seedStockingLak * 100000) / (activeTank.acres * 4046.86)).toFixed(1)} / m²
             </span>
           </div>
 
-          {/* 9. Feed Type */}
           <div style={styles.specItemCard}>
             <span style={styles.specLabel}>FEED TYPE</span>
-            <span style={{ ...styles.specPrimaryValue, fontSize: '14.5px', color: '#7c3aed' }}>
-              {activeTank.feedType || 'Premium Pellets'}
-            </span>
-            <span style={styles.specFootnote}>Premium, Functional, Hypro, Tiger</span>
+            <span style={styles.specPrimaryValue}>{activeTank.feedType || 'Premium Pellets'}</span>
+            <span style={styles.specFootnote}>Commercial Diet</span>
           </div>
         </div>
       </div>
@@ -534,14 +752,11 @@ const FarmerDetail = () => {
       <div style={styles.card}>
         <div style={styles.sectionHeaderRow}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <TrendingUp size={20} color="#2563eb" />
-              <h3 style={styles.sectionCardTitle}>
-                {activeTank.name} Growth Trajectory &amp; Feed Conversion Curve
-              </h3>
-            </div>
+            <h3 style={styles.sectionCardTitle}>
+              {activeTank.name} Growth Trajectory &amp; Feed Curve
+            </h3>
             <p style={styles.sectionCardSubtitle}>
-              Sampling telemetry collected by agent <strong>{farmer.agent}</strong> for <strong>{activeTank.name}</strong> across Day of Culture (DOC 10 to DOC 70)
+              Sampling telemetry across Day of Culture (DOC 10 to DOC 70)
             </p>
           </div>
 
@@ -554,7 +769,7 @@ const FarmerDetail = () => {
               }}
               onClick={() => setGrowthMetric('ABW')}
             >
-              Average Body Weight (ABW)
+              Average Weight (ABW)
             </button>
             <button 
               style={{
@@ -563,7 +778,7 @@ const FarmerDetail = () => {
               }}
               onClick={() => setGrowthMetric('BIOMASS')}
             >
-              Biomass Growth (kg)
+              Biomass (kg)
             </button>
             <button 
               style={{
@@ -572,7 +787,7 @@ const FarmerDetail = () => {
               }}
               onClick={() => setGrowthMetric('FCR')}
             >
-              FCR Efficiency
+              FCR
             </button>
             <button 
               style={{
@@ -581,40 +796,40 @@ const FarmerDetail = () => {
               }}
               onClick={() => setGrowthMetric('FEED')}
             >
-              Feed Intake (kg)
+              Feed (kg)
             </button>
           </div>
         </div>
 
-        {/* Growth Graph Container */}
-        <div style={{ height: '300px', marginTop: '16px' }}>
+        {/* Growth Graph */}
+        <div style={{ height: '260px', marginTop: '12px' }}>
           <ResponsiveContainer width="100%" height="100%">
             {growthMetric === 'BIOMASS' || growthMetric === 'FEED' ? (
-              <AreaChart data={growthData} margin={{ top: 15, right: 20, left: 0, bottom: 5 }}>
+              <AreaChart data={growthData} margin={{ top: 10, right: 15, left: -10, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.4} />
+                  <linearGradient id="areaGradientSimple" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.25} />
                     <stop offset="95%" stopColor="#2563eb" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis 
                   dataKey="doc" 
-                  axisLine={{ stroke: '#cbd5e1' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#475569', fontWeight: 600 }}
+                  tick={{ fontSize: 12, fill: '#64748b' }}
                 />
                 <YAxis 
-                  axisLine={{ stroke: '#cbd5e1' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#475569', fontWeight: 600 }}
+                  tick={{ fontSize: 12, fill: '#64748b' }}
                   unit=" kg"
                 />
                 <RechartsTooltip 
                   contentStyle={{ 
-                    borderRadius: '10px', 
+                    borderRadius: '8px', 
                     border: '1px solid #e2e8f0', 
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                     backgroundColor: '#ffffff'
                   }} 
                 />
@@ -623,32 +838,32 @@ const FarmerDetail = () => {
                   dataKey={growthMetric.toLowerCase()}
                   name={growthMetric === 'BIOMASS' ? 'Estimated Biomass' : 'Feed Intake'}
                   stroke="#2563eb" 
-                  strokeWidth={3}
+                  strokeWidth={2.5}
                   fillOpacity={1}
-                  fill="url(#areaGradient)"
+                  fill="url(#areaGradientSimple)"
                 />
               </AreaChart>
             ) : (
-              <LineChart data={growthData} margin={{ top: 15, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <LineChart data={growthData} margin={{ top: 10, right: 15, left: -10, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis 
                   dataKey="doc" 
-                  axisLine={{ stroke: '#cbd5e1' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#475569', fontWeight: 600 }}
+                  tick={{ fontSize: 12, fill: '#64748b' }}
                 />
                 <YAxis 
                   domain={growthMetric === 'FCR' ? [0.8, 2.0] : [0, 'auto']}
-                  axisLine={{ stroke: '#cbd5e1' }}
+                  axisLine={{ stroke: '#e2e8f0' }}
                   tickLine={false}
-                  tick={{ fontSize: 12, fill: '#475569', fontWeight: 600 }}
+                  tick={{ fontSize: 12, fill: '#64748b' }}
                   unit={growthMetric === 'ABW' ? 'g' : ''}
                 />
                 <RechartsTooltip 
                   contentStyle={{ 
-                    borderRadius: '10px', 
+                    borderRadius: '8px', 
                     border: '1px solid #e2e8f0', 
-                    boxShadow: '0 8px 20px rgba(0,0,0,0.08)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
                     backgroundColor: '#ffffff'
                   }} 
                 />
@@ -656,10 +871,10 @@ const FarmerDetail = () => {
                   type="monotone" 
                   dataKey={growthMetric.toLowerCase()}
                   name={growthMetric === 'ABW' ? 'Body Weight (ABW)' : 'FCR Ratio'}
-                  stroke={growthMetric === 'ABW' ? '#2563eb' : '#16a34a'} 
-                  strokeWidth={3}
-                  dot={{ r: 4.5, strokeWidth: 2, fill: '#ffffff', stroke: growthMetric === 'ABW' ? '#2563eb' : '#16a34a' }}
-                  activeDot={{ r: 7 }}
+                  stroke="#2563eb" 
+                  strokeWidth={2.5}
+                  dot={{ r: 4, strokeWidth: 2, fill: '#ffffff', stroke: '#2563eb' }}
+                  activeDot={{ r: 6 }}
                 />
               </LineChart>
             )}
@@ -667,221 +882,132 @@ const FarmerDetail = () => {
         </div>
       </div>
 
-      {/* 5. Section: Water Quality Parameters (Collected by Agent - Image 2) */}
+      {/* 5. Section: Water Quality Parameters (Clean Table) */}
       <div style={styles.card}>
         <div style={styles.sectionHeaderRow}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={styles.iconCircleTeal}>
-              <Droplets size={18} color="#0d9488" />
-            </div>
-            <div>
-              <h3 style={styles.sectionCardTitle}>
-                {activeTank.name} Water Quality Parameters &amp; Chemical Monitoring
-              </h3>
-              <p style={styles.sectionCardSubtitle}>
-                On-site weekly sampling parameters collected &amp; submitted by field agent <strong>{farmer.agent}</strong> for <strong>{activeTank.name}</strong>
-              </p>
-            </div>
+          <div>
+            <h3 style={styles.sectionCardTitle}>
+              {activeTank.name} Water Quality Telemetry
+            </h3>
+            <p style={styles.sectionCardSubtitle}>
+              On-site field measurements submitted by agent <strong>{farmer.agent}</strong>
+            </p>
           </div>
 
-          <div style={styles.agentAuditBadge}>
-            <Shield size={14} color="#0d9488" />
-            <span>Agent Field Telemetry (Read-Only Audit)</span>
+          <div style={styles.simpleAuditBadge}>
+            <ShieldCheck size={14} color="#64748b" />
+            <span>Agent Verified On-Site</span>
           </div>
         </div>
 
-        {/* Quality Threshold Helper Cards */}
-        <div style={styles.thresholdChipsRow}>
-          <div style={styles.thresholdPill}>
-            <strong>Salinity:</strong> 0 - 30 ppt
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>pH:</strong> 7.5 - 8.5
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>Alkalinity:</strong> 100 - 300 ppm
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>Hardness:</strong> 1 ppt = 300 ppm
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>Ammonia (NH3):</strong> &lt; 0.5 mg/L
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>Nitrite (NO2):</strong> &lt; 0.25 mg/L
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>Potassium (K):</strong> 1 ppt = 10.7 ppm
-          </div>
-          <div style={styles.thresholdPill}>
-            <strong>DO:</strong> &gt; 4.0 mg/L
-          </div>
+        {/* Clean Standard Threshold Note */}
+        <div style={styles.thresholdNoteRow}>
+          <span style={styles.thresholdNoteText}>
+            <strong>Standard Thresholds:</strong> Salinity 0–30 ppt • pH 7.5–8.5 • Alkalinity 100–300 ppm • Ammonia &lt;0.5 mg/L • Nitrite &lt;0.25 mg/L • DO &gt;4.0 mg/L
+          </span>
         </div>
 
-        {/* Water Quality Table (All 13 parameters from Image 2 + Agent Collection Column) */}
-        <div style={{ overflowX: 'auto', marginTop: '14px' }}>
+        {/* Water Quality Table */}
+        <div style={{ overflowX: 'auto', marginTop: '10px' }}>
           <table style={styles.qualityTable}>
             <thead>
               <tr style={styles.qualityTheadRow}>
                 <th style={styles.qualityTh}>DOC / DATE</th>
-                <th style={styles.qualityTh}>COLLECTED BY AGENT</th>
+                <th style={styles.qualityTh}>AGENT</th>
                 <th style={styles.qualityTh}>SALINITY</th>
                 <th style={styles.qualityTh}>pH</th>
                 <th style={styles.qualityTh}>ALKALINITY</th>
                 <th style={styles.qualityTh}>HARDNESS</th>
                 <th style={styles.qualityTh}>AMMONIA</th>
                 <th style={styles.qualityTh}>NITRITE</th>
-                <th style={styles.qualityTh}>POTASSIUM (K)</th>
-                <th style={styles.qualityTh}>DO (mg/L)</th>
+                <th style={styles.qualityTh}>POTASSIUM</th>
+                <th style={styles.qualityTh}>DO</th>
                 <th style={styles.qualityTh}>H2S</th>
                 <th style={styles.qualityTh}>Cl</th>
                 <th style={styles.qualityTh}>Fe</th>
-                <th style={styles.qualityTh}>WATER COLOR</th>
+                <th style={styles.qualityTh}>COLOR</th>
               </tr>
             </thead>
             <tbody>
-              {waterQualityLogs.map((log) => (
-                <tr key={log.id} style={styles.qualityTr}>
-                  {/* DOC & Date */}
-                  <td style={styles.qualityTd}>
-                    <div style={{ fontWeight: 700, color: '#0f172a' }}>DOC {log.doc}</div>
-                    <div style={{ fontSize: '11.5px', color: '#64748b' }}>{log.date}</div>
-                  </td>
+              {waterQualityLogs.map((log) => {
+                const isCriticalDO = log.do < 4.0;
+                const isCriticalAmmonia = log.ammonia > 0.5;
+                const isCriticalNitrite = log.nitrite > 0.25;
 
-                  {/* Collected by Field Agent */}
-                  <td style={styles.qualityTd}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                      <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '12px' }}>
-                        {log.collectedBy}
+                return (
+                  <tr key={log.id} style={styles.qualityTr}>
+                    <td style={styles.qualityTd}>
+                      <span style={{ fontWeight: 700, color: '#0f172a' }}>DOC {log.doc}</span>
+                      <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>{log.date}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ fontWeight: 500, color: '#334155' }}>{log.agent}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span>{log.salinity} ppt</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span>{log.ph}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span>{log.alkalinity} ppm</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span>{log.hardness} ppm</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ color: isCriticalAmmonia ? '#dc2626' : '#334155', fontWeight: isCriticalAmmonia ? 700 : 500 }}>
+                        {log.ammonia}
                       </span>
-                      <span style={styles.verifiedTag}>
-                        <Check size={11} strokeWidth={3} />
-                        <span>{log.verificationStatus}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ color: isCriticalNitrite ? '#dc2626' : '#334155', fontWeight: isCriticalNitrite ? 700 : 500 }}>
+                        {log.nitrite}
                       </span>
-                    </div>
-                  </td>
-
-                  {/* Salinity (0-30 ppt) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ fontWeight: 700, color: '#2563eb' }}>{log.salinity} ppt</span>
-                  </td>
-
-                  {/* pH (7.5 - 8.5) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{
-                      fontWeight: 700,
-                      color: log.ph >= 7.5 && log.ph <= 8.5 ? '#16a34a' : '#dc2626'
-                    }}>
-                      {log.ph}
-                    </span>
-                  </td>
-
-                  {/* Alkalinity (100 - 300 ppm) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ fontWeight: 600 }}>{log.alkalinity} ppm</span>
-                  </td>
-
-                  {/* Hardness (1 sal = 300 ppm) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ fontWeight: 600, color: '#334155' }}>{log.hardness} ppm</span>
-                  </td>
-
-                  {/* Ammonia (0 - >0.5) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{
-                      fontWeight: 700,
-                      color: log.ammonia > 0.5 ? '#dc2626' : '#16a34a'
-                    }}>
-                      {log.ammonia}
-                    </span>
-                  </td>
-
-                  {/* Nitrite (0 - >0.25) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{
-                      fontWeight: 700,
-                      color: log.nitrite > 0.25 ? '#dc2626' : '#16a34a'
-                    }}>
-                      {log.nitrite}
-                    </span>
-                  </td>
-
-                  {/* Potassium K (1 sal = 10.7 ppm) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ fontWeight: 600 }}>{log.potassium} ppm</span>
-                  </td>
-
-                  {/* DO (<4 is critical) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{
-                      fontWeight: 800,
-                      color: log.do < 4.0 ? '#dc2626' : '#16a34a',
-                      backgroundColor: log.do < 4.0 ? '#fee2e2' : '#dcfce7',
-                      padding: '2px 7px',
-                      borderRadius: '5px'
-                    }}>
-                      {log.do} mg/L
-                    </span>
-                  </td>
-
-                  {/* H2S (0 -> >0.02) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ color: log.h2s > 0.02 ? '#dc2626' : '#475569' }}>
-                      {log.h2s}
-                    </span>
-                  </td>
-
-                  {/* Cl (0 -> >0.02) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ color: log.cl > 0.02 ? '#dc2626' : '#475569' }}>
-                      {log.cl}
-                    </span>
-                  </td>
-
-                  {/* Fe (0 - 0.02) */}
-                  <td style={styles.qualityTd}>
-                    <span style={{ color: log.fe > 0.02 ? '#dc2626' : '#475569' }}>
-                      {log.fe}
-                    </span>
-                  </td>
-
-                  {/* Water Color */}
-                  <td style={styles.qualityTd}>
-                    <span style={{
-                      fontSize: '11.5px',
-                      fontWeight: 700,
-                      backgroundColor: '#f1f5f9',
-                      color: '#334155',
-                      padding: '3px 8px',
-                      borderRadius: '6px',
-                      border: '1px solid #e2e8f0'
-                    }}>
-                      {log.waterColor}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span>{log.potassium} ppm</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      {isCriticalDO ? (
+                        <span style={styles.criticalDOBadge}>
+                          {log.do} mg/L
+                        </span>
+                      ) : (
+                        <span>{log.do} mg/L</span>
+                      )}
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ color: '#64748b' }}>{log.h2s}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ color: '#64748b' }}>{log.cl}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={{ color: '#64748b' }}>{log.fe}</span>
+                    </td>
+                    <td style={styles.qualityTd}>
+                      <span style={styles.colorPill}>{log.waterColor}</span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Modal: Edit Tank Details & Setup Specifications */}
+      {/* Modal: Edit Tank Details */}
       {showEditTankModal && (
         <div style={styles.modalOverlay}>
-          <div style={{ ...styles.modalBox, width: '640px' }}>
+          <div style={{ ...styles.modalBox, width: '600px' }}>
             <div style={styles.modalHeader}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={styles.iconCircleBlue}>
-                  <Edit size={18} color="#2563eb" />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 800, color: '#0f172a' }}>
-                    Edit {activeTank.name} Details &amp; Specifications
-                  </h3>
-                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
-                    Farmer: {farmer.name} ({farmer.id})
-                  </div>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0f172a' }}>
+                  Edit {activeTank.name} Specifications
+                </h3>
+                <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                  Farmer: {farmer.name} ({farmer.id})
                 </div>
               </div>
               <button onClick={() => setShowEditTankModal(false)} style={styles.modalCloseBtn}>
@@ -892,9 +1018,9 @@ const FarmerDetail = () => {
             <form onSubmit={handleSaveTankDetails}>
               <div style={styles.modalBody}>
                 {/* 1. Tank Name, Size & Water Source */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '12px', marginBottom: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '10px', marginBottom: '12px' }}>
                   <div>
-                    <label style={styles.modalLabel}>Tank Label / Name *</label>
+                    <label style={styles.modalLabel}>Tank Name *</label>
                     <input 
                       type="text" 
                       value={editTankForm.name}
@@ -904,7 +1030,7 @@ const FarmerDetail = () => {
                     />
                   </div>
                   <div>
-                    <label style={styles.modalLabel}>Tank Size (Acres) *</label>
+                    <label style={styles.modalLabel}>Size (Acres) *</label>
                     <input 
                       type="number" 
                       step="0.1" 
@@ -916,7 +1042,7 @@ const FarmerDetail = () => {
                     />
                   </div>
                   <div>
-                    <label style={styles.modalLabel}>Source of Water *</label>
+                    <label style={styles.modalLabel}>Source of Water</label>
                     <select 
                       style={styles.modalSelect}
                       value={editTankForm.waterSource}
@@ -933,9 +1059,9 @@ const FarmerDetail = () => {
                 </div>
 
                 {/* 2. Salinity & Soil Type */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
                   <div>
-                    <label style={styles.modalLabel}>Baseline Salinity (ppt)</label>
+                    <label style={styles.modalLabel}>Salinity (ppt)</label>
                     <input 
                       type="number" 
                       step="0.5"
@@ -961,7 +1087,7 @@ const FarmerDetail = () => {
                 </div>
 
                 {/* 3. Hatchery Name & Brooder */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px', marginBottom: '12px' }}>
                   <div>
                     <label style={styles.modalLabel}>Hatchery Name</label>
                     <input 
@@ -988,9 +1114,9 @@ const FarmerDetail = () => {
                 </div>
 
                 {/* 4. Seed Date & Stocking Count (Lak) */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
                   <div>
-                    <label style={styles.modalLabel}>Seed Stocking Date</label>
+                    <label style={styles.modalLabel}>Seed Date</label>
                     <input 
                       type="date" 
                       value={editTankForm.seedDate}
@@ -999,7 +1125,7 @@ const FarmerDetail = () => {
                     />
                   </div>
                   <div>
-                    <label style={styles.modalLabel}>Stocking Count (Lakhs / Lak)</label>
+                    <label style={styles.modalLabel}>Stocking Count (Lakhs)</label>
                     <input 
                       type="number" 
                       step="0.1" 
@@ -1010,8 +1136,8 @@ const FarmerDetail = () => {
                   </div>
                 </div>
 
-                {/* 5. Feed Type, Culture Cycle & Target FCR */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                {/* 5. Feed Type & Target FCR */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '10px', marginBottom: '12px' }}>
                   <div>
                     <label style={styles.modalLabel}>Feed Type</label>
                     <select 
@@ -1025,15 +1151,6 @@ const FarmerDetail = () => {
                       <option value="Tiger Feed">Tiger Feed</option>
                       <option value="Other">Other</option>
                     </select>
-                  </div>
-                  <div>
-                    <label style={styles.modalLabel}>Culture Cycle</label>
-                    <input 
-                      type="text" 
-                      value={editTankForm.currentCycle}
-                      onChange={(e) => setEditTankForm({ ...editTankForm, currentCycle: e.target.value })}
-                      style={styles.modalInput}
-                    />
                   </div>
                   <div>
                     <label style={styles.modalLabel}>Target FCR</label>
@@ -1060,7 +1177,7 @@ const FarmerDetail = () => {
                   type="submit" 
                   style={styles.submitBtn}
                 >
-                  Save Tank Changes
+                  Save Changes
                 </button>
               </div>
             </form>
@@ -1071,7 +1188,7 @@ const FarmerDetail = () => {
       {/* Toast Feedback */}
       {toastMessage && (
         <div style={styles.toast}>
-          <Check size={16} />
+          <Check size={15} />
           <span>{toastMessage}</span>
         </div>
       )}
@@ -1083,8 +1200,8 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
-    maxWidth: '1380px',
+    gap: '16px',
+    maxWidth: '1360px',
     margin: '0 auto'
   },
   topNavRow: {
@@ -1096,22 +1213,21 @@ const styles = {
     alignItems: 'center',
     gap: '6px',
     backgroundColor: '#ffffff',
-    color: '#334155',
+    color: '#475569',
     border: '1px solid #cbd5e1',
-    borderRadius: '8px',
-    padding: '7px 14px',
-    fontSize: '13px',
+    borderRadius: '6px',
+    padding: '6px 12px',
+    fontSize: '12.5px',
     fontWeight: 600,
     cursor: 'pointer',
-    boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-    transition: 'all 0.15s'
+    boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
   },
   card: {
     backgroundColor: '#ffffff',
-    borderRadius: '16px',
+    borderRadius: '12px',
     border: '1px solid #e2e8f0',
-    padding: '22px 26px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.02)'
+    padding: '20px 22px',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
   },
   profileHeader: {
     display: 'flex',
@@ -1119,306 +1235,290 @@ const styles = {
     alignItems: 'flex-start',
     flexWrap: 'wrap',
     gap: '12px',
-    marginBottom: '18px'
+    marginBottom: '16px'
   },
   farmerTitle: {
-    fontSize: '22px',
+    fontSize: '20px',
     fontWeight: 800,
     color: '#0f172a',
     margin: 0
   },
   idBadge: {
-    backgroundColor: '#eff6ff',
-    color: '#2563eb',
-    fontSize: '12px',
-    fontWeight: 800,
-    padding: '3px 9px',
-    borderRadius: '6px',
-    border: '1px solid #dbeafe'
+    backgroundColor: '#f1f5f9',
+    color: '#334155',
+    fontSize: '11.5px',
+    fontWeight: 700,
+    padding: '2px 8px',
+    borderRadius: '5px',
+    border: '1px solid #e2e8f0'
   },
   activePill: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: '#f0fdf4',
     color: '#16a34a',
     fontSize: '11px',
     fontWeight: 700,
-    padding: '3px 8px',
-    borderRadius: '9999px'
+    padding: '2px 8px',
+    borderRadius: '9999px',
+    border: '1px solid #bbf7d0'
   },
   profileSubtitle: {
-    fontSize: '13.5px',
+    fontSize: '13px',
     color: '#64748b',
-    margin: '6px 0 0 0'
+    margin: '4px 0 0 0'
   },
-  exportReportBtn: {
+  exportExcelBtn: {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
-    backgroundColor: '#2563eb',
+    backgroundColor: '#15803d',
     color: '#ffffff',
     border: 'none',
-    borderRadius: '8px',
-    padding: '9px 16px',
-    fontSize: '13px',
+    borderRadius: '6px',
+    padding: '8px 14px',
+    fontSize: '12.5px',
     fontWeight: 600,
     cursor: 'pointer',
-    boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)'
+    boxShadow: '0 2px 5px rgba(21, 128, 61, 0.25)',
+    transition: 'background-color 0.15s'
+  },
+  exportCsvBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    backgroundColor: '#ffffff',
+    color: '#334155',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
+    padding: '7px 12px',
+    fontSize: '12.5px',
+    fontWeight: 600,
+    cursor: 'pointer'
   },
   profileGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '14px',
+    gap: '12px',
     backgroundColor: '#f8fafc',
-    borderRadius: '12px',
-    padding: '16px',
+    borderRadius: '8px',
+    padding: '14px 16px',
     border: '1px solid #e2e8f0'
   },
   profileBlock: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '3px'
+    gap: '2px'
   },
   blockLabel: {
-    fontSize: '11px',
+    fontSize: '10.5px',
     fontWeight: 700,
     color: '#64748b',
     letterSpacing: '0.4px'
   },
   blockValue: {
-    fontSize: '14px',
-    fontWeight: 700,
+    fontSize: '13.5px',
+    fontWeight: 600,
     color: '#0f172a'
   },
   tankTabsContainer: {
     backgroundColor: '#ffffff',
-    borderRadius: '12px',
+    borderRadius: '10px',
     border: '1px solid #e2e8f0',
-    padding: '12px 18px',
+    padding: '10px 16px',
     boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
   },
   selectTankLabel: {
-    fontSize: '13px',
+    fontSize: '12.5px',
     fontWeight: 700,
-    color: '#334155',
-    marginRight: '6px'
+    color: '#475569',
+    marginRight: '4px'
   },
   tankNavTab: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
+    gap: '5px',
     backgroundColor: '#f8fafc',
     border: '1px solid #cbd5e1',
-    borderRadius: '8px',
-    padding: '7px 14px',
-    fontSize: '13px',
+    borderRadius: '6px',
+    padding: '6px 12px',
+    fontSize: '12.5px',
     fontWeight: 600,
     color: '#475569',
-    cursor: 'pointer',
-    transition: 'all 0.15s'
+    cursor: 'pointer'
   },
   tankNavTabActive: {
     backgroundColor: '#eff6ff',
     border: '1px solid #93c5fd',
     color: '#2563eb',
-    fontWeight: 700,
-    boxShadow: '0 1px 3px rgba(37, 99, 235, 0.15)'
+    fontWeight: 700
   },
   editTankQuickBtn: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
+    gap: '5px',
     backgroundColor: '#f8fafc',
     border: '1px solid #cbd5e1',
-    borderRadius: '8px',
-    padding: '7px 14px',
-    fontSize: '12.5px',
+    borderRadius: '6px',
+    padding: '6px 12px',
+    fontSize: '12px',
     fontWeight: 600,
     color: '#2563eb',
-    cursor: 'pointer',
-    transition: 'all 0.15s'
+    cursor: 'pointer'
   },
   sectionHeaderRow: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: '14px',
-    marginBottom: '16px',
-    paddingBottom: '12px',
+    gap: '10px',
+    marginBottom: '14px',
+    paddingBottom: '10px',
     borderBottom: '1px solid #f1f5f9'
   },
-  iconCircleBlue: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    backgroundColor: '#eff6ff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  iconCircleTeal: {
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    backgroundColor: '#ccfbf1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
   sectionCardTitle: {
-    fontSize: '16.5px',
+    fontSize: '15px',
     fontWeight: 800,
     color: '#0f172a',
     margin: 0
   },
   sectionCardSubtitle: {
-    fontSize: '12.5px',
+    fontSize: '12px',
     color: '#64748b',
-    margin: '3px 0 0 0'
+    margin: '2px 0 0 0'
   },
   editTankSpecsPrimaryBtn: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '5px',
-    backgroundColor: '#eff6ff',
+    gap: '4px',
+    backgroundColor: '#ffffff',
     color: '#2563eb',
-    border: '1px solid #bfdbfe',
-    borderRadius: '8px',
-    padding: '6px 12px',
+    border: '1px solid #cbd5e1',
+    borderRadius: '6px',
+    padding: '5px 10px',
     fontSize: '12px',
-    fontWeight: 700,
+    fontWeight: 600,
     cursor: 'pointer'
   },
-  agentSyncedBadge: {
+  simpleAuditBadge: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '6px',
-    backgroundColor: '#f0fdf4',
-    color: '#16a34a',
-    border: '1px solid #bbf7d0',
-    borderRadius: '8px',
-    padding: '6px 12px',
-    fontSize: '12px',
-    fontWeight: 700
-  },
-  agentAuditBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '6px',
-    backgroundColor: '#f0fdfa',
-    color: '#0d9488',
-    border: '1px solid #99f6e4',
-    borderRadius: '8px',
-    padding: '6px 12px',
-    fontSize: '12px',
-    fontWeight: 700
+    gap: '5px',
+    backgroundColor: '#f8fafc',
+    color: '#64748b',
+    border: '1px solid #e2e8f0',
+    borderRadius: '6px',
+    padding: '4px 10px',
+    fontSize: '11.5px',
+    fontWeight: 600
   },
   specsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-    gap: '12px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '10px'
   },
   specItemCard: {
     backgroundColor: '#f8fafc',
     border: '1px solid #e2e8f0',
-    borderRadius: '10px',
-    padding: '12px 14px',
+    borderRadius: '8px',
+    padding: '10px 12px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '3px'
+    gap: '2px'
   },
   specLabel: {
-    fontSize: '10.5px',
+    fontSize: '10px',
     fontWeight: 700,
     color: '#64748b',
     letterSpacing: '0.4px',
     textTransform: 'uppercase'
   },
   specPrimaryValue: {
-    fontSize: '16px',
-    fontWeight: 800,
+    fontSize: '14px',
+    fontWeight: 700,
     color: '#0f172a',
-    lineHeight: '1.2'
+    lineHeight: '1.3'
   },
   specFootnote: {
-    fontSize: '11px',
-    color: '#94a3b8',
-    marginTop: '2px'
+    fontSize: '10.5px',
+    color: '#94a3b8'
   },
   metricToggleGroup: {
     display: 'flex',
     backgroundColor: '#f1f5f9',
-    borderRadius: '8px',
-    padding: '3px',
-    gap: '3px'
+    borderRadius: '6px',
+    padding: '2px',
+    gap: '2px'
   },
   metricTab: {
     backgroundColor: 'transparent',
     border: 'none',
-    borderRadius: '6px',
-    padding: '5px 10px',
-    fontSize: '12px',
+    borderRadius: '4px',
+    padding: '4px 8px',
+    fontSize: '11.5px',
     fontWeight: 600,
     color: '#64748b',
-    cursor: 'pointer',
-    transition: 'all 0.15s'
+    cursor: 'pointer'
   },
   metricTabActive: {
     backgroundColor: '#ffffff',
     color: '#0f172a',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
     fontWeight: 700
   },
-  thresholdChipsRow: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '8px',
-    marginBottom: '10px'
-  },
-  thresholdPill: {
-    fontSize: '11.5px',
+  thresholdNoteRow: {
     backgroundColor: '#f8fafc',
-    color: '#475569',
     border: '1px solid #e2e8f0',
-    padding: '3px 8px',
-    borderRadius: '6px'
+    borderRadius: '6px',
+    padding: '6px 12px',
+    marginBottom: '8px'
+  },
+  thresholdNoteText: {
+    fontSize: '11.5px',
+    color: '#475569',
+    lineHeight: '1.4'
   },
   qualityTable: {
     width: '100%',
     borderCollapse: 'collapse',
     textAlign: 'left',
-    fontSize: '12.5px'
+    fontSize: '12px'
   },
   qualityTheadRow: {
-    borderBottom: '2px solid #e2e8f0',
+    borderBottom: '1px solid #cbd5e1',
     backgroundColor: '#f8fafc'
   },
   qualityTh: {
-    padding: '10px 10px',
+    padding: '8px 10px',
     fontSize: '10.5px',
     fontWeight: 700,
-    color: '#64748b',
+    color: '#475569',
     textTransform: 'uppercase',
-    letterSpacing: '0.4px',
+    letterSpacing: '0.3px',
     whiteSpace: 'nowrap'
   },
   qualityTr: {
     borderBottom: '1px solid #f1f5f9'
   },
   qualityTd: {
-    padding: '12px 10px',
-    verticalAlign: 'middle'
+    padding: '10px 10px',
+    verticalAlign: 'middle',
+    color: '#334155',
+    fontSize: '12.5px',
+    fontWeight: 500
   },
-  verifiedTag: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '3px',
-    fontSize: '9.5px',
-    fontWeight: 800,
-    color: '#15803d',
-    backgroundColor: '#dcfce7',
-    padding: '1px 5px',
+  criticalDOBadge: {
+    color: '#dc2626',
+    fontWeight: 700,
+    backgroundColor: '#fee2e2',
+    padding: '2px 6px',
+    borderRadius: '4px'
+  },
+  colorPill: {
+    fontSize: '11px',
+    color: '#475569',
+    backgroundColor: '#f1f5f9',
+    padding: '2px 6px',
     borderRadius: '4px',
-    width: 'fit-content'
+    border: '1px solid #e2e8f0'
   },
   modalOverlay: {
     position: 'fixed',
@@ -1434,19 +1534,19 @@ const styles = {
   },
   modalBox: {
     backgroundColor: '#ffffff',
-    borderRadius: '16px',
+    borderRadius: '12px',
     maxWidth: '92vw',
     maxHeight: '90vh',
     overflowY: 'auto',
-    padding: '24px',
+    padding: '20px',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)'
   },
   modalHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '18px',
-    paddingBottom: '12px',
+    marginBottom: '14px',
+    paddingBottom: '10px',
     borderBottom: '1px solid #f1f5f9'
   },
   modalCloseBtn: {
@@ -1462,54 +1562,54 @@ const styles = {
   },
   modalLabel: {
     display: 'block',
-    fontSize: '12px',
+    fontSize: '11.5px',
     fontWeight: 600,
     color: '#334155',
-    marginBottom: '5px'
+    marginBottom: '4px'
   },
   modalInput: {
     width: '100%',
-    padding: '8px 12px',
-    borderRadius: '8px',
+    padding: '7px 10px',
+    borderRadius: '6px',
     border: '1px solid #cbd5e1',
     backgroundColor: '#f8fafc',
-    fontSize: '13px',
+    fontSize: '12.5px',
     outline: 'none',
     boxSizing: 'border-box'
   },
   modalSelect: {
     width: '100%',
-    padding: '8px 12px',
-    borderRadius: '8px',
+    padding: '7px 10px',
+    borderRadius: '6px',
     border: '1px solid #cbd5e1',
     backgroundColor: '#f8fafc',
-    fontSize: '13px',
+    fontSize: '12.5px',
     outline: 'none',
     boxSizing: 'border-box'
   },
   modalFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
-    gap: '10px',
-    marginTop: '18px'
+    gap: '8px',
+    marginTop: '14px'
   },
   cancelBtn: {
-    padding: '8px 16px',
-    borderRadius: '8px',
+    padding: '6px 14px',
+    borderRadius: '6px',
     border: '1px solid #cbd5e1',
     backgroundColor: '#ffffff',
     color: '#475569',
-    fontSize: '13px',
+    fontSize: '12.5px',
     fontWeight: 600,
     cursor: 'pointer'
   },
   submitBtn: {
-    padding: '8px 18px',
-    borderRadius: '8px',
+    padding: '6px 16px',
+    borderRadius: '6px',
     border: 'none',
     backgroundColor: '#2563eb',
     color: '#ffffff',
-    fontSize: '13px',
+    fontSize: '12.5px',
     fontWeight: 600,
     cursor: 'pointer'
   },
@@ -1519,9 +1619,9 @@ const styles = {
     right: '24px',
     backgroundColor: '#15803d',
     color: '#ffffff',
-    padding: '12px 20px',
-    borderRadius: '10px',
-    fontSize: '13.5px',
+    padding: '10px 18px',
+    borderRadius: '8px',
+    fontSize: '13px',
     fontWeight: 600,
     display: 'flex',
     alignItems: 'center',
