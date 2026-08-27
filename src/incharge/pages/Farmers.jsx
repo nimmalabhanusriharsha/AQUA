@@ -276,15 +276,9 @@ const Farmers = () => {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="button" className="btn-secondary" onClick={() => {
-                  setIsModalOpen(false);
-                  setPhoneError('');
-                }}>
-                  Cancel
-                </button>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                 <button type="submit" className="btn-primary">
-                  Save Farmer
+                  Save farmer-&gt;Add Tanks
                 </button>
               </div>
             </form>

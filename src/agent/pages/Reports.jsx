@@ -8,7 +8,7 @@ import StatusBadge from '../components/StatusBadge';
 const Reports = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
-  const { getSubmissionsByAgentId, getFarmersByAgentId } = useMockData();
+  const { getSubmissionsByAgentId, getFarmersByAgentId, getTanksByFarmerId } = useMockData();
   const [submissions, setSubmissions] = useState([]);
   const [farmers, setFarmers] = useState([]);
   
@@ -89,9 +89,8 @@ const Reports = () => {
     document.body.removeChild(a);
   };
 
-  // Get dynamic tank list for selected farmer filter
-  const selectedFarmerObj = farmers.find(f => f.id === filterFarmer);
-  const availableTanks = selectedFarmerObj ? selectedFarmerObj.tanks : [];
+  // Get dynamic tank list for selected farmer filter securely from the database
+  const availableTanks = filterFarmer ? (getTanksByFarmerId(filterFarmer) || []) : [];
 
   return (
     <div>

@@ -27,8 +27,10 @@ const mockComplianceData = [
   { name: 'Not Due', value: 147 },
 ];
 
-const KPICard = ({ title, value, subtext, subtextPrefix, isPositive, icon: Icon, color }) => (
-  <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+const KPICard = ({ title, value, subtext, subtextPrefix, isPositive, icon: Icon, color, onClick }) => (
+  <div className="card" onClick={onClick} style={{ display: 'flex', flexDirection: 'column', gap: '12px', cursor: 'pointer', transition: 'all 0.2s ease-in-out' }} 
+       onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} 
+       onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
       <div>
         <p style={{ fontSize: '14px', color: 'var(--color-text-muted)', marginBottom: '4px' }}>{title}</p>
@@ -96,31 +98,37 @@ const Dashboard = () => {
             title="My Agents" value={metrics.totalAgents}
             subtextPrefix={`${metrics.newAgentsMonth} `} subtext="this month"
             isPositive={true} icon={Users} color="#3b82f6"
+            onClick={() => navigate('/incharge/agents')}
           />
           <KPICard
             title="Total Farmers" value={metrics.totalFarmers}
             subtextPrefix={`${metrics.newFarmersMonth} `} subtext="this month"
             isPositive={true} icon={UserSquare} color="#10b981"
+            onClick={() => navigate('/incharge/farmers')}
           />
           <KPICard
             title="Total Tanks" value={metrics.totalTanks.toLocaleString()}
             subtextPrefix={`${metrics.newTanksMonth} `} subtext="this month"
             isPositive={true} icon={Droplets} color="#0ea5e9"
+            onClick={() => navigate('/incharge/tanks')}
           />
           <KPICard
             title="Tests Completed" value={metrics.testsCompleted.toLocaleString()}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={true} icon={TestTube} color="#8b5cf6"
+            onClick={() => navigate('/incharge/tests')}
           />
           <KPICard
             title="Pending Verification" value={metrics.pendingVerification}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={true} icon={CheckCircle} color="#f59e0b"
+            onClick={() => navigate('/incharge/verifications')}
           />
           <KPICard
             title="Overdue Tests" value={metrics.overdueTests}
             subtextPrefix={`0 `} subtext="from yesterday"
             isPositive={false} icon={AlertTriangle} color="#ef4444"
+            onClick={() => navigate('/incharge/weekly-tests')}
           />
         </div>
 

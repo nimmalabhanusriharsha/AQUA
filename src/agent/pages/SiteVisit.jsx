@@ -164,7 +164,9 @@ const SiteVisit = () => {
   const handleSaveDraft = () => {
     saveDraft({
       tankId,
+      farmerId: tank?.farmerId,
       agentId: session.agentId,
+      testType: 'Routine Site Visit',
       formData,
       lastSaved: new Date().toISOString()
     });
@@ -174,7 +176,9 @@ const SiteVisit = () => {
   const handleSubmit = () => {
     submitRecord({
       tankId,
+      farmerId: tank?.farmerId,
       agentId: session.agentId,
+      testType: 'Routine Site Visit',
       formData,
       submittedAt: new Date().toISOString()
     });

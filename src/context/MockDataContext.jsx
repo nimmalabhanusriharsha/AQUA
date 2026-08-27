@@ -54,9 +54,67 @@ const initialSubmissions = [
     status: 'PENDING_VERIFICATION',
     submittedAgo: '10 mins ago',
     data: {
-      waterQuality: { salinity: '15', ph: '7.8', do: '5.2', waterColor: 'Light Green' },
+      waterQuality: { doc: '75', salinity: '5', ph: '8.3', alkalinity: '140', hardness: '1250', ammonia: '0.2', nitrite: '0.5', do: '4.5', k: '35', h2s: '0.1', cl: '0.2', fe: '0.03', waterColor: 'Golden yellow' },
       biomass: '1200kg',
       fcr: '1.2'
+    }
+  },
+  {
+    id: 'SUB003',
+    agentId: 'agent001',
+    farmerId: 'F001',
+    tankId: 'T001',
+    testType: 'Feed Test',
+    date: '2026-08-22',
+    status: 'PENDING_VERIFICATION',
+    submittedAgo: '10 mins ago',
+    data: {
+      doc: '45', seed: '2 Lakh', abw: '12g', dayFeed: '50 Kg', 
+      cumulativeFeed: '1500 Kg', totalBiomass: '1200kg', fcr: '1.25',
+      checkTrayFeed: '10 grams', checkTrayTime: '1.5 hours',
+      remarks: 'Normal feeding'
+    }
+  },
+  {
+    id: 'SUB004',
+    agentId: 'agent001',
+    farmerId: 'F001',
+    tankId: 'T001',
+    testType: 'Medication',
+    date: '2026-08-22',
+    status: 'COMPLETED',
+    submittedAgo: '2 hrs ago',
+    data: {
+      type: 'Preventive', category: 'Probiotics', product: 'AquaPro', 
+      dosage: '500 ml / Acre', date: '2026-08-22', remarks: 'Routine maintenance'
+    }
+  },
+  {
+    id: 'SUB005',
+    agentId: 'agent001',
+    farmerId: 'F001',
+    tankId: 'T001',
+    testType: 'Disease',
+    date: '2026-08-22',
+    status: 'COMPLETED',
+    submittedAgo: '1 day ago',
+    data: {
+      observations: ['White muscle', 'Soft shell'], 
+      remarks: 'Mild symptoms observed in check tray'
+    }
+  },
+  {
+    id: 'SUB006',
+    agentId: 'agent001',
+    farmerId: 'F001',
+    tankId: 'T001',
+    testType: 'Harvest',
+    date: '2026-08-22',
+    status: 'COMPLETED',
+    submittedAgo: '2 days ago',
+    data: {
+      type: 'Partial Harvest', date: '2026-08-20', abw: '15g',
+      harvestedNumber: '10000', harvestedBiomass: '150kg', remarks: 'Test harvest'
     }
   },
   {
@@ -69,7 +127,7 @@ const initialSubmissions = [
     status: 'COMPLETED',
     submittedAgo: '1 day ago',
     data: {
-      waterQuality: { salinity: '20', ph: '8.1', do: '4.8', waterColor: 'Brown' },
+      waterQuality: { doc: '35', salinity: '10', ph: '8.5', alkalinity: '200', hardness: '1200', ammonia: '0.5', nitrite: '0.1', do: '4.0', k: '250', h2s: '0.05', cl: '0.1', fe: '0.1', waterColor: 'Green' },
       biomass: '800kg',
       fcr: '1.4'
     }
@@ -86,7 +144,7 @@ export const MockDataProvider = ({ children }) => {
 
   // Load from LocalStorage or Initialize
   useEffect(() => {
-    const savedData = localStorage.getItem('aqua_feed_mock_database_v2');
+    const savedData = localStorage.getItem('aqua_feed_mock_database_v4');
     if (savedData) {
       setDb(JSON.parse(savedData));
     } else {
@@ -106,14 +164,14 @@ export const MockDataProvider = ({ children }) => {
         ]
       };
       setDb(initialDb);
-      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(initialDb));
+      localStorage.setItem('aqua_feed_mock_database_v4', JSON.stringify(initialDb));
     }
   }, []);
 
   // Save to LocalStorage whenever DB changes
   useEffect(() => {
     if (db) {
-      localStorage.setItem('aqua_feed_mock_database_v2', JSON.stringify(db));
+      localStorage.setItem('aqua_feed_mock_database_v4', JSON.stringify(db));
     }
   }, [db]);
 
